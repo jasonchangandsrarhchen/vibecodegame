@@ -68,7 +68,7 @@ function planIntent(e){let targets=aliveUnits().sort((a,b)=>dist(e,a)-dist(e,b))
 function planAll(){aliveEnemies().forEach(planIntent)}
 function render(){
 $('phase').textContent=phase==='player'?'SECTOR '+stage+' · PLAYER PHASE · 第 '+turn+' 回合':phase==='enemy'?'SECTOR '+stage+' · ENEMY PHASE':'SECTOR '+stage+' · MISSION COMPLETE';$('turnhint').textContent=phase==='player'?'選擇作戰員，移動並攻擊。紅色標記是敵方下一步行動。':phase==='enemy'?'敵方正在執行預告行動…':'戰場已清空。領取獎勵後前往下一區。';
-$('teamcount').textContent=aliveUnits().length+' ACTIVE';$('enemycount').textContent=aliveEnemies().length+' HOSTILES';
+$('teamcount').textContent=aliveUnits().length+' ACTIVE · '+credits+' CR';$('enemycount').textContent=aliveEnemies().length+' HOSTILES';
 $('board').innerHTML='';
 for(let y=0;y<H;y++)for(let x=0;x<W;x++){
 let u=unitAt(x,y),e=enemyAt(x,y),wall=walls.has(x+','+y),cover=covers.has(x+','+y),reach=phase==='player'&&units.some(a=>a.id===selected&&a.hp>0&&a.ap>0&&pathTo(a,x,y,3)?.length),tile=document.createElement('button');
