@@ -36,7 +36,7 @@ Operatives should encourage distinct builds without restricting access to weapon
 | Pulse Rifle | High rate of fire and stable tracking |
 | Rail Lance | Slow, high-damage piercing shot |
 
-The intended full-game roster is 10+ weapons. Prototype weapons are deliberately limited to validate the two-slot combat loop first.
+The intended full-game roster is 10+ weapons. Prototype begins with Arc Pistol + Plasma Shotgun. A field armory appears after the first cleared room and periodically afterward; choose one newly offered weapon and replace either slot. The replaced weapon returns to the available pool. Prototype weapons validate the two-slot loop before expanding the full roster.
 
 ## Upgrade families and synergies
 - Electromagnetic: chain lightning, stun and EMP.
@@ -45,7 +45,7 @@ The intended full-game roster is 10+ weapons. Prototype weapons are deliberately
 - Nano: drones, repair and persistent summons.
 - Overload: critical hits, attack speed and burst windows.
 
-Prototype upgrades include damage, fire rate, critical chance, chain lightning, burn, freeze, drones, lifesteal, dash burst, nova explosions and shields.
+Prototype upgrades include damage, fire rate, critical chance, reliable visible chain lightning (with an extra jump from Overload), burn, freeze, orbiting auto-fire drones, lifesteal, dash burst, burn-death nova explosions and shields.
 
 ## Run structure
 1. Start from safehouse and select an operative.
