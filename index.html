@@ -1,217 +1,98 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NEON ABYSS PROTOCOL — Tactical Prototype</title>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PROJECT FRONTIER — Planetary Automation</title>
 <style>
-:root{--bg:#070b16;--panel:#10192b;--line:#263b55;--cyan:#59e6ed;--pink:#ff4e87;--amber:#ffbd62;--green:#8df0ad;--muted:#8da4bc;--white:#e9f4ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#19324b 0,#070b16 65%);color:var(--white);font:14px/1.45 system-ui,"Noto Sans TC",sans-serif;min-height:100vh}
-header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid #22344a;background:#080e1bdc;position:sticky;top:0;z-index:2}
-.brand{font-weight:900;letter-spacing:.14em;font-size:18px}.brand span{color:var(--cyan)}.tag{color:var(--muted);font-size:11px;letter-spacing:.18em}
-main{max-width:1450px;margin:auto;padding:18px;display:grid;grid-template-columns:minmax(600px,1fr) 330px;gap:16px}
-.panel{background:linear-gradient(160deg,#121f32,#0c1423);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 14px 40px #0005}
-.topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}.phase{color:var(--cyan);font-weight:800;letter-spacing:.12em}.hint{color:var(--muted);font-size:12px}
-.board{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;aspect-ratio:10/8;max-width:900px;margin:auto}
-.tile{position:relative;min-width:0;border:1px solid #253b50;border-radius:5px;background:linear-gradient(145deg,#17283b,#101b2b);color:white;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;transition:.12s}
-.tile:hover{border-color:var(--cyan);filter:brightness(1.25)}.tile.wall{background:repeating-linear-gradient(135deg,#1b2633,#1b2633 6px,#111b28 6px,#111b28 12px);border-color:#506073;cursor:not-allowed}
-.tile.cover{background:linear-gradient(145deg,#314052,#1c2b3d);border-color:#73899d}.tile.reach{outline:2px solid #59e6edaa;outline-offset:-2px;background:#16414a}.tile.target{outline:2px solid var(--pink);outline-offset:-2px}
-.coord{position:absolute;left:4px;top:2px;color:#71869b;font-size:8px;opacity:.45}
-.unit,.enemy{width:70%;height:70%;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:clamp(13px,2vw,24px);font-weight:900;position:relative}
-.unit{background:#123d50;border:2px solid var(--cyan);color:#aafaff;box-shadow:0 0 14px #4be3ed55}.unit.selected{box-shadow:0 0 0 3px #fff,0 0 22px var(--cyan);transform:scale(1.06)}
-.enemy{background:#4b1b38;border:2px solid var(--pink);color:#ffd3e2;box-shadow:0 0 14px #ff4e8755}
-.hp{position:absolute;bottom:-7px;left:0;width:100%;height:4px;background:#263346;border-radius:4px;overflow:hidden}.hp i{display:block;height:100%;background:var(--green)}
-.apdots{position:absolute;top:-5px;right:-5px;display:flex;gap:2px}.apdots i{width:6px;height:6px;border-radius:50%;background:var(--amber);border:1px solid #09111e}
-.intent{position:absolute;right:1px;top:1px;font-size:9px;background:#1a1523;color:#ffb4cb;border:1px solid #87415c;border-radius:4px;padding:0 3px;z-index:1}
-.turret{color:var(--green);font-size:20px;text-shadow:0 0 12px var(--green)}
-.side{display:flex;flex-direction:column;gap:12px}.unitcard{padding:10px;border:1px solid #2a4159;border-radius:8px;background:#0d1928;cursor:pointer}.unitcard.active{border-color:var(--cyan);box-shadow:inset 3px 0 var(--cyan)}#roster{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:410px;overflow:auto;padding-right:3px}.unitrow{display:flex;justify-content:space-between;align-items:center}.unitname{font-weight:800}.role{font-size:10px;color:var(--muted)}.bar{height:6px;background:#27364a;border-radius:5px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--green)}.stats{font-size:11px;color:var(--muted);margin-top:5px}
-button.action{background:#14283b;border:1px solid #36516b;color:var(--white);padding:9px 11px;border-radius:7px;cursor:pointer;font-weight:700}button.action:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}button.action:disabled{opacity:.35;cursor:not-allowed}button.primary{background:#15515c;border-color:#3ac6d0;color:#eaffff}.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.actions .wide{grid-column:1/-1}
-.skilldesc{color:var(--muted);font-size:11px;margin-top:5px}.log{height:160px;overflow:auto;font-size:12px;color:#b8c9da;display:flex;flex-direction:column;gap:6px}.log p{margin:0;padding-bottom:5px;border-bottom:1px solid #1e3044}.log .good{color:var(--green)}.log .bad{color:#ff8eac}.log .info{color:var(--cyan)}
-.legend{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:11px;margin:12px 2px 0}.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px}
-.modal{position:fixed;inset:0;background:#030711d9;display:none;align-items:center;justify-content:center;z-index:5;padding:20px}.modalbox{max-width:480px;width:100%;padding:26px;background:#101d30;border:1px solid var(--cyan);border-radius:14px;text-align:center;box-shadow:0 0 60px #30c9d955}.modalbox h2{letter-spacing:.12em}.rewardChoices{display:grid;gap:9px;margin-top:18px}.rewardChoice{width:100%;text-align:left;padding:13px;border:1px solid #36516b;border-radius:9px;background:#14283b;color:var(--white);cursor:pointer}.rewardChoice:hover{border-color:var(--cyan);background:#18394a}.rewardChoice b{display:block;color:var(--cyan);font-size:14px}.rewardChoice small{display:block;color:var(--muted);margin-top:4px}.progressbar{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-bottom:10px}.progressbar b{color:var(--amber)}
-@media(max-width:1000px){main{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}.side .panel:last-child{grid-column:1/-1}}
-@media(max-width:650px){header{padding:12px}.brand{font-size:14px}main{padding:8px;grid-template-columns:1fr}.side{display:flex}.panel{padding:9px}.board{gap:2px}.tile{border-radius:3px}.coord{font-size:6px}.intent{font-size:7px}}
-</style></head>
+:root{--bg:#080f17;--panel:#111e29;--panel2:#172936;--line:#294653;--cyan:#62e6d1;--lime:#b4e879;--amber:#ffc46b;--red:#ff737b;--muted:#8da5b1;--text:#e8f3f2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1b3941,#080f17 65%);color:var(--text);font:14px/1.45 system-ui,"Noto Sans TC",sans-serif;min-height:100vh}
+header{height:auto;min-height:68px;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);background:#09141deF;position:sticky;top:0;z-index:5}
+.brand{font-weight:900;letter-spacing:.15em;font-size:18px}.brand span{color:var(--cyan)}.sub{font-size:10px;letter-spacing:.22em;color:var(--muted)}
+.resources{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.res{background:#142630;border:1px solid #2c4850;border-radius:8px;padding:6px 10px;min-width:76px}.res small{display:block;color:var(--muted);font-size:10px}.res b{font-size:15px;font-variant-numeric:tabular-nums}
+main{max-width:1500px;margin:auto;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px}.panel{background:linear-gradient(155deg,#142530,#0d1923);border:1px solid var(--line);border-radius:12px;padding:13px;box-shadow:0 12px 32px #0004}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.eyebrow{font-size:10px;letter-spacing:.2em;color:var(--cyan);font-weight:800}.muted{color:var(--muted)}.status{font-size:12px;color:var(--lime)}
+.world-wrap{position:relative;overflow:auto;background:#0a151b;border:1px solid #29434a;border-radius:9px;padding:8px}
+.world{display:grid;grid-template-columns:repeat(16,minmax(30px,1fr));gap:3px;min-width:560px;max-width:1000px;margin:auto}
+.cell{aspect-ratio:1;border:1px solid #284047;border-radius:5px;background:linear-gradient(145deg,#1b3030,#142729);position:relative;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;user-select:none;transition:.12s}
+.cell:hover{border-color:var(--cyan);filter:brightness(1.3);z-index:1}.cell.selected{outline:2px solid var(--cyan);outline-offset:1px}.cell.resource{background:linear-gradient(145deg,#344238,#202e2b)}.cell.water{background:linear-gradient(145deg,#173d50,#112b3b)}.cell.rock{background:repeating-linear-gradient(135deg,#303b3e,#303b3e 5px,#273337 5px,#273337 10px)}.cell .hp{position:absolute;bottom:2px;left:3px;right:3px;height:3px;background:#0008;border-radius:4px}.cell .hp i{display:block;height:100%;background:var(--lime);border-radius:4px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}.build{background:#162a34;border:1px solid #34515a;color:var(--text);border-radius:8px;padding:9px 5px;cursor:pointer;text-align:left;min-height:66px}.build:hover,.build.active{border-color:var(--cyan);background:#1b3a40}.build strong{display:block;font-size:12px}.build small{color:var(--muted);font-size:10px}.build .ico{font-size:18px;margin-right:5px}
+button{font:inherit}.action{border:1px solid #3b6268;background:#1b4144;color:#dffff6;padding:8px 11px;border-radius:7px;cursor:pointer}.action:hover{filter:brightness(1.2)}.action:disabled{opacity:.4;cursor:not-allowed}.side{display:flex;flex-direction:column;gap:12px}.statline{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #263c45;font-size:12px}.statline b{font-variant-numeric:tabular-nums}.meter{height:7px;background:#263b43;border-radius:8px;overflow:hidden;margin:6px 0 10px}.meter i{display:block;height:100%;background:var(--cyan);width:50%}.log{height:160px;overflow:auto;font-size:11px;color:#b3c8c7;display:flex;flex-direction:column;gap:5px}.log div{border-left:2px solid #3b6b69;padding-left:7px}.objective{font-size:12px;line-height:1.6;color:#d1e1dc}.objective strong{color:var(--lime)}.selected-info{font-size:12px;line-height:1.6;color:#b9ccca;min-height:70px}.footer{max-width:1500px;margin:0 auto;padding:0 16px 18px;color:#718b93;font-size:10px;display:flex;justify-content:space-between}
+.modal{position:fixed;inset:0;background:#03090dcc;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-card{max-width:520px;width:100%;background:#142630;border:1px solid #4b7474;border-radius:14px;padding:24px;box-shadow:0 24px 90px #000b}.modal h1{letter-spacing:.12em;color:var(--cyan);font-size:24px}.modal p{color:#b9ccca;line-height:1.7}.modal[hidden]{display:none}
+@media(max-width:900px){main{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.world{grid-template-columns:repeat(16,minmax(27px,1fr))}.brand{font-size:15px}}
+@media(max-width:560px){header{align-items:flex-start;flex-direction:column}.resources{justify-content:flex-start}.res{min-width:66px;padding:5px 7px}.toolbar{grid-template-columns:repeat(2,1fr)}.side{display:flex}.world{min-width:520px}main{padding:9px}.panel{padding:10px}}
+</style>
+</head>
 <body>
-<header><div><div class="brand">NEON <span>ABYSS</span> PROTOCOL</div><div class="tag">TURN-BASED TACTICAL ROGUELITE · PROTOTYPE 0.2</div></div><div class="tag">NEXUS CONTAINMENT INITIATIVE</div></header>
+<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // SECTOR 07</div></div>
+<div class="resources">
+<div class="res"><small>鐵礦</small><b id="iron">24</b></div><div class="res"><small>銅礦</small><b id="copper">12</b></div><div class="res"><small>碳晶</small><b id="crystal">8</b></div><div class="res"><small>合金板</small><b id="plate">0</b></div><div class="res"><small>能源</small><b id="energy">40</b></div>
+</div></header>
 <main>
-<section class="panel"><div class="topline"><div><div class="phase" id="phase">PLAYER PHASE</div><div class="hint" id="turnhint">選擇作戰員，移動並攻擊。敵人意圖會預先顯示。</div></div><button class="action primary" id="endTurn">結束回合 →</button></div><div class="board" id="board"></div><div class="legend"><span><i class="dot" style="background:#123d50;border:1px solid #59e6ed"></i>我方作戰員</span><span><i class="dot" style="background:#4b1b38;border:1px solid #ff4e87"></i>敵方單位</span><span><i class="dot" style="background:#314052"></i>掩體（減傷）</span><span>◆ 紅色標記：敵方預告行動</span></div></section>
+<section class="panel">
+<div class="topline"><div><div class="eyebrow">SECTOR MAP / 16 × 12</div><div class="muted" style="font-size:11px">點擊地格選取位置，再選擇建築部署</div></div><div class="status" id="clock">☀ 白晝 01</div></div>
+<div class="world-wrap"><div class="world" id="world"></div></div>
+<div class="legend"><span><i class="dot" style="background:#8eaa69"></i>平原</span><span>🪨 鐵礦脈</span><span>🟠 銅礦脈</span><span>💎 碳晶</span><span>🌊 水域</span><span>🏭 已建設</span></div>
+<div class="topline" style="margin-top:14px"><div class="eyebrow">CONSTRUCTION MENU</div><button class="action" id="cancel">取消建造</button></div>
+<div class="toolbar" id="toolbar">
+<button class="build" data-build="miner"><strong><span class="ico">⛏️</span>採礦機</strong><small>鐵礦 8 · 銅礦 8</small></button>
+<button class="build" data-build="solar"><strong><span class="ico">☀️</span>太陽能板</strong><small>鐵礦 5 · 銅礦 3</small></button>
+<button class="build" data-build="smelter"><strong><span class="ico">🔥</span>冶煉爐</strong><small>鐵礦 10</small></button>
+<button class="build" data-build="assembler"><strong><span class="ico">⚙️</span>組裝工廠</strong><small>鐵礦 12 · 銅礦 6</small></button>
+<button class="build" data-build="belt"><strong><span class="ico">➖</span>輸送帶</strong><small>鐵礦 1</small></button>
+<button class="build" data-build="turret"><strong><span class="ico">🛡️</span>防禦砲塔</strong><small>鐵礦 10 · 銅礦 5</small></button>
+<button class="build" data-build="battery"><strong><span class="ico">🔋</span>蓄電池</strong><small>鐵礦 5 · 銅礦 5</small></button>
+<button class="build" data-build="drill"><strong><span class="ico">💠</span>晶體鑽機</strong><small>鐵礦 8 · 銅礦 4</small></button>
+</div>
+</section>
 <aside class="side">
-<section class="panel"><div class="topline"><strong>STRIKE TEAM / 小隊</strong><span class="tag" id="teamcount">3 ACTIVE</span></div><div id="roster"></div><div id="selectedInfo" class="skilldesc">選擇一名作戰員查看技能。</div><div class="actions"><button class="action" id="skillBtn" disabled>使用技能</button><button class="action" id="waitBtn">待命</button><button class="action wide" id="cancelSkill">取消技能選取</button></div></section>
-<section class="panel"><div class="topline"><strong>敵方戰術預告</strong><span class="tag" id="enemycount">4 HOSTILES</span></div><div id="intentList" class="skilldesc"></div></section>
-<section class="panel"><div class="topline"><strong>戰場紀錄</strong><span class="tag">COMBAT LOG</span></div><div class="log" id="log"></div></section>
-</aside></main>
-<div class="modal" id="modal"><div class="modalbox"><div class="tag" id="modalTag">NEXUS COMBAT REPORT</div><h2 id="resultTitle">MISSION COMPLETE</h2><p id="resultText"></p><div id="rewardChoices" class="rewardChoices"></div></div></div>
+<section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 style="margin:6px 0 4px;font-size:16px">建立第一座工業基地</h3><div class="objective" id="objective">部署一台採礦機和一座太陽能板，開始建立你的自動化產線。</div><div class="meter"><i id="progress" style="width:0%"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
+<section class="panel"><div class="eyebrow">GRID TELEMETRY</div><div class="statline"><span>發電量</span><b id="generation">0 / 秒</b></div><div class="statline"><span>耗電量</span><b id="usage">0 / 秒</b></div><div class="statline"><span>基地完整度</span><b id="integrity">100%</b></div><div class="statline"><span>已部署設施</span><b id="buildingCount">0</b></div><div class="statline"><span>日夜週期</span><b id="cycle">白晝</b></div></section>
+<section class="panel"><div class="eyebrow">SELECTED TILE</div><div class="selected-info" id="tileInfo">尚未選取地格。選擇地圖上的格子查看地形與設施資訊。</div><button class="action" id="demolish" style="margin-top:8px" disabled>拆除選取設施</button></section>
+<section class="panel"><div class="topline"><div class="eyebrow">MISSION LOG</div><button class="action" id="pause">暫停</button></div><div class="log" id="log"></div></section>
+<section class="panel"><div class="eyebrow">SYSTEM CONTROL</div><div style="display:flex;gap:7px;margin-top:9px"><button class="action" id="speed">速度 ×1</button><button class="action" id="save">儲存基地</button><button class="action" id="reset">重新開始</button></div><p class="muted" style="font-size:10px;margin-bottom:0">自動儲存於本機瀏覽器。不同裝置的存檔不會同步。</p></section>
+</aside>
+</main>
+<div class="footer"><span>FRONTIER COLONIAL SYSTEMS © 2189</span><span>BUILD. AUTOMATE. SURVIVE.</span></div>
+<div class="modal" id="intro"><div class="modal-card"><div class="sub">FRONTIER COLONIAL SYSTEMS</div><h1>PROJECT FRONTIER</h1><p>殖民艦「拓荒者七號」迫降在未編目的星球。你必須利用有限的物資建立能源與採礦系統，逐步打造能自我維持的工業基地。</p><p>先部署<strong>太陽能板</strong>和<strong>採礦機</strong>。採礦機必須放在礦脈上；夜間太陽能停止發電，請逐步建立蓄電能力。</p><button class="action" id="start">開始殖民</button></div></div>
 <script>
-const W=10,H=8;
-const walls=new Set(['4,1','4,2','4,3','4,4','6,5','6,6']);
-const covers=new Set(['2,1','2,5','5,6','8,2','8,6']);
-let turn=1,stage=1,credits=0,kills=0,phase='player',selected='phantom',skillMode=null,shieldTeam=false,turrets=[],logs=[],gameOver=false,rewardOptions=[],turretDamage=18;
-let units=[
-{id:'phantom',name:'PHANTOM / 幽影',role:'突擊斥候 · 精準輸出',icon:'✦',x:1,y:1,hp:92,max:92,ap:2,range:3,damage:31,skill:'影襲',skillText:'消耗 2 AP：瞬移至目標敵人附近並造成 24 點傷害。',skillUsed:false},
-{id:'bastion',name:'BASTION / 堡壘',role:'重裝防衛 · 小隊保護',icon:'⬡',x:1,y:3,hp:132,max:132,ap:2,range:1,damage:25,skill:'守護力場',skillText:'消耗 2 AP：本回合我方全員受到的傷害降低 50%。',skillUsed:false},
-{id:'engineer',name:'ENGINEER / 工程師',role:'戰場控制 · 自動砲塔',icon:'⌘',x:1,y:6,hp:86,max:86,ap:2,range:3,damage:21,skill:'部署砲塔',skillText:'消耗 2 AP：在指定空格部署砲塔，敵方回合結束時自動攻擊。',skillUsed:false},
-{id:'medic',name:'MEDIC / 醫護兵',role:'支援治療 · 戰場續航',icon:'✚',x:0,y:0,hp:90,max:90,ap:2,range:3,damage:13,skill:'奈米急救',skillText:'消耗 2 AP：選擇一名隊友，恢復 45 點生命（不超過上限）。',skillUsed:false},
-{id:'sniper',name:'RANGER / 神射手',role:'遠程狙殺 · 高爆發',icon:'⌖',x:0,y:2,hp:76,max:76,ap:2,range:5,damage:39,skill:'致命瞄準',skillText:'消耗 2 AP：對射程 7 格內敵人造成 2.2 倍傷害。',skillUsed:false},
-{id:'grenadier',name:'BREACHER / 爆破手',role:'範圍轟炸 · 群體壓制',icon:'✹',x:0,y:4,hp:98,max:98,ap:2,range:3,damage:24,skill:'集束手榴彈',skillText:'消耗 2 AP：對目標及周圍一格內所有敵人造成 32 點爆炸傷害。',skillUsed:false},
-{id:'cryo',name:'CRYO / 寒霜兵',role:'控場專家 · 凍結敵軍',icon:'❄',x:0,y:5,hp:88,max:88,ap:2,range:3,damage:18,skill:'冷凍脈衝',skillText:'消耗 2 AP：凍結一名敵人，使其跳過下一次行動。',skillUsed:false},
-{id:'hacker',name:'HACKER / 入侵者',role:'電子戰 · 癱瘓機械',icon:'⌘',x:0,y:7,hp:82,max:82,ap:2,range:4,damage:16,skill:'系統劫持',skillText:'消耗 2 AP：癱瘓一名敵人兩個敵方回合。',skillUsed:false}
-];
-let enemies=[
-{id:'drone1',name:'巡邏無人機',kind:'drone',icon:'◉',x:8,y:1,hp:48,max:48,damage:16,range:4,intent:'',target:null},
-{id:'rusher1',name:'突襲機兵',kind:'rusher',icon:'➤',x:8,y:4,hp:62,max:62,damage:22,range:1,intent:'',target:null},
-{id:'sniper1',name:'狙擊單位',kind:'sniper',icon:'⌖',x:8,y:6,hp:43,max:43,damage:19,range:5,intent:'',target:null},
-{id:'drone2',name:'守衛機械',kind:'drone',icon:'◇',x:5,y:0,hp:54,max:54,damage:14,range:3,intent:'',target:null}
-];
-const $=id=>document.getElementById(id);
-function log(msg,kind=''){logs.unshift({msg,kind});logs=logs.slice(0,24);$('log').innerHTML=logs.map(x=>'<p class="'+x.kind+'">'+x.msg+'</p>').join('')}
-function dist(a,b){return Math.abs(a.x-b.x)+Math.abs(a.y-b.y)}
-function aliveUnits(){return units.filter(u=>u.hp>0)}
-function aliveEnemies(){return enemies.filter(e=>e.hp>0)}
-function unitAt(x,y){return units.find(u=>u.hp>0&&u.x===x&&u.y===y)}
-function enemyAt(x,y){return enemies.find(e=>e.hp>0&&e.x===x&&e.y===y)}
-function blocked(x,y,mover='ally'){return x<0||y<0||x>=W||y>=H||walls.has(x+','+y)||unitAt(x,y)||enemyAt(x,y)||((mover==='enemy'||mover==='build')&&turrets.some(t=>t.x===x&&t.y===y))}
-function lineClear(a,b){let dx=b.x-a.x,dy=b.y-a.y,n=Math.max(Math.abs(dx),Math.abs(dy));for(let i=1;i<n;i++){let x=Math.round(a.x+dx*i/n),y=Math.round(a.y+dy*i/n);if(walls.has(x+','+y))return false}return true}
-function pathTo(u,x,y,max=3){if(turrets.some(t=>t.x===x&&t.y===y))return null;let q=[{x:u.x,y:u.y,path:[]}],seen=new Set([u.x+','+u.y]);while(q.length){let p=q.shift();if(p.x===x&&p.y===y)return p.path;if(p.path.length>=max)continue;for(let [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){let nx=p.x+dx,ny=p.y+dy,k=nx+','+ny;if(seen.has(k)||blocked(nx,ny))continue;seen.add(k);q.push({x:nx,y:ny,path:[...p.path,{x:nx,y:ny}]})}}return null}
-function planIntent(e){let targets=aliveUnits().sort((a,b)=>dist(e,a)-dist(e,b));let t=targets[0];if(!t){e.intent='';return}e.target=t.id;let d=dist(e,t);if(e.kind==='rusher'){e.intent=d<=1?'攻擊 '+t.name.split('/')[0]:'突進靠近 '+t.name.split('/')[0]}else if(d<=e.range&&lineClear(e,t)){e.intent='射擊 '+t.name.split('/')[0]}else e.intent='移動接近 '+t.name.split('/')[0]}
-function planAll(){aliveEnemies().forEach(planIntent)}
-function render(){
-$('phase').textContent='SECTOR '+stage+(stage%5===0?' · ☠ BOSS ALERT':'')+(phase==='player'?' · PLAYER PHASE · 第 '+turn+' 回合':phase==='enemy'?' · ENEMY PHASE':' · MISSION COMPLETE');$('turnhint').textContent=phase==='player'?'選擇作戰員，移動並攻擊。紅色標記是敵方下一步行動。':phase==='enemy'?'敵方正在執行預告行動…':'戰場已清空。領取獎勵後前往下一區。';
-$('teamcount').textContent=aliveUnits().length+' ACTIVE · '+credits+' CR';$('enemycount').textContent=aliveEnemies().length+' HOSTILES';
-$('board').innerHTML='';
-for(let y=0;y<H;y++)for(let x=0;x<W;x++){
-let u=unitAt(x,y),e=enemyAt(x,y),wall=walls.has(x+','+y),cover=covers.has(x+','+y),reach=phase==='player'&&units.some(a=>a.id===selected&&a.hp>0&&a.ap>0&&pathTo(a,x,y,3)?.length),tile=document.createElement('button');
-tile.className='tile'+(wall?' wall':'')+(cover?' cover':'')+(reach&&!u&&!e&&!wall?' reach':'')+(e&&phase==='player'&&units.some(a=>a.id===selected&&a.hp>0&&a.ap>0&&dist(a,e)<=a.range&&lineClear(a,e))?' target':'');
-let content='<span class="coord">'+x+','+y+'</span>';
-if(wall)content+='▧';else if(u){content+='<div class="unit '+(u.id===selected?'selected':'')+'">'+u.icon+'<span class="hp"><i style="width:'+u.hp/u.max*100+'%"></i></span><span class="apdots">'+Array.from({length:u.ap},()=>'<i></i>').join('')+'</span></div>'}
-else if(e){content+='<div class="enemy">'+e.icon+'<span class="hp"><i style="width:'+e.hp/e.max*100+'%"></i></span><span class="intent">'+(e.kind==='rusher'?'⚠':e.kind==='sniper'?'⌖':'!')+'</span></div>'}
-else if(turrets.some(t=>t.x===x&&t.y===y))content+='<span class="turret">⌖</span>';
-tile.innerHTML=content;tile.title=wall?'障礙物':cover?'掩體':u?u.name:e?e.name:'';
-tile.onclick=()=>cellClick(x,y);$('board').appendChild(tile)
+(()=>{
+const W=16,H=12, $=id=>document.getElementById(id);
+const costs={miner:{iron:8,copper:8},solar:{iron:5,copper:3},smelter:{iron:10},assembler:{iron:12,copper:6},belt:{iron:1},turret:{iron:10,copper:5},battery:{iron:5,copper:5},drill:{iron:8,copper:4}};
+const names={miner:"採礦機",solar:"太陽能板",smelter:"冶煉爐",assembler:"組裝工廠",belt:"輸送帶",turret:"防禦砲塔",battery:"蓄電池",drill:"晶體鑽機"};
+const icons={miner:"⛏️",solar:"☀️",smelter:"🔥",assembler:"⚙️",belt:"➖",turret:"🛡️",battery:"🔋",drill:"💠"};
+let state={res:{iron:24,copper:12,crystal:8,plate:0,energy:40},tiles:[],buildings:[],selected:0,mode:null,tick:0,paused:false,speed:1,integrity:100,bugs:[],log:[],objectiveDone:false};
+const idx=(x,y)=>y*W+x,xy=i=>({x:i%W,y:Math.floor(i/W)});
+function initMap(){state.tiles=[];for(let y=0;y<H;y++)for(let x=0;x<W;x++){let terrain="plain";if((x===0||x===15)&&(y<3||y>8))terrain="rock";if((x===7||x===8)&&y===0)terrain="water";state.tiles.push({terrain,ore:null,building:null});}
+[[2,2,"iron"],[3,2,"iron"],[12,2,"iron"],[13,2,"iron"],[2,8,"copper"],[3,9,"copper"],[12,8,"copper"],[13,9,"copper"],[7,4,"crystal"],[8,8,"crystal"],[5,5,"iron"],[10,6,"copper"]].forEach(([x,y,o])=>state.tiles[idx(x,y)].ore=o);
 }
-$('roster').innerHTML=units.map(u=>'<div class="unitcard '+(u.id===selected?'active':'')+'" data-unit="'+u.id+'"><div class="unitrow"><span class="unitname">'+u.icon+' '+u.name+'</span><span class="tag">'+u.ap+' AP</span></div><div class="role">'+u.role+'</div><div class="bar"><i style="width:'+Math.max(0,u.hp/u.max*100)+'%"></i></div><div class="stats">HP '+Math.max(0,u.hp)+' / '+u.max+' · 攻擊 '+u.damage+' · 射程 '+u.range+'</div></div>').join('');
-document.querySelectorAll('[data-unit]').forEach(el=>el.onclick=()=>{if(phase!=='player')return;selected=el.dataset.unit;skillMode=null;render()});
-let s=units.find(u=>u.id===selected);$('selectedInfo').innerHTML=s?'<b>'+s.skill+'</b><br>'+s.skillText+'<br><br>目前 AP：'+s.ap+' / 2':'';
-$('skillBtn').disabled=phase!=='player'||!s||s.hp<=0||s.ap<2||s.skillUsed;$('skillBtn').textContent=skillMode?'選擇目標格…':'使用 '+(s?s.skill:'技能');
-$('intentList').innerHTML=aliveEnemies().map(e=>'<div style="padding:5px 0;border-bottom:1px solid #26384b"><b style="color:#ff91b2">'+e.icon+' '+e.name+'</b><br><span>預告：'+e.intent+'</span></div>').join('')||'沒有剩餘敵人。';
-$('endTurn').disabled=phase!=='player'||gameOver;
+function addLog(t){state.log.unshift(t);state.log=state.log.slice(0,30);$("log").innerHTML=state.log.map(x=>"<div>"+x+"</div>").join("");}
+function render(){let html="";state.tiles.forEach((t,i)=>{let cls=t.terrain==="water"?"water":t.terrain==="rock"?"rock":t.ore?"resource":"";if(i===state.selected)cls+=" selected";let icon=t.building?icons[t.building.type]:t.ore?({iron:"🪨",copper:"🟠",crystal:"💎"}[t.ore]):t.terrain==="water"?"🌊":t.terrain==="rock"?"⛰️":"";html+='<div class="cell '+cls+'" data-i="'+i+'" title="'+(t.building?names[t.building.type]:t.ore?t.ore+" 礦脈":t.terrain)+'">'+icon+'</div>';});$("world").innerHTML=html;
+document.querySelectorAll(".cell").forEach(el=>el.addEventListener("click",()=>select(+el.dataset.i)));
+for(let k in state.res)$(k).textContent=Math.floor(state.res[k]);$("integrity").textContent=state.integrity+"%";$("buildingCount").textContent=state.buildings.length;
+let gen=state.buildings.filter(b=>b.type==="solar").length*(state.tick%24<17?3:0),use=state.buildings.reduce((a,b)=>a+({miner:1,smelter:2,assembler:3,drill:2,turret:1}[b.type]||0),0);$("generation").textContent=gen+" / 秒";$("usage").textContent=use+" / 秒";$("clock").textContent=(state.tick%24<17?"☀ 白晝 ":"☾ 夜晚 ")+String(state.tick%24+1).padStart(2,"0");$("cycle").textContent=state.tick%24<17?"白晝":"夜晚";
+let n=state.buildings.filter(b=>b.type==="miner").length+state.buildings.filter(b=>b.type==="solar").length;$("progress").style.width=Math.min(100,n/2*100)+"%";$("progressText").textContent=Math.min(n,2)+" / 2";if(n>=2&&!state.objectiveDone){state.objectiveDone=true;addLog("任務完成：基礎採集系統已建立。下一步：建造冶煉爐與組裝工廠。");$("objective").innerHTML="已建立基本採集系統！建造<strong>冶煉爐</strong>生產合金板，再用組裝工廠擴張基地。";}
 }
-function cellClick(x,y){
-if(phase!=='player'||gameOver)return;
-let u=unitAt(x,y),e=enemyAt(x,y),s=units.find(a=>a.id===selected);
-if(u&&skillMode!=='medic'){selected=u.id;skillMode=null;render();return}
-if(!s||s.hp<=0||s.ap<=0)return;
-if(skillMode){
- if(s.id==='medic'&&u){if(u.hp<=0){log('無法治療已陣亡的隊員。','bad');return}let healed=Math.min(45,u.max-u.hp);if(healed<=0){log('該隊員生命值已滿。','info');return}u.hp+=healed;s.ap-=2;s.skillUsed=true;log('醫護兵使用奈米急救，'+u.name+' 恢復 '+healed+' HP。','good');skillMode=null;render();return}
- if(s.id==='sniper'&&e){if(dist(s,e)>7||!lineClear(s,e)){log('目標超出狙擊距離或視線受阻。','bad');return}let dmg=Math.round(s.damage*2.2);e.hp-=dmg;s.ap-=2;s.skillUsed=true;log('神射手致命瞄準命中 '+e.name+'，造成 '+dmg+' 點傷害！','good');if(e.hp<=0){kills++;log(e.name+' 已被狙殺。','good')}skillMode=null;checkEnd();render();return}
- if(s.id==='grenadier'&&e){if(dist(s,e)>4||!lineClear(s,e)){log('目標超出投擲距離。','bad');return}let hit=aliveEnemies().filter(t=>dist(e,t)<=1);hit.forEach(t=>{t.hp-=32;log('爆炸波及 '+t.name+'，造成 32 點傷害。','good');if(t.hp<=0){kills++;log(t.name+' 被炸毀。','good')}});s.ap-=2;s.skillUsed=true;skillMode=null;checkEnd();render();return}
- if((s.id==='cryo'||s.id==='hacker')&&e){if(dist(s,e)>5||!lineClear(s,e)){log('目標超出技能距離或視線受阻。','bad');return}e.frozenTurns=s.id==='cryo'?1:2;s.ap-=2;s.skillUsed=true;log(s.id==='cryo'?'寒霜兵凍結 '+e.name+'，使其跳過下一次行動。':'入侵者癱瘓 '+e.name+'，使其連續兩個敵方回合無法行動。','good');skillMode=null;render();return}
- if(s.id==='phantom'&&e){if(dist(s,e)>4){log('目標超出影襲距離。','bad');return}let spots=[[e.x+1,e.y],[e.x-1,e.y],[e.x,e.y+1],[e.x,e.y-1]].filter(([a,b])=>!blocked(a,b,'build'));if(!spots.length){log('目標周圍沒有可瞬移位置。','bad');return}let [nx,ny]=spots[0];s.x=nx;s.y=ny;s.ap-=2;s.skillUsed=true;e.hp-=24;log('幽影發動影襲，對 '+e.name+' 造成 24 點傷害。','good');if(e.hp<=0){kills++;log(e.name+' 已被摧毀。','good')}skillMode=null;checkEnd();render();return}
- if(s.id==='engineer'&&!blocked(x,y,'build')){s.ap-=2;s.skillUsed=true;turrets.push({x,y,damage:18});log('工程師部署自動砲塔。','good');skillMode=null;render();return}
- log('請選擇有效的技能目標。','bad');return
-}
-if(e){if(dist(s,e)>s.range||!lineClear(s,e)){log('目標超出射程或視線被阻擋。','bad');return}e.hp-=s.damage;s.ap--;log(s.name+' 攻擊 '+e.name+'，造成 '+s.damage+' 點傷害。','good');if(e.hp<=0){kills++;log(e.name+' 已被摧毀。','good')}checkEnd();render();return}
-let path=pathTo(s,x,y,3);if(!path||!path.length){log('該位置無法抵達。','bad');return}s.x=x;s.y=y;s.ap--;log(s.name+' 移動 '+path.length+' 格，消耗 1 AP。','info');render()
-}
-function useSkill(){let s=units.find(u=>u.id===selected);if(!s||s.ap<2||s.skillUsed||phase!=='player')return;if(s.id==='bastion'){s.ap-=2;s.skillUsed=true;shieldTeam=true;log('堡壘啟動守護力場：本回合全隊減傷 50%。','good');render()}else{skillMode=s.id;let prompts={phantom:'選擇 4 格內敵人發動影襲。',engineer:'選擇空格部署砲塔。',medic:'選擇一名受傷隊友進行治療。',sniper:'選擇 7 格內敵人進行致命狙擊。',grenadier:'選擇敵人作為集束手榴彈中心。',cryo:'選擇一名敵人施放冷凍脈衝。',hacker:'選擇一名敵人進行系統劫持。'};log(prompts[s.id]||'選擇技能目標。','info');render()}}
-function enemyPhase(){
-phase='enemy';render();
-for(let e of aliveEnemies()){
-if(e.frozenTurns>0){e.frozenTurns--;log(e.name+' 仍處於電子／冷凍癱瘓狀態，無法行動。','info');continue}
-let t=units.find(u=>u.id===e.target&&u.hp>0)||aliveUnits().sort((a,b)=>dist(e,a)-dist(e,b))[0];if(!t)break;
-let d=dist(e,t),canShoot=d<=e.range&&lineClear(e,t);
-if(e.kind==='rusher'){
- if(d<=1)hitUnit(e,t);else{let options=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({x:e.x+dx,y:e.y+dy})).filter(p=>!blocked(p.x,p.y,'enemy')).sort((a,b)=>Math.abs(a.x-t.x)+Math.abs(a.y-t.y)-Math.abs(b.x-t.x)-Math.abs(b.y-t.y));if(options[0]){e.x=options[0].x;e.y=options[0].y;log(e.name+' 突進至新位置。','bad')}}
-}else if(canShoot)hitUnit(e,t);else{let options=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({x:e.x+dx,y:e.y+dy})).filter(p=>!blocked(p.x,p.y,'enemy')).sort((a,b)=>Math.abs(a.x-t.x)+Math.abs(a.y-t.y)-Math.abs(b.x-t.x)-Math.abs(b.y-t.y));if(options[0]){e.x=options[0].x;e.y=options[0].y;log(e.name+' 重新部署位置。','bad')}}
-}
-for(let turret of turrets){let target=aliveEnemies().sort((a,b)=>dist(turret,a)-dist(turret,b))[0];if(target){target.hp-=turretDamage;log('自動砲塔命中 '+target.name+'，造成 '+turretDamage+' 點傷害。','good');if(target.hp<=0){kills++;log(target.name+' 被砲塔摧毀。','good')}}}
-shieldTeam=false;checkEnd();if(!gameOver){turn++;phase='player';units.forEach(u=>{u.ap=u.hp>0?2:0;u.skillUsed=false});planAll();log('第 '+turn+' 回合開始。敵方意圖已更新。','info')}render()
-}
-function hitUnit(e,u){let dmg=e.damage;if(covers.has(u.x+','+u.y))dmg=Math.ceil(dmg*.6);if(shieldTeam)dmg=Math.ceil(dmg*.5);u.hp-=dmg;log(e.name+' 攻擊 '+u.name+'，造成 '+dmg+' 點傷害。','bad');if(u.hp<=0)log(u.name+' 失去作戰能力！','bad')}
-function checkEnd(){if(aliveEnemies().length===0){finish(true);return}if(aliveUnits().length===0)finish(false)}
-function finish(win){
- if(gameOver)return;
- gameOver=true;phase='over';$('modal').style.display='flex';
- $('modalTag').textContent=win?'NEXUS REWARD TERMINAL':'NEXUS COMBAT REPORT';
- $('resultTitle').textContent=win?'SECTOR '+stage+' CLEARED':'SQUAD ELIMINATED';
- if(win){
-   let reward=35+stage*15+aliveEnemies().length*0;
-   credits+=reward;
-   $('resultText').textContent='戰場清除！獲得 '+reward+' 信用點。選擇一項戰利品，強化小隊後繼續深入。';
-   const pool=[
-    {name:'超載彈藥',desc:'全隊傷害永久提升 20%。',apply:()=>units.forEach(u=>u.damage=Math.round(u.damage*1.2))},
-    {name:'奈米修復',desc:'全隊恢復 40% 最大生命值。',apply:()=>units.forEach(u=>{if(u.hp>0)u.hp=Math.min(u.max,u.hp+Math.ceil(u.max*.4))})},
-    {name:'強化裝甲',desc:'全隊最大生命值 +20，並立即修復 20 點。',apply:()=>units.forEach(u=>{u.max+=20;if(u.hp>0)u.hp=Math.min(u.max,u.hp+20)})},
-    {name:'砲塔超頻',desc:'工程師砲塔傷害永久 +10。',apply:()=>turretDamage+=10},
-    {name:'戰術訓練',desc:'全隊攻擊射程 +1。',apply:()=>units.forEach(u=>u.range+=1)}
-   ];
-   rewardOptions=pool.sort(()=>Math.random()-.5).slice(0,3);
-   $('rewardChoices').innerHTML=rewardOptions.map((r,i)=>'<button class="rewardChoice" onclick="chooseReward('+i+')"><b>'+String(i+1)+'. '+r.name+'</b><small>'+r.desc+'</small></button>').join('');
- }else{
-   $('resultText').textContent='小隊全員失去作戰能力。這次遠征到此結束；重新部署可從第一區開始。';
-   $('rewardChoices').innerHTML='<button class="action primary" onclick="location.reload()">重新部署 · 從第一區開始</button>';
- }
- render();
-}
-function chooseReward(index){
- if(!gameOver||phase!=='over'||!rewardOptions[index])return;
- const reward=rewardOptions[index];reward.apply();log('取得戰利品：'+reward.name+'。','good');
- stage++;turn=1;skillMode=null;shieldTeam=false;turrets=[];
- units.forEach((u,i)=>{u.x=i<3?1:0;u.y=i<3?(u.id==='phantom'?1:u.id==='bastion'?3:6):({medic:0,sniper:2,grenadier:4,cryo:5,hacker:7}[u.id]);u.hp=Math.max(1,u.hp);u.ap=2;u.skillUsed=false});
- spawnStage();planAll();openShop();
-}
-const shopItems=[
- {name:'醫療奈米包',price:35,desc:'全隊恢復 35% 最大生命值。',apply:()=>units.forEach(u=>{if(u.hp>0)u.hp=Math.min(u.max,u.hp+Math.ceil(u.max*.35))})},
- {name:'穿甲彈藥',price:65,desc:'全隊攻擊力永久提升 15%。',apply:()=>units.forEach(u=>u.damage=Math.round(u.damage*1.15))},
- {name:'合金裝甲',price:55,desc:'全隊最大生命值永久 +15，並恢復 15 點生命。',apply:()=>units.forEach(u=>{u.max+=15;if(u.hp>0)u.hp=Math.min(u.max,u.hp+15)})},
- {name:'砲塔火控核心',price:60,desc:'工程師砲塔傷害永久 +12。',apply:()=>turretDamage+=12},
- {name:'戰術瞄準鏡',price:50,desc:'全隊攻擊射程永久 +1。',apply:()=>units.forEach(u=>u.range+=1)},
- {name:'緊急復活模組',price:90,desc:'復活一名倒下的隊員，恢復 50% 最大生命。',apply:()=>{let u=units.find(a=>a.hp<=0);if(u){u.hp=Math.ceil(u.max*.5);u.ap=2}else{units.forEach(a=>{if(a.hp>0)a.hp=Math.min(a.max,a.hp+25)})}}}
-];
-let shopBought=new Set();
-function openShop(){
- gameOver=true;phase='over';shopBought=new Set();
- $('modal').style.display='flex';$('modalTag').textContent='NEXUS FIELD SUPPLY';
- $('resultTitle').textContent='補給商店 · SECTOR '+stage;
- $('resultText').textContent='信用點：'+credits+' CR。購買額外能力，或直接出發前往下一區。每項商品本次補給限購一次。';
- renderShop();
-}
-function renderShop(){
- $('resultText').textContent='信用點：'+credits+' CR。購買額外能力，或直接出發前往下一區。每項商品本次補給限購一次。';
- $('rewardChoices').innerHTML=shopItems.map((item,i)=>{
-  const bought=shopBought.has(i),afford=credits>=item.price;
-  return '<button class="rewardChoice" '+(bought||!afford?'disabled style="opacity:.45;cursor:not-allowed"':'')+' onclick="buyShopItem('+i+')"><b>'+item.name+' · '+item.price+' CR</b><small>'+item.desc+(bought?'（已購買）':!afford?'（信用點不足）':'')+'</small></button>';
- }).join('')+'<button class="action primary" style="margin-top:8px" onclick="continueFromShop()">完成補給，進入第 '+stage+' 區 →</button>';
-}
-function buyShopItem(index){
- const item=shopItems[index];if(!item||shopBought.has(index)||credits<item.price||!gameOver)return;
- credits-=item.price;shopBought.add(index);item.apply();
- log('商店購買：'+item.name+'。','good');renderShop();render();
-}
-function continueFromShop(){
- if(!gameOver)return;
- gameOver=false;phase='player';$('modal').style.display='none';
- log('進入第 '+stage+' 區。'+(stage%5===0?'Boss 已出現！':'敵方增援已抵達。'),'info');render();
-}
-function spawnStage(){
- const scale=1+(stage-1)*.13;
- const theme=stage%5;
- const themeName=['','狙擊封鎖','裝甲縱隊','蜂群入侵','電子干擾'][theme]||'未知區域';
- $('turnhint').textContent='區域特性：'+themeName+'。每個區域敵軍配置不同，注意敵方預告。';
- if(stage%5===0){
-  const bossType=Math.floor(stage/5)%3;
-  const boss=bossType===1?{name:'收割者級主宰',kind:'rusher',icon:'☠',hp:260,damage:32,range:1}:bossType===2?{name:'軌道砲擊者',kind:'sniper',icon:'✹',hp:220,damage:27,range:6}:{name:'深淵監察者',kind:'drone',icon:'◈',hp:300,damage:24,range:5};
-  enemies=[{id:'boss'+stage,...boss,x:8,y:3,hp:Math.round(boss.hp*scale),max:Math.round(boss.hp*scale),damage:Math.round(boss.damage*scale),intent:'',target:null,isBoss:true},
-  {id:'guard'+stage,name:'主宰護衛',kind:'rusher',icon:'◇',x:8,y:6,hp:Math.round(90*scale),max:Math.round(90*scale),damage:Math.round(22*scale),range:1,intent:'',target:null},
-  {id:'droneguard'+stage,name:'干擾無人機',kind:'drone',icon:'⌁',x:6,y:0,hp:Math.round(72*scale),max:Math.round(72*scale),damage:Math.round(18*scale),range:4,intent:'',target:null}];
-  log('警告：第 '+stage+' 區 Boss：'+boss.name+'！','bad');
- }else{
-  const baseSpots=[[8,1],[8,4],[8,6],[5,0],[9,2],[9,5],[7,7],[6,0],[9,7]];
-  let count=Math.min(4+Math.floor(stage/2)+(theme===3?2:0),baseSpots.length);
-  let kinds=theme===1?['sniper','sniper','drone','rusher','sniper','drone','rusher','sniper','drone']:theme===2?['rusher','rusher','drone','rusher','sniper','rusher','drone','rusher','sniper']:theme===3?['drone','drone','drone','rusher','drone','sniper','drone','rusher','drone']:['drone','rusher','sniper','drone','rusher','sniper','rusher','drone','sniper'];
-  enemies=baseSpots.slice(0,count).map((p,i)=>{let kind=kinds[i],base=kind==='rusher'?68:kind==='sniper'?48:52,damage=kind==='rusher'?23:kind==='sniper'?20:17;let hpScale=theme===2?1.3:theme===3?.82:1,atkScale=theme===4?1.3:1;
-   return {id:'s'+stage+'e'+i,name:kind==='rusher'?'重裝突擊兵':kind==='sniper'?'幽靈狙擊手':'蜂群無人機',kind,icon:kind==='rusher'?'➤':kind==='sniper'?'⌖':'◉',x:p[0],y:p[1],hp:Math.round(base*scale*hpScale),max:Math.round(base*scale*hpScale),damage:Math.round(damage*scale*atkScale),range:kind==='rusher'?1:kind==='sniper'?6:4,intent:'',target:null};
-  });
-  log('區域特性：'+themeName+'。敵軍編制已變更。','info');
- }
-}
-function endTurn(){if(phase!=='player'||gameOver)return;skillMode=null;enemyPhase()}
-$('skillBtn').onclick=useSkill;$('endTurn').onclick=endTurn;$('cancelSkill').onclick=()=>{skillMode=null;render()};$('waitBtn').onclick=()=>{let s=units.find(u=>u.id===selected);if(s&&s.ap>0){s.ap=0;log(s.name+' 選擇待命。','info');render()}};
-planAll();log('任務開始。敵方已部署，請先觀察紅色行動預告。','info');log('移動最多 3 格消耗 1 AP；攻擊消耗 1 AP；技能消耗 2 AP。','info');render();
-</script></body></html>
+function select(i){state.selected=i;const t=state.tiles[i],p=xy(i);let s="座標："+p.x+","+p.y+"<br>";s+=t.building?"設施："+names[t.building.type]:"地形："+(t.ore?({iron:"鐵礦脈",copper:"銅礦脈",crystal:"碳晶礦脈"}[t.ore]):t.terrain==="plain"?"平原":t.terrain==="water"?"水域":"岩壁");if(t.building)s+="<br>狀態："+(t.building.type==="solar"?"依日照發電":t.building.type==="miner"?"自動採集附近礦物":"運作中");$("tileInfo").innerHTML=s;$("demolish").disabled=!t.building;render();}
+function place(i,type){let t=state.tiles[i],cost=costs[type];if(t.building||t.terrain!=="plain"){addLog("部署失敗：此地格無法建造。");return;}if(type==="miner"&& !t.ore){addLog("採礦機必須部署在礦脈上。");return;}if(type==="drill"&&t.ore!=="crystal"){addLog("晶體鑽機必須部署在碳晶礦脈上。");return;}for(let k in cost)if(state.res[k]<cost[k]){addLog("資源不足，無法建造"+names[type]);return;}for(let k in cost)state.res[k]-=cost[k];let b={id:Date.now()+Math.random(),type,index:i,hp:100};t.building=b;state.buildings.push(b);state.mode=null;document.querySelectorAll(".build").forEach(e=>e.classList.remove("active"));addLog("已部署："+names[type]);select(i);}
+function tick(){if(state.paused)return;state.tick++;let solar=state.buildings.filter(b=>b.type==="solar").length*(state.tick%24<17?3:0);let demand=state.buildings.reduce((a,b)=>a+({miner:1,smelter:2,assembler:3,drill:2,turret:1}[b.type]||0),0);let battery=state.buildings.filter(b=>b.type==="battery").length;state.res.energy=Math.min(100+battery*60,state.res.energy+solar-demand*.4);let power=state.res.energy>0;
+if(power){state.buildings.forEach(b=>{if(b.type==="miner"&&state.tick%3===0){let ore=state.tiles[b.index].ore;if(ore)state.res[ore]+=.7;}if(b.type==="drill"&&state.tick%4===0)state.res.crystal+=.5;if(b.type==="smelter"&&state.tick%5===0&&state.res.iron>=3){state.res.iron-=3;state.res.plate++;}if(b.type==="assembler"&&state.tick%8===0&&state.res.plate>=2&&state.res.copper>=2){state.res.plate-=2;state.res.copper-=2;state.res.crystal++;}});}
+if(state.tick%24===0){addLog("新的一天開始。基地能源與生產線已更新。");if(Math.random()<.4){state.bugs.push({hp:3});addLog("警告：偵測到外星生物活動！防禦砲塔將自動攔截。");}}
+if(state.tick%24>=17&&state.bugs.length){let turrets=state.buildings.filter(b=>b.type==="turret").length;if(turrets)state.bugs=[];else if(state.tick%24===23){state.integrity=Math.max(0,state.integrity-8);state.bugs=[];addLog("外星生物突破防線！基地完整度下降。");}}
+if(state.res.energy<0)state.res.energy=0;if(state.integrity<=0){state.paused=true;addLog("基地失守。請重新開始殖民。");}
+render();save(false);}
+function save(show=true){localStorage.setItem("frontierSave",JSON.stringify(state));if(show)addLog("基地已儲存至本機瀏覽器。");}
+function load(){try{let s=JSON.parse(localStorage.getItem("frontierSave"));if(s&&s.tiles?.length===W*H){state={...state,...s};addLog("已載入本機基地紀錄。");}}catch(e){}}
+$("toolbar").addEventListener("click",e=>{let b=e.target.closest("[data-build]");if(!b)return;state.mode=b.dataset.build;document.querySelectorAll(".build").forEach(x=>x.classList.toggle("active",x===b));addLog("建造模式："+names[state.mode]+"。請選擇地格。");});
+$("world").addEventListener("click",e=>{let c=e.target.closest("[data-i]");if(c&&state.mode)place(+c.dataset.i,state.mode);});
+$("cancel").onclick=()=>{state.mode=null;document.querySelectorAll(".build").forEach(x=>x.classList.remove("active"));};
+$("demolish").onclick=()=>{let t=state.tiles[state.selected];if(!t.building)return;let b=t.building;state.res.iron+=Math.floor((costs[b.type].iron||0)*.5);t.building=null;state.buildings=state.buildings.filter(x=>x.id!==b.id);addLog("已拆除"+names[b.type]+"，回收部分材料。");select(state.selected);};
+$("pause").onclick=()=>{state.paused=!state.paused;$("pause").textContent=state.paused?"繼續":"暫停";};
+$("speed").onclick=()=>{state.speed=state.speed===1?2:state.speed===2?3:1;$("speed").textContent="速度 ×"+state.speed;};
+$("save").onclick=()=>save(true);
+$("reset").onclick=()=>{if(!confirm("確定要刪除目前基地並重新開始？"))return;localStorage.removeItem("frontierSave");location.reload();};
+$("start").onclick=()=>{$("intro").hidden=true;};
+initMap();load();render();addLog("殖民艦拓荒者七號已迫降。請開始建立基地。");setInterval(()=>{for(let i=0;i<state.speed;i++)tick();},1000);
+})();
+</script>
+</body></html>
