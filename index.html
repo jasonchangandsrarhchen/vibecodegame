@@ -15,7 +15,7 @@
  <div class="rightstats"><div class="chip">SECTOR <b id="sectorText">01</b></div><div class="chip">ROOM <b id="roomText">01</b></div><div class="chip">SCRAP <b id="scrapText">0</b></div></div></div>
  <div class="bossbar" id="bossbar"><div class="eyebrow" id="bossName">WARDEN</div><div class="bar"><i id="bossHp"></i></div></div>
  <div class="bottomleft"><div class="weapon-card active" id="weapon1"><small>1 · PRIMARY</small><strong>ARC PISTOL</strong></div><div class="weapon-card" id="weapon2"><small>2 · SECONDARY</small><strong>PLASMA SHOTGUN</strong></div></div>
- <div class="bottomright">WASD MOVE · MOUSE AIM / FIRE<br>1 / 2 SWITCH · SPACE DASH · E PULSE<br>ESC PAUSE</div><div class="toast" id="toast"></div>
+ <div class="bottomright">WASD MOVE · MOUSE AIM / FIRE<br>1 / 2 SWITCH · SPACE DASH · E PULSE<br>Q ULTIMATE <span id="ultText">0%</span> · ESC PAUSE</div><div class="toast" id="toast"></div>
 </div>
 <div class="overlay" id="overlay"><div class="panel" id="panel"></div></div><div class="footer">NEXUS CONTAINMENT INITIATIVE // BUILD 0.1.0</div></div>
 <script>
@@ -114,7 +114,7 @@ for(let i=0;i<w.count;i++){let a=base+(i-(w.count-1)/2)*w.spread+rand(-.012,.012
 sound(weaponLoadout[activeWeapon-1]==='shotgun'?110:390,.045,'square',.012);
 }
 function damageEnemy(e,dmg,source){
-if(e.hp<=0)return;let critical=source&&source.crit;if(critical)dmg*=1.8+(build.critDamage||0);
+if(e.hp<=0)return;let critical=source&&source.crit;if(critical)dmg*=1.8+(build.critDamage||0);player.ult=Math.min(100,(player.ult||0)+dmg*.045);
 e.hp-=dmg;e.hit=.09;runStats.damage+=dmg;
 if(source&&source.burn)e.burn=2.8;if(source&&source.freeze)e.freeze=1.2;
 addParticle(e.x,e.y,critical?'#fff1a8':e.color,critical?7:3,75);
@@ -133,11 +133,11 @@ addParticle(e.x,e.y,e.color,15,170);sound(130,.09,'triangle',.018);
 if(selectedPilot==='phantom')player.focus=Math.min(18,player.focus+1);
 checkLevel();
 }
-function checkLevel(){while(xp>=xpNeed){xp-=xpNeed;level++;xpNeed=Math.floor(xpNeed*1.28+12);showUpgrade()}}
+function checkLevel(){if(xp>=xpNeed&&state==='playing'){xp-=xpNeed;level++;xpNeed=Math.floor(xpNeed*1.28+12);showUpgrade()}}
 function showUpgrade(){
 if(state!=='playing')return;state='upgrade';let pool=[...upgrades];if((build.chain||0)>0)pool=pool.filter(u=>u.id!=='chain');choiceCards=[];while(choiceCards.length<3&&pool.length){let i=Math.floor(Math.random()*pool.length);choiceCards.push(pool.splice(i,1)[0])}
 panel('<div class="eyebrow">NEURAL ADAPTATION // LEVEL '+level+'</div><h2 style="font:700 25px Orbitron;margin:8px 0 5px">選擇戰鬥強化</h2><p class="lede" style="margin:0 0 18px">你的神經介面已完成同步。選擇一項模組植入本次出擊。</p><div class="cards">'+choiceCards.map((u,i)=>'<button class="upgrade" data-card="'+i+'"><div class="symbol">'+u.symbol+'</div><div class="tag">'+u.rarity+'</div><h3>'+u.name+'</h3><p>'+u.desc+'</p></button>').join('')+'</div>');
-document.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>{choiceCards[+b.dataset.card].apply();sound(620,.15,'sine');state='playing';hidePanel();updateHud();last=performance.now()});
+document.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>{choiceCards[+b.dataset.card].apply();sound(620,.15,'sine');state='playing';hidePanel();updateHud();last=performance.now();checkLevel()});
 }
 function useAbility(){
 if(player.ability>0)return;player.ability=player.abilityMax;
@@ -178,7 +178,7 @@ if(e.type==='sniper'){if(d<220){e.x-=Math.cos(a)*sp*.65*dt;e.y-=Math.sin(a)*sp*.
 else{if(d>e.r+player.r+8){e.x+=Math.cos(a)*sp*dt;e.y+=Math.sin(a)*sp*dt}if(d<e.r+player.r+5&&e.attack<=0){hurt(e.dmg);e.attack=1.05}}
 });
 if(boss){boss.attack-=dt;boss.shoot-=dt;boss.phase+=dt;boss.hit=Math.max(0,boss.hit-dt);let a=Math.atan2(player.y-boss.y,player.x-boss.x),d=dist(boss,player);boss.x+=Math.sin(boss.phase*.8)*25*dt;boss.y=110+Math.sin(boss.phase*1.4)*20;if(boss.shoot<=0){for(let i=0;i<7;i++){let ang=boss.phase+i*TAU/7;enemyBullets.push({x:boss.x,y:boss.y,vx:Math.cos(ang)*175,vy:Math.sin(ang)*175,r:7,damage:13+sector,color:'#ff4da6',life:3})}boss.shoot=1.8;if(d<130&&boss.attack<=0){hurt(24);boss.attack=1.3}}}
-bullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;for(let e of enemies){if(e.hp>0&&dist(b,e)<e.r+b.r){damageEnemy(e,b.damage,b);b.life=b.pierce>0?b.life:0;if(b.pierce>0)b.pierce--;break}}if(boss&&dist(b,boss)<boss.r+b.r){let dmg=b.damage;boss.hp-=dmg;boss.hit=.08;b.life=b.pierce>0?b.life:0;if(b.pierce>0)b.pierce--;if(boss.hp<=0){boss=null;$('bossbar').style.display='none';roomCleared=true;roomKills=roomTarget;xp+=80;scrapRun+=35;toast('區域首領已摧毀');checkLevel()}}});
+bullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;for(let e of enemies){if(e.hp>0&&dist(b,e)<e.r+b.r){damageEnemy(e,b.damage,b);b.life=b.pierce>0?b.life:0;if(b.pierce>0)b.pierce--;break}}if(boss&&dist(b,boss)<boss.r+b.r){let dmg=b.damage;player.ult=Math.min(100,(player.ult||0)+dmg*.045);boss.hp-=dmg;boss.hit=.08;b.life=b.pierce>0?b.life:0;if(b.pierce>0)b.pierce--;if(boss.hp<=0){boss=null;$('bossbar').style.display='none';roomCleared=true;roomKills=roomTarget;xp+=80;scrapRun+=35;toast('區域首領已摧毀');checkLevel()}}});
 enemyBullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;if(dist(b,player)<player.r+b.r){hurt(b.damage);b.life=0}});
 turrets.forEach(t=>{t.life-=dt;t.fire-=dt;if(t.fire<=0){let target=enemies.filter(e=>e.hp>0).sort((a,b)=>dist(a,t)-dist(b,t))[0];if(target){let a=Math.atan2(target.y-t.y,target.x-t.x);bullets.push({x:t.x,y:t.y,vx:Math.cos(a)*580,vy:Math.sin(a)*580,r:3,damage:13*(1+(build.damage||0)),life:1.5,color:'#8cff9b'});t.fire=.48}}});
 pickups.forEach(p=>{if(dist(p,player)<22){if(p.type==='heal')player.hp=Math.min(player.maxHp,player.hp+17);p.life=0;sound(660,.1,'sine')}});pickups.forEach(p=>p.life=(p.life??8)-dt);
@@ -190,7 +190,7 @@ updateHud();
 }
 function roomClearReward(){runStats.rooms++;scrapRun+=roomType==='elite'?18:10;xp+=roomType==='elite'?35:20;checkLevel();if(roomType==='boss'){scrapRun+=25;sector++;room=0;toast('區域完成：可選擇下一戰區')}else toast('區域清除 · +'+(roomType==='elite'?18:10)+' SCRAP')}
 function updateHud(){
-$('hpText').textContent=Math.ceil(player.hp);$('hpMax').textContent=player.maxHp;$('hpBar').style.width=clamp(player.hp/player.maxHp*100,0,100)+'%';$('xpBar').style.width=xp/xpNeed*100+'%';$('xpText').textContent=xp;$('levelText').textContent=level;$('sectorText').textContent=String(sector).padStart(2,'0');$('roomText').textContent=String(room).padStart(2,'0');$('scrapText').textContent=scrapRun;$('weapon1').classList.toggle('active',activeWeapon===1);$('weapon2').classList.toggle('active',activeWeapon===2);$('weapon1').querySelector('strong').textContent=weapons[weaponLoadout[0]].name;$('weapon2').querySelector('strong').textContent=weapons[weaponLoadout[1]].name;
+$('hpText').textContent=Math.ceil(player.hp);$('hpMax').textContent=player.maxHp;$('hpBar').style.width=clamp(player.hp/player.maxHp*100,0,100)+'%';$('xpBar').style.width=xp/xpNeed*100+'%';$('xpText').textContent=xp;$('levelText').textContent=level;$('sectorText').textContent=String(sector).padStart(2,'0');$('roomText').textContent=String(room).padStart(2,'0');$('scrapText').textContent=scrapRun;$('ultText').textContent=Math.floor(player.ult||0)+'%';$('weapon1').classList.toggle('active',activeWeapon===1);$('weapon2').classList.toggle('active',activeWeapon===2);$('weapon1').querySelector('strong').textContent=weapons[weaponLoadout[0]].name;$('weapon2').querySelector('strong').textContent=weapons[weaponLoadout[1]].name;
 }
 function openRoute(){
 state='route';let options=[
