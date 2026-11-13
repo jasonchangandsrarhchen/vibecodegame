@@ -16,7 +16,7 @@ button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3
 </style>
 </head>
 <body>
-<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // BUILD 0.2.0</div></div>
+<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // BUILD 0.2.1</div></div>
 <div class="resources">
 <div class="res"><small>鐵礦</small><b id="iron">40</b></div><div class="res"><small>銅礦</small><b id="copper">25</b></div><div class="res"><small>碳晶</small><b id="crystal">12</b></div><div class="res"><small>合金板</small><b id="plate">0</b></div><div class="res"><small>電子元件</small><b id="circuit">0</b></div><div class="res"><small>能源</small><b id="energy">80</b></div>
 </div></header>
@@ -41,7 +41,7 @@ button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3
 <div class="muted" style="font-size:9px;margin-top:8px">提示：採礦機必須放在對應礦脈；晶體鑽機只能放在碳晶礦脈。生產設施會自動使用基地共享倉儲中的材料。</div>
 </section>
 <aside class="side">
-<section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 id="missionTitle" style="margin:5px 0;font-size:15px">第一座能源基地</h3><div id="objective" class="objective">部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。</div><div class="meter"><i id="progress"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
+<section class="panel"><div class="eyebrow">新手教學 / FIRST 10 MINUTES</div><div class="objective" style="margin-top:7px"><b>① 採礦：</b>點「採礦機」→ 點座標 (2,2) 的鐵礦 🪨。<br><b>② 發電：</b>建造太陽能板，再補風力發電，夜晚才不會停電。<br><b>③ 冶煉：</b>鐵礦累積後，在平地建造冶煉爐，生產合金板。<br><b>④ 研究：</b>建造組裝工廠生產電子元件，再建研究中心。<br><b>⑤ 防守：</b>約 90 秒後第一波蟲群抵達；先備妥合金板與電子元件，建造砲塔。<br><span style="color:var(--gold)">地圖中央 🏠 是基地核心；敵人會從邊緣出現並朝核心移動。</span></div></section><section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 id="missionTitle" style="margin:5px 0;font-size:15px">第一座能源基地</h3><div id="objective" class="objective">部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。</div><div class="meter"><i id="progress"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
 <section class="panel"><div class="eyebrow">GRID TELEMETRY</div><div class="statline"><span>即時發電</span><b id="generation">0 MW</b></div><div class="statline"><span>設施耗電</span><b id="usage">0 MW</b></div><div class="statline"><span>基地完整度</span><b id="integrity">100%</b></div><div class="statline"><span>設施數量</span><b id="buildingCount">0</b></div><div class="statline"><span>存活天數</span><b id="day">1</b></div><div class="statline"><span>外星威脅</span><b id="threat">低</b></div></section>
 <section class="panel"><div class="eyebrow">SELECTED TILE</div><div class="selected-info" id="tileInfo">選取地圖格子以查看地形、礦物及設施狀態。</div><div class="side-actions"><button class="action" id="demolish" disabled>拆除設施</button><button class="action" id="rotate" disabled>旋轉輸送帶</button></div></section>
 <section class="panel"><div class="topline"><div class="eyebrow">RESEARCH TREE</div><span id="science" class="muted" style="font-size:10px">研究點 0</span></div><div id="techlist" class="techlist"></div></section>
@@ -84,6 +84,7 @@ makeMap();
 function makeMap(){
 s.tiles=[];
 for(let y=0;y<H;y++)for(let x=0;x<W;x++){let terrain="plain";if((x===0||x===19)&&(y<3||y>10))terrain="rock";if((x===9||x===10)&&y===0)terrain="water";s.tiles.push({terrain,ore:null,building:null});}
+s.tiles[idx(9,7)].terrain="base";
 [[2,2,"iron"],[3,2,"iron"],[5,10,"iron"],[16,3,"iron"],[17,3,"iron"],[15,10,"iron"],[2,8,"copper"],[3,9,"copper"],[16,8,"copper"],[17,9,"copper"],[8,4,"crystal"],[11,10,"crystal"],[6,6,"iron"],[13,5,"copper"],[10,7,"iron"],[4,12,"copper"]].forEach(([x,y,o])=>s.tiles[idx(x,y)].ore=o);
 }
 function log(t){s.log.unshift(t);s.log=s.log.slice(0,45);$("log").innerHTML=s.log.map(x=>"<div>"+x+"</div>").join("");}
@@ -93,7 +94,7 @@ function powerUse(){return s.buildings.reduce((a,b)=>a+(defs[b.type]?.power||0),
 function active(){return s.res.energy>0}
 function buildAt(i,type){
 const t=s.tiles[i],d=defs[type];if(!d)return;
-if(t.building||t.terrain!=="plain"){log("部署失敗：此地格無法建造。");return;}
+if(t.building||t.terrain!=="plain"){log(t.terrain==="base"?"這裡是基地核心，不能建造。":"部署失敗：此地格無法建造。");return;}
 if(type==="miner"&&!t.ore){log("採礦機必須部署在鐵礦或銅礦脈上。");return}
 if(type==="drill"&&t.ore!=="crystal"){log("晶體鑽機必須部署在碳晶礦脈上。");return}
 if(type==="miner"&&t.ore==="crystal"){log("碳晶礦脈請使用晶體鑽機。");return}
@@ -101,9 +102,9 @@ for(const [k,v] of Object.entries(d.cost))if(s.res[k]<v){log("資源不足，無
 for(const [k,v] of Object.entries(d.cost))s.res[k]-=v;
 const b={id:Date.now()+Math.random(),type,index:i,hp:100,dir:0};t.building=b;s.buildings.push(b);s.mode=null;document.querySelectorAll(".build").forEach(e=>e.classList.remove("active"));log("已部署："+d.name);select(i);render();
 }
-function select(i){s.selected=i;const t=s.tiles[i],p=xy(i);let lines=["座標："+p.x+", "+p.y];if(t.building){const b=t.building,d=defs[b.type];lines.push("設施："+d.name,"狀態："+(active()?"待命／自動運作":"能源不足"),d.desc);if(b.type==="belt")lines.push("方向："+["東","南","西","北"][b.dir]);}else{lines.push("地形："+({plain:"平原",rock:"岩壁",water:"水域"}[t.terrain]));if(t.ore)lines.push("礦物："+oreNames[t.ore]);else lines.push("可建造：是");}$("tileInfo").innerHTML=lines.join("<br>");$("demolish").disabled=!t.building;$("rotate").disabled=t.building?.type!=="belt";renderMap();}
+function select(i){s.selected=i;const t=s.tiles[i],p=xy(i);let lines=["座標："+p.x+", "+p.y];if(t.building){const b=t.building,d=defs[b.type];lines.push("設施："+d.name,"狀態："+(active()?"待命／自動運作":"能源不足"),d.desc);if(b.type==="belt")lines.push("方向："+["東","南","西","北"][b.dir]);}else{lines.push("地形："+({plain:"平原",rock:"岩壁",water:"水域",base:"殖民基地核心"}[t.terrain]));if(t.ore)lines.push("礦物："+oreNames[t.ore]);else lines.push("可建造：是");}$("tileInfo").innerHTML=lines.join("<br>");$("demolish").disabled=!t.building;$("rotate").disabled=t.building?.type!=="belt";renderMap();}
 function renderMap(){
-$("world").innerHTML=s.tiles.map((t,i)=>{let cls=t.terrain;if(t.ore)cls+=" ore";if(i===s.selected)cls+=" selected";let icon=t.building?defs[t.building.type].icon:t.ore?({iron:"🪨",copper:"🟠",crystal:"💎"}[t.ore]):t.terrain==="water"?"🌊":t.terrain==="rock"?"⛰️":"";if(s.enemy.some(e=>e.index===i))icon="👾";return '<div class="cell '+cls+'" data-i="'+i+'" title="'+(t.building?defs[t.building.type].name:t.ore?oreNames[t.ore]:t.terrain)+'">'+icon+'</div>'}).join("");
+$("world").innerHTML=s.tiles.map((t,i)=>{let cls=t.terrain;if(t.ore)cls+=" ore";if(i===s.selected)cls+=" selected";let icon=t.building?defs[t.building.type].icon:t.ore?({iron:"🪨",copper:"🟠",crystal:"💎"}[t.ore]):t.terrain==="water"?"🌊":t.terrain==="rock"?"⛰️":t.terrain==="base"?"🏠":"";if(s.enemy.some(e=>e.index===i))icon="👾";return '<div class="cell '+cls+'" data-i="'+i+'" title="'+(t.building?defs[t.building.type].name:t.ore?oreNames[t.ore]:t.terrain)+'">'+icon+'</div>'}).join("");
 }
 function mission(){
 let n=0,goal=2,title="第一座能源基地",desc="部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。",max=2;
@@ -124,11 +125,32 @@ const t=s.tick%120,day=t<82;$("clock").textContent=(day?"☀ 白晝 ":"☾ 夜�
 }
 function event(title,txt){$("eventTitle").textContent=title;$("eventText").textContent=txt;$("eventModal").hidden=false;s.paused=true;$("pause").textContent="繼續";}
 function raid(){
-s.threat++;let strength=Math.min(7,1+Math.floor(s.threat/2));let turrets=count("turret"),defence=turrets*(s.unlocked.includes("weapons")?3:1);
-if(defence>=strength){log("防禦成功：砲塔擊退了 "+strength+" 隻外星生物。");s.res.crystal+=Math.ceil(strength/2);s.res.plate+=1;return}
-let damage=Math.min(35,(strength-defence)*8);s.integrity=Math.max(0,s.integrity-damage);log("警報：外星蟲群突破防線！基地受損 "+damage+"%。");
-if(s.integrity<=0){s.paused=true;event("殖民基地失守","外星生物摧毀了基地核心。你可以重新開始殖民計畫。");}
-else if(s.threat%2===0)event("偵測到外星訊號","遠方地表出現新的活動跡象。威脅正在升高，請建造防禦砲塔。");
+s.threat++;
+const amount=Math.min(4,1+Math.floor((s.threat-1)/3));
+let spawned=0;
+for(let n=0;n<amount;n++){
+ let edge=Math.floor(Math.random()*4),x=edge===0?1:edge===1?W-2:1+Math.floor(Math.random()*(W-2)),y=edge===2?1:edge===3?H-2:1+Math.floor(Math.random()*(H-2));
+ let tries=0,i=idx(x,y);
+ while((s.tiles[i].terrain!=="plain"||s.enemy.some(e=>e.index===i))&&tries++<40){x=1+Math.floor(Math.random()*(W-2));y=1+Math.floor(Math.random()*(H-2));i=idx(x,y);}
+ if(tries<40){s.enemy.push({id:Date.now()+Math.random(),index:i,hp:50,move:0,attack:0});spawned++;}
+}
+log("🚨 蟲群警報！"+spawned+" 隻外星生物已從地圖邊緣出現，正朝基地核心移動！");
+}
+function updateEnemies(){
+const core=idx(9,7);
+for(const e of [...s.enemy]){
+ e.move++;
+ if(e.move>=5){e.move=0;const p=xy(e.index),c=xy(core);let nx=p.x,ny=p.y;if(p.x!==c.x)nx+=Math.sign(c.x-p.x);else if(p.y!==c.y)ny+=Math.sign(c.y-p.y);e.index=idx(nx,ny);}
+ if(Math.abs(xy(e.index).x-9)+Math.abs(xy(e.index).y-7)<=1){e.attack++;if(e.attack>=10){e.attack=0;s.integrity=Math.max(0,s.integrity-3);log("👾 外星生物正在攻擊基地核心！完整度 -3%。");}}
+}
+}
+function turretFire(){
+if(s.tick%3!==0)return;
+for(const b of s.buildings.filter(b=>b.type==="turret")){
+ const p=xy(b.index);
+ const target=s.enemy.find(e=>Math.abs(xy(e.index).x-p.x)+Math.abs(xy(e.index).y-p.y)<=5);
+ if(target){target.hp-=s.unlocked.includes("weapons")?50:25;log("🛡️ 防禦砲塔命中外星生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=1;log("外星生物已被消滅，回收 1 碳晶。");}}
+}
 }
 function tick(){
 if(s.paused)return;s.tick++;
@@ -146,12 +168,14 @@ if(b.type==="lab"&&s.tick%15===0)s.science+=1;
 }
 if(s.tick%120===0){log("第 "+(Math.floor(s.tick/120)+1)+" 天開始。能源與產線狀態已更新。");}
 if(s.tick%90===0)raid();
+updateEnemies();turretFire();
+if(s.integrity<=0){s.paused=true;event("殖民基地失守","外星生物已突破防線並摧毀基地核心。請重新開始殖民計畫。");}
 if(s.tick%30===0&&s.integrity<100&&s.unlocked.includes("shields"))s.integrity=Math.min(100,s.integrity+1);
 if(s.res.energy<=0&&use>0&&s.tick%10===0)log("能源不足：部分工業設施已停止運作，請擴建發電設施。");
 render();save(false);
 }
 function save(show=true){localStorage.setItem("projectFrontierSaveV2",JSON.stringify(s));if(show)log("基地進度已儲存。")}
-function load(){try{let x=JSON.parse(localStorage.getItem("projectFrontierSaveV2"));if(x&&x.tiles?.length===W*H){s={...s,...x};log("已載入先前的殖民基地。");}}catch(e){}}
+function load(){try{let x=JSON.parse(localStorage.getItem("projectFrontierSaveV2"));if(x&&x.tiles?.length===W*H){s={...s,...x,enemy:Array.isArray(x.enemy)?x.enemy:[]};if(s.tiles[idx(9,7)]&&!s.tiles[idx(9,7)].building)s.tiles[idx(9,7)].terrain="base";log("已載入先前的殖民基地。");}}catch(e){}}
 $("toolbar").addEventListener("click",e=>{let b=e.target.closest("[data-build]");if(!b)return;let type=b.dataset.build;s.mode=type;document.querySelectorAll(".build").forEach(x=>x.classList.toggle("active",x===b));log("建造模式："+defs[type].name+"；選擇地格部署。");});
 $("world").addEventListener("click",e=>{let c=e.target.closest("[data-i]");if(!c)return;let i=+c.dataset.i;if(s.mode)buildAt(i,s.mode);else select(i);});
 $("cancel").onclick=()=>{s.mode=null;document.querySelectorAll(".build").forEach(x=>x.classList.remove("active"));};
