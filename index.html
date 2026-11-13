@@ -24,7 +24,7 @@ main{max-width:1450px;margin:auto;padding:18px;display:grid;grid-template-column
 button.action{background:#14283b;border:1px solid #36516b;color:var(--white);padding:9px 11px;border-radius:7px;cursor:pointer;font-weight:700}button.action:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}button.action:disabled{opacity:.35;cursor:not-allowed}button.primary{background:#15515c;border-color:#3ac6d0;color:#eaffff}.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}.actions .wide{grid-column:1/-1}
 .skilldesc{color:var(--muted);font-size:11px;margin-top:5px}.log{height:160px;overflow:auto;font-size:12px;color:#b8c9da;display:flex;flex-direction:column;gap:6px}.log p{margin:0;padding-bottom:5px;border-bottom:1px solid #1e3044}.log .good{color:var(--green)}.log .bad{color:#ff8eac}.log .info{color:var(--cyan)}
 .legend{display:flex;flex-wrap:wrap;gap:12px;color:var(--muted);font-size:11px;margin:12px 2px 0}.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px}
-.modal{position:fixed;inset:0;background:#030711d9;display:none;align-items:center;justify-content:center;z-index:5;padding:20px}.modalbox{max-width:480px;width:100%;padding:26px;background:#101d30;border:1px solid var(--cyan);border-radius:14px;text-align:center;box-shadow:0 0 60px #30c9d955}.modalbox h2{letter-spacing:.12em}
+.modal{position:fixed;inset:0;background:#030711d9;display:none;align-items:center;justify-content:center;z-index:5;padding:20px}.modalbox{max-width:480px;width:100%;padding:26px;background:#101d30;border:1px solid var(--cyan);border-radius:14px;text-align:center;box-shadow:0 0 60px #30c9d955}.modalbox h2{letter-spacing:.12em}.rewardChoices{display:grid;gap:9px;margin-top:18px}.rewardChoice{width:100%;text-align:left;padding:13px;border:1px solid #36516b;border-radius:9px;background:#14283b;color:var(--white);cursor:pointer}.rewardChoice:hover{border-color:var(--cyan);background:#18394a}.rewardChoice b{display:block;color:var(--cyan);font-size:14px}.rewardChoice small{display:block;color:var(--muted);margin-top:4px}.progressbar{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-bottom:10px}.progressbar b{color:var(--amber)}
 @media(max-width:1000px){main{grid-template-columns:1fr}.side{display:grid;grid-template-columns:1fr 1fr}.side .panel:last-child{grid-column:1/-1}}
 @media(max-width:650px){header{padding:12px}.brand{font-size:14px}main{padding:8px;grid-template-columns:1fr}.side{display:flex}.panel{padding:9px}.board{gap:2px}.tile{border-radius:3px}.coord{font-size:6px}.intent{font-size:7px}}
 </style></head>
@@ -37,12 +37,12 @@ button.action{background:#14283b;border:1px solid #36516b;color:var(--white);pad
 <section class="panel"><div class="topline"><strong>敵方戰術預告</strong><span class="tag" id="enemycount">4 HOSTILES</span></div><div id="intentList" class="skilldesc"></div></section>
 <section class="panel"><div class="topline"><strong>戰場紀錄</strong><span class="tag">COMBAT LOG</span></div><div class="log" id="log"></div></section>
 </aside></main>
-<div class="modal" id="modal"><div class="modalbox"><div class="tag">NEXUS COMBAT REPORT</div><h2 id="resultTitle">MISSION COMPLETE</h2><p id="resultText"></p><button class="action primary" onclick="location.reload()">重新部署</button></div></div>
+<div class="modal" id="modal"><div class="modalbox"><div class="tag" id="modalTag">NEXUS COMBAT REPORT</div><h2 id="resultTitle">MISSION COMPLETE</h2><p id="resultText"></p><div id="rewardChoices" class="rewardChoices"></div></div></div>
 <script>
 const W=10,H=8;
 const walls=new Set(['4,1','4,2','4,3','4,4','6,5','6,6']);
 const covers=new Set(['2,1','2,5','5,6','8,2','8,6']);
-let turn=1,phase='player',selected='phantom',skillMode=null,shieldTeam=false,turrets=[],logs=[],gameOver=false;
+let turn=1,stage=1,credits=0,kills=0,phase='player',selected='phantom',skillMode=null,shieldTeam=false,turrets=[],logs=[],gameOver=false,rewardOptions=[],turretDamage=18;
 let units=[
 {id:'phantom',name:'PHANTOM / 幽影',role:'突擊斥候 · 精準輸出',icon:'✦',x:1,y:1,hp:92,max:92,ap:2,range:3,damage:31,skill:'影襲',skillText:'消耗 2 AP：瞬移至目標敵人附近並造成 24 點傷害。',skillUsed:false},
 {id:'bastion',name:'BASTION / 堡壘',role:'重裝防衛 · 小隊保護',icon:'⬡',x:1,y:3,hp:132,max:132,ap:2,range:1,damage:25,skill:'守護力場',skillText:'消耗 2 AP：本回合我方全員受到的傷害降低 50%。',skillUsed:false},
@@ -67,7 +67,7 @@ function pathTo(u,x,y,max=3){let q=[{x:u.x,y:u.y,path:[]}],seen=new Set([u.x+','
 function planIntent(e){let targets=aliveUnits().sort((a,b)=>dist(e,a)-dist(e,b));let t=targets[0];if(!t){e.intent='';return}e.target=t.id;let d=dist(e,t);if(e.kind==='rusher'){e.intent=d<=1?'攻擊 '+t.name.split('/')[0]:'突進靠近 '+t.name.split('/')[0]}else if(d<=e.range&&lineClear(e,t)){e.intent='射擊 '+t.name.split('/')[0]}else e.intent='移動接近 '+t.name.split('/')[0]}
 function planAll(){aliveEnemies().forEach(planIntent)}
 function render(){
-$('phase').textContent=phase==='player'?'PLAYER PHASE · 第 '+turn+' 回合':'ENEMY PHASE';$('turnhint').textContent=phase==='player'?'選擇作戰員，移動並攻擊。紅色標記是敵方下一步行動。':'敵方正在執行預告行動…';
+$('phase').textContent=phase==='player'?'SECTOR '+stage+' · PLAYER PHASE · 第 '+turn+' 回合':phase==='enemy'?'SECTOR '+stage+' · ENEMY PHASE':'SECTOR '+stage+' · MISSION COMPLETE';$('turnhint').textContent=phase==='player'?'選擇作戰員，移動並攻擊。紅色標記是敵方下一步行動。':phase==='enemy'?'敵方正在執行預告行動…':'戰場已清空。領取獎勵後前往下一區。';
 $('teamcount').textContent=aliveUnits().length+' ACTIVE';$('enemycount').textContent=aliveEnemies().length+' HOSTILES';
 $('board').innerHTML='';
 for(let y=0;y<H;y++)for(let x=0;x<W;x++){
@@ -93,11 +93,11 @@ let u=unitAt(x,y),e=enemyAt(x,y),s=units.find(a=>a.id===selected);
 if(u){selected=u.id;skillMode=null;render();return}
 if(!s||s.hp<=0||s.ap<=0)return;
 if(skillMode){
- if(s.id==='phantom'&&e){if(dist(s,e)>4){log('目標超出影襲距離。','bad');return}let spots=[[e.x+1,e.y],[e.x-1,e.y],[e.x,e.y+1],[e.x,e.y-1]].filter(([a,b])=>!blocked(a,b));if(!spots.length){log('目標周圍沒有可瞬移位置。','bad');return}let [nx,ny]=spots[0];s.x=nx;s.y=ny;s.ap-=2;s.skillUsed=true;e.hp-=24;log('幽影發動影襲，對 '+e.name+' 造成 24 點傷害。','good');if(e.hp<=0)log(e.name+' 已被摧毀。','good');skillMode=null;checkEnd();render();return}
+ if(s.id==='phantom'&&e){if(dist(s,e)>4){log('目標超出影襲距離。','bad');return}let spots=[[e.x+1,e.y],[e.x-1,e.y],[e.x,e.y+1],[e.x,e.y-1]].filter(([a,b])=>!blocked(a,b));if(!spots.length){log('目標周圍沒有可瞬移位置。','bad');return}let [nx,ny]=spots[0];s.x=nx;s.y=ny;s.ap-=2;s.skillUsed=true;e.hp-=24;log('幽影發動影襲，對 '+e.name+' 造成 24 點傷害。','good');if(e.hp<=0){kills++;log(e.name+' 已被摧毀。','good')}skillMode=null;checkEnd();render();return}
  if(s.id==='engineer'&&!blocked(x,y)){s.ap-=2;s.skillUsed=true;turrets.push({x,y,damage:18});log('工程師部署自動砲塔。','good');skillMode=null;render();return}
  log('請選擇有效的技能目標。','bad');return
 }
-if(e){if(dist(s,e)>s.range||!lineClear(s,e)){log('目標超出射程或視線被阻擋。','bad');return}e.hp-=s.damage;s.ap--;log(s.name+' 攻擊 '+e.name+'，造成 '+s.damage+' 點傷害。','good');if(e.hp<=0)log(e.name+' 已被摧毀。','good');checkEnd();render();return}
+if(e){if(dist(s,e)>s.range||!lineClear(s,e)){log('目標超出射程或視線被阻擋。','bad');return}e.hp-=s.damage;s.ap--;log(s.name+' 攻擊 '+e.name+'，造成 '+s.damage+' 點傷害。','good');if(e.hp<=0){kills++;log(e.name+' 已被摧毀。','good')}checkEnd();render();return}
 let path=pathTo(s,x,y,3);if(!path||!path.length){log('該位置無法抵達。','bad');return}s.x=x;s.y=y;s.ap--;log(s.name+' 移動 '+path.length+' 格，消耗 1 AP。','info');render()
 }
 function useSkill(){let s=units.find(u=>u.id===selected);if(!s||s.ap<2||s.skillUsed||phase!=='player')return;if(s.id==='bastion'){s.ap-=2;s.skillUsed=true;shieldTeam=true;log('堡壘啟動守護力場：本回合全隊減傷 50%。','good');render()}else{skillMode=s.id;log(s.id==='phantom'?'選擇一名 4 格內的敵人發動影襲。':'選擇空格部署砲塔。','info');render()}}
@@ -110,12 +110,57 @@ if(e.kind==='rusher'){
  if(d<=1)hitUnit(e,t);else{let options=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({x:e.x+dx,y:e.y+dy})).filter(p=>!blocked(p.x,p.y)).sort((a,b)=>Math.abs(a.x-t.x)+Math.abs(a.y-t.y)-Math.abs(b.x-t.x)-Math.abs(b.y-t.y));if(options[0]){e.x=options[0].x;e.y=options[0].y;log(e.name+' 突進至新位置。','bad')}}
 }else if(canShoot)hitUnit(e,t);else{let options=[[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy])=>({x:e.x+dx,y:e.y+dy})).filter(p=>!blocked(p.x,p.y)).sort((a,b)=>Math.abs(a.x-t.x)+Math.abs(a.y-t.y)-Math.abs(b.x-t.x)-Math.abs(b.y-t.y));if(options[0]){e.x=options[0].x;e.y=options[0].y;log(e.name+' 重新部署位置。','bad')}}
 }
-for(let turret of turrets){let target=aliveEnemies().sort((a,b)=>dist(turret,a)-dist(turret,b))[0];if(target){target.hp-=turret.damage;log('自動砲塔命中 '+target.name+'，造成 '+turret.damage+' 點傷害。','good');if(target.hp<=0)log(target.name+' 被砲塔摧毀。','good')}}
+for(let turret of turrets){let target=aliveEnemies().sort((a,b)=>dist(turret,a)-dist(turret,b))[0];if(target){target.hp-=turretDamage;log('自動砲塔命中 '+target.name+'，造成 '+turretDamage+' 點傷害。','good');if(target.hp<=0){kills++;log(target.name+' 被砲塔摧毀。','good')}}}
 shieldTeam=false;checkEnd();if(!gameOver){turn++;phase='player';units.forEach(u=>{u.ap=u.hp>0?2:0;u.skillUsed=false});planAll();log('第 '+turn+' 回合開始。敵方意圖已更新。','info')}render()
 }
 function hitUnit(e,u){let dmg=e.damage;if(covers.has(u.x+','+u.y))dmg=Math.ceil(dmg*.6);if(shieldTeam)dmg=Math.ceil(dmg*.5);u.hp-=dmg;log(e.name+' 攻擊 '+u.name+'，造成 '+dmg+' 點傷害。','bad');if(u.hp<=0)log(u.name+' 失去作戰能力！','bad')}
 function checkEnd(){if(aliveEnemies().length===0){finish(true);return}if(aliveUnits().length===0)finish(false)}
-function finish(win){gameOver=true;phase='over';$('resultTitle').textContent=win?'SECTOR CLEARED':'SQUAD ELIMINATED';$('resultText').textContent=win?'你成功清除本次戰場。下一階段將加入獎勵、路線選擇與 Roguelite 成長。':'小隊全員失去作戰能力。調整站位與技能搭配，再次部署。';$('modal').style.display='flex';render()}
+function finish(win){
+ if(gameOver)return;
+ gameOver=true;phase='over';$('modal').style.display='flex';
+ $('modalTag').textContent=win?'NEXUS REWARD TERMINAL':'NEXUS COMBAT REPORT';
+ $('resultTitle').textContent=win?'SECTOR '+stage+' CLEARED':'SQUAD ELIMINATED';
+ if(win){
+   let reward=35+stage*15+aliveEnemies().length*0;
+   credits+=reward;
+   $('resultText').textContent='戰場清除！獲得 '+reward+' 信用點。選擇一項戰利品，強化小隊後繼續深入。';
+   const pool=[
+    {name:'超載彈藥',desc:'全隊傷害永久提升 20%。',apply:()=>units.forEach(u=>u.damage=Math.round(u.damage*1.2))},
+    {name:'奈米修復',desc:'全隊恢復 40% 最大生命值。',apply:()=>units.forEach(u=>{if(u.hp>0)u.hp=Math.min(u.max,u.hp+Math.ceil(u.max*.4))})},
+    {name:'強化裝甲',desc:'全隊最大生命值 +20，並立即修復 20 點。',apply:()=>units.forEach(u=>{u.max+=20;if(u.hp>0)u.hp=Math.min(u.max,u.hp+20)})},
+    {name:'砲塔超頻',desc:'工程師砲塔傷害永久 +10。',apply:()=>turretDamage+=10},
+    {name:'戰術訓練',desc:'全隊攻擊射程 +1。',apply:()=>units.forEach(u=>u.range+=1)}
+   ];
+   rewardOptions=pool.sort(()=>Math.random()-.5).slice(0,3);
+   $('rewardChoices').innerHTML=rewardOptions.map((r,i)=>'<button class="rewardChoice" onclick="chooseReward('+i+')"><b>'+String(i+1)+'. '+r.name+'</b><small>'+r.desc+'</small></button>').join('');
+ }else{
+   $('resultText').textContent='小隊全員失去作戰能力。這次遠征到此結束；重新部署可從第一區開始。';
+   $('rewardChoices').innerHTML='<button class="action primary" onclick="location.reload()">重新部署 · 從第一區開始</button>';
+ }
+ render();
+}
+function chooseReward(index){
+ if(!gameOver||phase!=='over'||!rewardOptions[index])return;
+ const reward=rewardOptions[index];reward.apply();log('取得戰利品：'+reward.name+'。','good');
+ stage++;turn=1;gameOver=false;phase='player';skillMode=null;shieldTeam=false;turrets=[];
+ units.forEach(u=>{u.x=1;u.y=u.id==='phantom'?1:u.id==='bastion'?3:6;u.hp=Math.max(1,u.hp);u.ap=2;u.skillUsed=false});
+ spawnStage();planAll();$('modal').style.display='none';
+ log('進入第 '+stage+' 區。敵方增援已抵達。','info');render();
+}
+function spawnStage(){
+ const scale=1+(stage-1)*.16;
+ if(stage%5===0){
+  enemies=[{id:'boss'+stage,name:'收割者級主宰',kind:'rusher',icon:'☠',x:8,y:3,hp:Math.round(210*scale),max:Math.round(210*scale),damage:Math.round(28*scale),range:1,intent:'',target:null},
+  {id:'guard'+stage,name:'主宰護衛',kind:'drone',icon:'◇',x:8,y:6,hp:Math.round(65*scale),max:Math.round(65*scale),damage:Math.round(18*scale),range:4,intent:'',target:null}];
+  log('警告：第 '+stage+' 區為 Boss 戰！','bad');
+ }else{
+  const spots=[[8,1],[8,4],[8,6],[5,0],[9,2],[9,5],[7,7],[6,0],[9,7]];
+  const count=Math.min(3+Math.floor(stage/2),spots.length);
+  enemies=spots.slice(0,count).map((p,i)=>{let kind=i%3===0?'drone':i%3===1?'rusher':'sniper',base=kind==='rusher'?62:kind==='sniper'?43:48;
+   return {id:'s'+stage+'e'+i,name:kind==='rusher'?'突襲機兵':kind==='sniper'?'狙擊單位':'巡邏無人機',kind,icon:kind==='rusher'?'➤':kind==='sniper'?'⌖':'◉',x:p[0],y:p[1],hp:Math.round(base*scale),max:Math.round(base*scale),damage:Math.round((kind==='rusher'?22:kind==='sniper'?19:16)*scale),range:kind==='rusher'?1:kind==='sniper'?5:4,intent:'',target:null};
+  });
+ }
+}
 function endTurn(){if(phase!=='player'||gameOver)return;skillMode=null;enemyPhase()}
 $('skillBtn').onclick=useSkill;$('endTurn').onclick=endTurn;$('cancelSkill').onclick=()=>{skillMode=null;render()};$('waitBtn').onclick=()=>{let s=units.find(u=>u.id===selected);if(s&&s.ap>0){s.ap=0;log(s.name+' 選擇待命。','info');render()}};
 planAll();log('任務開始。敵方已部署，請先觀察紅色行動預告。','info');log('移動最多 3 格消耗 1 AP；攻擊消耗 1 AP；技能消耗 2 AP。','info');render();
