@@ -1,37 +1,36 @@
-# Development Roadmap
+# PROJECT FRONTIER — Development Roadmap
 
-## Milestone 1 — Playable vertical slice (current)
-- [x] Browser launch without a build toolchain
-- [x] Top-down movement and mouse aiming
-- [x] Two weapon slots and weapon switching
-- [x] Four operative archetypes
-- [x] Basic enemy roles and projectile combat
-- [x] XP, three-choice upgrades and build modifiers
-- [x] Route choices, supply, shop and anomaly rooms
-- [x] Boss encounter and extraction/death settlement
-- [x] Persistent safehouse upgrade loop
-- [ ] Full browser playtest and balance pass
+## Milestone 1 — Playable industrial foundation (0.2.0)
+- [x] Browser launch with no build toolchain
+- [x] 20 × 14 grid world and resource deposits
+- [x] Select and place ten building types
+- [x] Shared inventory and automated extraction
+- [x] Smelting and electronic assembly recipes
+- [x] Solar/wind generation, day/night and battery capacity
+- [x] Research tree and mission progression
+- [x] Escalating alien raids and turret defense
+- [x] Pause, speed, local save and reset
 
-## Milestone 2 — Combat depth
-- [ ] Distinct enemy telegraphs, attack patterns and coordinated enemy groups
-- [ ] Better boss phases, arena hazards and readable weak points
-- [ ] More weapon behaviors and meaningful secondary-weapon utility
-- [ ] Status-effect UI and clear synergy feedback
-- [ ] More upgrade pools and legendary rule-changing modules
+## Milestone 2 — Real logistics
+- [ ] Conveyors transport visible item entities between buildings
+- [ ] Directional belt routing, splitters, mergers and underground belts
+- [ ] Input/output buffers and configurable recipes
+- [ ] Storage buildings, priority and overflow handling
+- [ ] Production graphs and bottleneck diagnostics
 
-## Milestone 3 — Content
-- [ ] Four visually distinct regions
-- [ ] 10+ weapons and expanded mod pool
-- [ ] 8+ bosses and minibosses
-- [ ] More room events, secrets and narrative logs
-- [ ] Unlockable operatives and difficulty tiers
+## Milestone 3 — Planetary expansion
+- [ ] Expandable map chunks and fog of war
+- [ ] Scanning, exploration vehicles and resource outposts
+- [ ] Water extraction, pipes, pumps and chemical processing
+- [ ] Advanced alloys, fuel and high-tier components
+- [ ] More research branches and meaningful unlock choices
 
-## Milestone 4 — Production quality
-- [ ] Dedicated art/audio asset pipeline
-- [ ] Settings, remappable controls and accessibility options
-- [ ] Gamepad support and optional touch layout
-- [ ] Save versioning and export/import
-- [ ] Performance, browser compatibility and balance testing
+## Milestone 4 — Survival and polish
+- [ ] Visible alien units, multiple archetypes and attack paths
+- [ ] Walls, repair drones, shields and active defense
+- [ ] Weather and environmental hazards
+- [ ] Audio, settings, accessibility and responsive controls
+- [ ] Save versioning, export/import and balance testing
 
 ## Development principle
-Keep the game playable after every milestone. Add systems in coherent vertical slices rather than building a large collection of disconnected menus.
+Keep the game playable after every milestone. Each new feature must connect to the resource, power, logistics, research or survival loop.
