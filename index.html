@@ -2,97 +2,170 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PROJECT FRONTIER — Planetary Automation</title>
+<title>PROJECT FRONTIER — 星際拓荒</title>
 <style>
-:root{--bg:#080f17;--panel:#111e29;--panel2:#172936;--line:#294653;--cyan:#62e6d1;--lime:#b4e879;--amber:#ffc46b;--red:#ff737b;--muted:#8da5b1;--text:#e8f3f2}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1b3941,#080f17 65%);color:var(--text);font:14px/1.45 system-ui,"Noto Sans TC",sans-serif;min-height:100vh}
-header{height:auto;min-height:68px;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);background:#09141deF;position:sticky;top:0;z-index:5}
-.brand{font-weight:900;letter-spacing:.15em;font-size:18px}.brand span{color:var(--cyan)}.sub{font-size:10px;letter-spacing:.22em;color:var(--muted)}
-.resources{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.res{background:#142630;border:1px solid #2c4850;border-radius:8px;padding:6px 10px;min-width:76px}.res small{display:block;color:var(--muted);font-size:10px}.res b{font-size:15px;font-variant-numeric:tabular-nums}
-main{max-width:1500px;margin:auto;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px}.panel{background:linear-gradient(155deg,#142530,#0d1923);border:1px solid var(--line);border-radius:12px;padding:13px;box-shadow:0 12px 32px #0004}
-.topline{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.eyebrow{font-size:10px;letter-spacing:.2em;color:var(--cyan);font-weight:800}.muted{color:var(--muted)}.status{font-size:12px;color:var(--lime)}
-.world-wrap{position:relative;overflow:auto;background:#0a151b;border:1px solid #29434a;border-radius:9px;padding:8px}
-.world{display:grid;grid-template-columns:repeat(16,minmax(30px,1fr));gap:3px;min-width:560px;max-width:1000px;margin:auto}
-.cell{aspect-ratio:1;border:1px solid #284047;border-radius:5px;background:linear-gradient(145deg,#1b3030,#142729);position:relative;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;user-select:none;transition:.12s}
-.cell:hover{border-color:var(--cyan);filter:brightness(1.3);z-index:1}.cell.selected{outline:2px solid var(--cyan);outline-offset:1px}.cell.resource{background:linear-gradient(145deg,#344238,#202e2b)}.cell.water{background:linear-gradient(145deg,#173d50,#112b3b)}.cell.rock{background:repeating-linear-gradient(135deg,#303b3e,#303b3e 5px,#273337 5px,#273337 10px)}.cell .hp{position:absolute;bottom:2px;left:3px;right:3px;height:3px;background:#0008;border-radius:4px}.cell .hp i{display:block;height:100%;background:var(--lime);border-radius:4px}
-.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
-.toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}.build{background:#162a34;border:1px solid #34515a;color:var(--text);border-radius:8px;padding:9px 5px;cursor:pointer;text-align:left;min-height:66px}.build:hover,.build.active{border-color:var(--cyan);background:#1b3a40}.build strong{display:block;font-size:12px}.build small{color:var(--muted);font-size:10px}.build .ico{font-size:18px;margin-right:5px}
-button{font:inherit}.action{border:1px solid #3b6268;background:#1b4144;color:#dffff6;padding:8px 11px;border-radius:7px;cursor:pointer}.action:hover{filter:brightness(1.2)}.action:disabled{opacity:.4;cursor:not-allowed}.side{display:flex;flex-direction:column;gap:12px}.statline{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #263c45;font-size:12px}.statline b{font-variant-numeric:tabular-nums}.meter{height:7px;background:#263b43;border-radius:8px;overflow:hidden;margin:6px 0 10px}.meter i{display:block;height:100%;background:var(--cyan);width:50%}.log{height:160px;overflow:auto;font-size:11px;color:#b3c8c7;display:flex;flex-direction:column;gap:5px}.log div{border-left:2px solid #3b6b69;padding-left:7px}.objective{font-size:12px;line-height:1.6;color:#d1e1dc}.objective strong{color:var(--lime)}.selected-info{font-size:12px;line-height:1.6;color:#b9ccca;min-height:70px}.footer{max-width:1500px;margin:0 auto;padding:0 16px 18px;color:#718b93;font-size:10px;display:flex;justify-content:space-between}
-.modal{position:fixed;inset:0;background:#03090dcc;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modal-card{max-width:520px;width:100%;background:#142630;border:1px solid #4b7474;border-radius:14px;padding:24px;box-shadow:0 24px 90px #000b}.modal h1{letter-spacing:.12em;color:var(--cyan);font-size:24px}.modal p{color:#b9ccca;line-height:1.7}.modal[hidden]{display:none}
-@media(max-width:900px){main{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.world{grid-template-columns:repeat(16,minmax(27px,1fr))}.brand{font-size:15px}}
-@media(max-width:560px){header{align-items:flex-start;flex-direction:column}.resources{justify-content:flex-start}.res{min-width:66px;padding:5px 7px}.toolbar{grid-template-columns:repeat(2,1fr)}.side{display:flex}.world{min-width:520px}main{padding:9px}.panel{padding:10px}}
+:root{color-scheme:dark;--bg:#08121a;--panel:#101f2a;--panel2:#162b37;--line:#294754;--cyan:#62e6d1;--lime:#b6e879;--gold:#ffc46b;--red:#ff707b;--muted:#8fa8b3;--txt:#e7f2f2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1a3942 0,#08121a 62%);color:var(--txt);font:14px/1.45 system-ui,"Noto Sans TC",sans-serif;min-height:100vh}
+header{position:sticky;top:0;z-index:5;background:#091720ee;border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{font-weight:950;letter-spacing:.16em;font-size:19px}.brand span{color:var(--cyan)}.sub{font-size:9px;letter-spacing:.2em;color:var(--muted)}
+.resources{display:flex;gap:6px;flex-wrap:wrap}.res{background:#132630;border:1px solid #2c4852;border-radius:7px;padding:5px 9px;min-width:67px}.res small{display:block;color:var(--muted);font-size:9px}.res b{font-size:15px;font-variant-numeric:tabular-nums}
+main{max-width:1580px;margin:auto;padding:13px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px}.panel{background:linear-gradient(150deg,#142631,#0d1a24);border:1px solid var(--line);border-radius:11px;padding:12px;box-shadow:0 10px 30px #0003}.topline{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}.eyebrow{font-size:10px;font-weight:850;letter-spacing:.19em;color:var(--cyan)}.muted{color:var(--muted)}.world-wrap{overflow:auto;background:#09151c;border:1px solid #29444c;border-radius:8px;padding:7px}.world{display:grid;grid-template-columns:repeat(20,minmax(27px,1fr));gap:3px;min-width:600px;max-width:1050px;margin:auto}.cell{aspect-ratio:1;border:1px solid #28434a;border-radius:4px;background:linear-gradient(145deg,#1d3433,#142a2c);display:flex;align-items:center;justify-content:center;font-size:18px;position:relative;cursor:pointer;user-select:none;transition:filter .1s,border-color .1s}.cell:hover{filter:brightness(1.35);border-color:var(--cyan);z-index:1}.cell.selected{outline:2px solid var(--cyan);outline-offset:1px}.cell.rock{background:repeating-linear-gradient(135deg,#303c40,#303c40 5px,#273237 5px,#273237 10px)}.cell.water{background:linear-gradient(145deg,#17475a,#102c3b)}.cell.ore{background:linear-gradient(145deg,#38473b,#24352f)}.cell .bar{position:absolute;left:2px;right:2px;bottom:2px;height:3px;background:#0008}.cell .bar i{display:block;height:100%;background:var(--lime)}.legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:10px;margin:7px 0}.toolbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.build{background:#152a35;border:1px solid #34515b;color:var(--txt);border-radius:7px;padding:8px 6px;min-height:60px;text-align:left;cursor:pointer}.build:hover,.build.active{border-color:var(--cyan);background:#1a3b41}.build:disabled{opacity:.32;cursor:not-allowed}.build strong{display:block;font-size:11px}.build small{display:block;color:var(--muted);font-size:9px;margin-top:3px}.build .ico{font-size:16px;margin-right:4px}
+button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3c6669;border-radius:7px;padding:7px 10px;cursor:pointer}.action:hover{filter:brightness(1.18)}.action:disabled{opacity:.35;cursor:not-allowed}.side{display:flex;flex-direction:column;gap:10px}.statline{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #263d47;padding:5px 0;font-size:11px}.statline b{font-variant-numeric:tabular-nums}.meter{height:7px;background:#263d47;border-radius:8px;overflow:hidden;margin:6px 0}.meter i{display:block;height:100%;background:var(--cyan);width:0%}.objective{font-size:12px;line-height:1.65;color:#d2e2df}.objective strong{color:var(--lime)}.log{height:155px;overflow:auto;display:flex;flex-direction:column;gap:5px;color:#b5c9c9;font-size:10px}.log div{border-left:2px solid #3c7772;padding-left:7px}.selected-info{font-size:11px;line-height:1.7;color:#c2d4d1;min-height:55px}.side-actions{display:flex;gap:6px;flex-wrap:wrap}.tabs{display:flex;gap:5px;margin:8px 0}.tab{background:#152a35;border:1px solid #304b54;color:#adc2c4;border-radius:6px;padding:6px 9px;font-size:10px;cursor:pointer}.tab.active{color:var(--cyan);border-color:var(--cyan)}.techlist{display:grid;gap:6px}.tech{display:flex;justify-content:space-between;align-items:center;gap:6px;border:1px solid #304b54;border-radius:7px;padding:7px;font-size:10px}.tech small{display:block;color:var(--muted)}.tech.done{border-color:#557d52}.footer{max-width:1580px;margin:auto;padding:0 14px 16px;color:#718b93;font-size:9px;display:flex;justify-content:space-between}
+.modal{position:fixed;inset:0;background:#02090ddc;display:flex;align-items:center;justify-content:center;padding:18px;z-index:20}.modal[hidden]{display:none}.modal-card{width:min(540px,100%);background:#142832;border:1px solid #4a7778;border-radius:14px;padding:23px;box-shadow:0 24px 90px #000b}.modal h1{color:var(--cyan);letter-spacing:.12em;font-size:25px;margin:6px 0}.modal p{color:#c0d1cf;line-height:1.7}.modal .action{margin-top:8px}
+@media(max-width:950px){main{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){header{align-items:flex-start}.resources{width:100%}.toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.side{display:flex}.world{min-width:600px}main{padding:8px}.panel{padding:9px}}
 </style>
 </head>
 <body>
-<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // SECTOR 07</div></div>
+<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // BUILD 0.2.0</div></div>
 <div class="resources">
-<div class="res"><small>鐵礦</small><b id="iron">24</b></div><div class="res"><small>銅礦</small><b id="copper">12</b></div><div class="res"><small>碳晶</small><b id="crystal">8</b></div><div class="res"><small>合金板</small><b id="plate">0</b></div><div class="res"><small>能源</small><b id="energy">40</b></div>
+<div class="res"><small>鐵礦</small><b id="iron">40</b></div><div class="res"><small>銅礦</small><b id="copper">25</b></div><div class="res"><small>碳晶</small><b id="crystal">12</b></div><div class="res"><small>合金板</small><b id="plate">0</b></div><div class="res"><small>電子元件</small><b id="circuit">0</b></div><div class="res"><small>能源</small><b id="energy">80</b></div>
 </div></header>
 <main>
 <section class="panel">
-<div class="topline"><div><div class="eyebrow">SECTOR MAP / 16 × 12</div><div class="muted" style="font-size:11px">點擊地格選取位置，再選擇建築部署</div></div><div class="status" id="clock">☀ 白晝 01</div></div>
+<div class="topline"><div><div class="eyebrow">SECTOR 07 / PLANETARY SURFACE</div><div class="muted" style="font-size:10px">點擊地格選取；選擇建築後再點地圖部署。滾動可查看完整星球地表。</div></div><div id="clock" class="eyebrow">☀ 白晝 01</div></div>
 <div class="world-wrap"><div class="world" id="world"></div></div>
-<div class="legend"><span><i class="dot" style="background:#8eaa69"></i>平原</span><span>🪨 鐵礦脈</span><span>🟠 銅礦脈</span><span>💎 碳晶</span><span>🌊 水域</span><span>🏭 已建設</span></div>
-<div class="topline" style="margin-top:14px"><div class="eyebrow">CONSTRUCTION MENU</div><button class="action" id="cancel">取消建造</button></div>
+<div class="legend"><span>🪨 鐵礦脈</span><span>🟠 銅礦脈</span><span>💎 碳晶</span><span>🌊 水域</span><span>⛰️ 岩壁</span><span>🏭 工業設施</span><span>👾 敵對生物</span></div>
+<div class="topline" style="margin-top:12px"><div class="eyebrow">CONSTRUCTION / 建造選單</div><button class="action" id="cancel">取消建造</button></div>
 <div class="toolbar" id="toolbar">
-<button class="build" data-build="miner"><strong><span class="ico">⛏️</span>採礦機</strong><small>鐵礦 8 · 銅礦 8</small></button>
-<button class="build" data-build="solar"><strong><span class="ico">☀️</span>太陽能板</strong><small>鐵礦 5 · 銅礦 3</small></button>
-<button class="build" data-build="smelter"><strong><span class="ico">🔥</span>冶煉爐</strong><small>鐵礦 10</small></button>
-<button class="build" data-build="assembler"><strong><span class="ico">⚙️</span>組裝工廠</strong><small>鐵礦 12 · 銅礦 6</small></button>
-<button class="build" data-build="belt"><strong><span class="ico">➖</span>輸送帶</strong><small>鐵礦 1</small></button>
-<button class="build" data-build="turret"><strong><span class="ico">🛡️</span>防禦砲塔</strong><small>鐵礦 10 · 銅礦 5</small></button>
-<button class="build" data-build="battery"><strong><span class="ico">🔋</span>蓄電池</strong><small>鐵礦 5 · 銅礦 5</small></button>
-<button class="build" data-build="drill"><strong><span class="ico">💠</span>晶體鑽機</strong><small>鐵礦 8 · 銅礦 4</small></button>
+<button class="build" data-build="miner"><strong><span class="ico">⛏️</span>採礦機</strong><small>鐵 8 · 銅 4</small></button>
+<button class="build" data-build="solar"><strong><span class="ico">☀️</span>太陽能板</strong><small>鐵 6 · 銅 2</small></button>
+<button class="build" data-build="wind"><strong><span class="ico">🌬️</span>風力發電</strong><small>鐵 8 · 銅 4</small></button>
+<button class="build" data-build="smelter"><strong><span class="ico">🔥</span>冶煉爐</strong><small>鐵 12 · 銅 4</small></button>
+<button class="build" data-build="assembler"><strong><span class="ico">⚙️</span>組裝工廠</strong><small>板 5 · 銅 8</small></button>
+<button class="build" data-build="drill"><strong><span class="ico">💠</span>晶體鑽機</strong><small>鐵 10 · 銅 5</small></button>
+<button class="build" data-build="belt"><strong><span class="ico">➖</span>輸送帶</strong><small>鐵 1</small></button>
+<button class="build" data-build="battery"><strong><span class="ico">🔋</span>蓄電池</strong><small>鐵 6 · 銅 4</small></button>
+<button class="build" data-build="turret"><strong><span class="ico">🛡️</span>防禦砲塔</strong><small>板 4 · 電子 2</small></button>
+<button class="build" data-build="lab"><strong><span class="ico">🧬</span>研究中心</strong><small>板 8 · 電子 5 · 晶 5</small></button>
 </div>
+<div class="muted" style="font-size:9px;margin-top:8px">提示：採礦機必須放在對應礦脈；晶體鑽機只能放在碳晶礦脈。生產設施會自動使用基地共享倉儲中的材料。</div>
 </section>
 <aside class="side">
-<section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 style="margin:6px 0 4px;font-size:16px">建立第一座工業基地</h3><div class="objective" id="objective">部署一台採礦機和一座太陽能板，開始建立你的自動化產線。</div><div class="meter"><i id="progress" style="width:0%"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
-<section class="panel"><div class="eyebrow">GRID TELEMETRY</div><div class="statline"><span>發電量</span><b id="generation">0 / 秒</b></div><div class="statline"><span>耗電量</span><b id="usage">0 / 秒</b></div><div class="statline"><span>基地完整度</span><b id="integrity">100%</b></div><div class="statline"><span>已部署設施</span><b id="buildingCount">0</b></div><div class="statline"><span>日夜週期</span><b id="cycle">白晝</b></div></section>
-<section class="panel"><div class="eyebrow">SELECTED TILE</div><div class="selected-info" id="tileInfo">尚未選取地格。選擇地圖上的格子查看地形與設施資訊。</div><button class="action" id="demolish" style="margin-top:8px" disabled>拆除選取設施</button></section>
-<section class="panel"><div class="topline"><div class="eyebrow">MISSION LOG</div><button class="action" id="pause">暫停</button></div><div class="log" id="log"></div></section>
-<section class="panel"><div class="eyebrow">SYSTEM CONTROL</div><div style="display:flex;gap:7px;margin-top:9px"><button class="action" id="speed">速度 ×1</button><button class="action" id="save">儲存基地</button><button class="action" id="reset">重新開始</button></div><p class="muted" style="font-size:10px;margin-bottom:0">自動儲存於本機瀏覽器。不同裝置的存檔不會同步。</p></section>
+<section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 id="missionTitle" style="margin:5px 0;font-size:15px">第一座能源基地</h3><div id="objective" class="objective">部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。</div><div class="meter"><i id="progress"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
+<section class="panel"><div class="eyebrow">GRID TELEMETRY</div><div class="statline"><span>即時發電</span><b id="generation">0 MW</b></div><div class="statline"><span>設施耗電</span><b id="usage">0 MW</b></div><div class="statline"><span>基地完整度</span><b id="integrity">100%</b></div><div class="statline"><span>設施數量</span><b id="buildingCount">0</b></div><div class="statline"><span>存活天數</span><b id="day">1</b></div><div class="statline"><span>外星威脅</span><b id="threat">低</b></div></section>
+<section class="panel"><div class="eyebrow">SELECTED TILE</div><div class="selected-info" id="tileInfo">選取地圖格子以查看地形、礦物及設施狀態。</div><div class="side-actions"><button class="action" id="demolish" disabled>拆除設施</button><button class="action" id="rotate" disabled>旋轉輸送帶</button></div></section>
+<section class="panel"><div class="topline"><div class="eyebrow">RESEARCH TREE</div><span id="science" class="muted" style="font-size:10px">研究點 0</span></div><div id="techlist" class="techlist"></div></section>
+<section class="panel"><div class="topline"><div class="eyebrow">MISSION LOG</div><button class="action" id="pause">暫停</button></div><div id="log" class="log"></div></section>
+<section class="panel"><div class="eyebrow">SYSTEM CONTROL</div><div class="side-actions" style="margin-top:8px"><button class="action" id="speed">速度 ×1</button><button class="action" id="save">儲存基地</button><button class="action" id="reset">重新開始</button></div><div class="muted" style="font-size:9px;margin-top:7px">進度自動儲存於目前瀏覽器。可隨時暫停。</div></section>
 </aside>
 </main>
-<div class="footer"><span>FRONTIER COLONIAL SYSTEMS © 2189</span><span>BUILD. AUTOMATE. SURVIVE.</span></div>
-<div class="modal" id="intro"><div class="modal-card"><div class="sub">FRONTIER COLONIAL SYSTEMS</div><h1>PROJECT FRONTIER</h1><p>殖民艦「拓荒者七號」迫降在未編目的星球。你必須利用有限的物資建立能源與採礦系統，逐步打造能自我維持的工業基地。</p><p>先部署<strong>太陽能板</strong>和<strong>採礦機</strong>。採礦機必須放在礦脈上；夜間太陽能停止發電，請逐步建立蓄電能力。</p><button class="action" id="start">開始殖民</button></div></div>
+<div class="footer"><span>FRONTIER COLONIAL SYSTEMS © 2189</span><span>EXPLORE · BUILD · AUTOMATE · SURVIVE</span></div>
+<div class="modal" id="intro"><div class="modal-card"><div class="sub">FRONTIER COLONIAL SYSTEMS // COLONY COMMAND</div><h1>PROJECT FRONTIER</h1><p>殖民艦「拓荒者七號」迫降在未編目的星球。你是基地指揮官，必須從有限的物資開始，建立能源、採礦與工業生產鏈，研究科技並抵禦週期性出現的外星生物。</p><p><strong>第一步：</strong>在鐵礦脈上部署採礦機，再找一塊空地建造太陽能板。夜晚太陽能會停止發電，記得擴建風力發電與蓄電池。</p><button class="action" id="start">啟動殖民計畫</button></div></div>
+<div class="modal" id="eventModal" hidden><div class="modal-card"><div class="eyebrow">PLANETARY EVENT</div><h1 id="eventTitle">未知訊號</h1><p id="eventText"></p><button class="action" id="eventOk">繼續</button></div></div>
 <script>
 (()=>{
-const W=16,H=12, $=id=>document.getElementById(id);
-const costs={miner:{iron:8,copper:8},solar:{iron:5,copper:3},smelter:{iron:10},assembler:{iron:12,copper:6},belt:{iron:1},turret:{iron:10,copper:5},battery:{iron:5,copper:5},drill:{iron:8,copper:4}};
-const names={miner:"採礦機",solar:"太陽能板",smelter:"冶煉爐",assembler:"組裝工廠",belt:"輸送帶",turret:"防禦砲塔",battery:"蓄電池",drill:"晶體鑽機"};
-const icons={miner:"⛏️",solar:"☀️",smelter:"🔥",assembler:"⚙️",belt:"➖",turret:"🛡️",battery:"🔋",drill:"💠"};
-let state={res:{iron:24,copper:12,crystal:8,plate:0,energy:40},tiles:[],buildings:[],selected:0,mode:null,tick:0,paused:false,speed:1,integrity:100,bugs:[],log:[],objectiveDone:false};
-const idx=(x,y)=>y*W+x,xy=i=>({x:i%W,y:Math.floor(i/W)});
-function initMap(){state.tiles=[];for(let y=0;y<H;y++)for(let x=0;x<W;x++){let terrain="plain";if((x===0||x===15)&&(y<3||y>8))terrain="rock";if((x===7||x===8)&&y===0)terrain="water";state.tiles.push({terrain,ore:null,building:null});}
-[[2,2,"iron"],[3,2,"iron"],[12,2,"iron"],[13,2,"iron"],[2,8,"copper"],[3,9,"copper"],[12,8,"copper"],[13,9,"copper"],[7,4,"crystal"],[8,8,"crystal"],[5,5,"iron"],[10,6,"copper"]].forEach(([x,y,o])=>state.tiles[idx(x,y)].ore=o);
+const W=20,H=14,$=id=>document.getElementById(id),idx=(x,y)=>y*W+x,xy=i=>({x:i%W,y:Math.floor(i/W)});
+const defs={
+ miner:{name:"採礦機",icon:"⛏️",cost:{iron:8,copper:4},power:2,desc:"每 4 秒從所在礦脈採集 2 單位礦物。"},
+ solar:{name:"太陽能板",icon:"☀️",cost:{iron:6,copper:2},power:0,desc:"白晝發電 7 MW。夜間停止。"},
+ wind:{name:"風力發電",icon:"🌬️",cost:{iron:8,copper:4},power:0,desc:"全天候發電 3 MW。"},
+ smelter:{name:"冶煉爐",icon:"🔥",cost:{iron:12,copper:4},power:3,desc:"每 6 秒消耗 3 鐵礦，生產 1 合金板。"},
+ assembler:{name:"組裝工廠",icon:"⚙️",cost:{plate:5,copper:8},power:4,desc:"每 8 秒消耗 2 合金板與 2 銅礦，生產 1 電子元件。"},
+ drill:{name:"晶體鑽機",icon:"💠",cost:{iron:10,copper:5},power:3,desc:"每 5 秒從碳晶礦脈採集 1 碳晶。"},
+ belt:{name:"輸送帶",icon:"➖",cost:{iron:1},power:0,desc:"物流網路節點；連接相鄰工業設施。"},
+ battery:{name:"蓄電池",icon:"🔋",cost:{iron:6,copper:4},power:0,desc:"增加 100 點能源儲存容量。"},
+ turret:{name:"防禦砲塔",icon:"🛡️",cost:{plate:4,circuit:2},power:2,desc:"自動防守基地，抵禦外星生物。"},
+ lab:{name:"研究中心",icon:"🧬",cost:{plate:8,circuit:5,crystal:5},power:5,desc:"每 15 秒產生 1 研究點。"}
+};
+const oreNames={iron:"鐵礦脈",copper:"銅礦脈",crystal:"碳晶礦脈"};
+const techs=[
+{id:"efficiency",name:"高效採礦",cost:4,desc:"採礦機產量 +50%。"},
+{id:"power",name:"能源工程",cost:5,desc:"太陽能與風力發電量 +30%。"},
+{id:"metallurgy",name:"先進冶金",cost:6,desc:"冶煉爐速度提升 35%。"},
+{id:"weapons",name:"脈衝武器",cost:7,desc:"砲塔攻擊力提升，可抵禦大型蟲群。"},
+{id:"automation",name:"工業自動化",cost:9,desc:"組裝工廠速度提升 40%。"},
+{id:"shields",name:"行星護盾",cost:12,desc:"基地完整度上限與防禦能力提升。"}
+];
+let s;
+function fresh(){
+s={res:{iron:40,copper:25,crystal:12,plate:0,circuit:0,energy:80},tiles:[],buildings:[],selected:0,mode:null,tick:0,paused:false,speed:1,integrity:100,threat:0,science:0,unlocked:[],log:[],mission:0,enemy:[],beltDir:0,lastEvent:0};
+makeMap();
 }
-function addLog(t){state.log.unshift(t);state.log=state.log.slice(0,30);$("log").innerHTML=state.log.map(x=>"<div>"+x+"</div>").join("");}
-function render(){let html="";state.tiles.forEach((t,i)=>{let cls=t.terrain==="water"?"water":t.terrain==="rock"?"rock":t.ore?"resource":"";if(i===state.selected)cls+=" selected";let icon=t.building?icons[t.building.type]:t.ore?({iron:"🪨",copper:"🟠",crystal:"💎"}[t.ore]):t.terrain==="water"?"🌊":t.terrain==="rock"?"⛰️":"";html+='<div class="cell '+cls+'" data-i="'+i+'" title="'+(t.building?names[t.building.type]:t.ore?t.ore+" 礦脈":t.terrain)+'">'+icon+'</div>';});$("world").innerHTML=html;
-document.querySelectorAll(".cell").forEach(el=>el.addEventListener("click",()=>select(+el.dataset.i)));
-for(let k in state.res)$(k).textContent=Math.floor(state.res[k]);$("integrity").textContent=state.integrity+"%";$("buildingCount").textContent=state.buildings.length;
-let gen=state.buildings.filter(b=>b.type==="solar").length*(state.tick%24<17?3:0),use=state.buildings.reduce((a,b)=>a+({miner:1,smelter:2,assembler:3,drill:2,turret:1}[b.type]||0),0);$("generation").textContent=gen+" / 秒";$("usage").textContent=use+" / 秒";$("clock").textContent=(state.tick%24<17?"☀ 白晝 ":"☾ 夜晚 ")+String(state.tick%24+1).padStart(2,"0");$("cycle").textContent=state.tick%24<17?"白晝":"夜晚";
-let n=state.buildings.filter(b=>b.type==="miner").length+state.buildings.filter(b=>b.type==="solar").length;$("progress").style.width=Math.min(100,n/2*100)+"%";$("progressText").textContent=Math.min(n,2)+" / 2";if(n>=2&&!state.objectiveDone){state.objectiveDone=true;addLog("任務完成：基礎採集系統已建立。下一步：建造冶煉爐與組裝工廠。");$("objective").innerHTML="已建立基本採集系統！建造<strong>冶煉爐</strong>生產合金板，再用組裝工廠擴張基地。";}
+function makeMap(){
+s.tiles=[];
+for(let y=0;y<H;y++)for(let x=0;x<W;x++){let terrain="plain";if((x===0||x===19)&&(y<3||y>10))terrain="rock";if((x===9||x===10)&&y===0)terrain="water";s.tiles.push({terrain,ore:null,building:null});}
+[[2,2,"iron"],[3,2,"iron"],[5,10,"iron"],[16,3,"iron"],[17,3,"iron"],[15,10,"iron"],[2,8,"copper"],[3,9,"copper"],[16,8,"copper"],[17,9,"copper"],[8,4,"crystal"],[11,10,"crystal"],[6,6,"iron"],[13,5,"copper"],[10,7,"iron"],[4,12,"copper"]].forEach(([x,y,o])=>s.tiles[idx(x,y)].ore=o);
 }
-function select(i){state.selected=i;const t=state.tiles[i],p=xy(i);let s="座標："+p.x+","+p.y+"<br>";s+=t.building?"設施："+names[t.building.type]:"地形："+(t.ore?({iron:"鐵礦脈",copper:"銅礦脈",crystal:"碳晶礦脈"}[t.ore]):t.terrain==="plain"?"平原":t.terrain==="water"?"水域":"岩壁");if(t.building)s+="<br>狀態："+(t.building.type==="solar"?"依日照發電":t.building.type==="miner"?"自動採集附近礦物":"運作中");$("tileInfo").innerHTML=s;$("demolish").disabled=!t.building;render();}
-function place(i,type){let t=state.tiles[i],cost=costs[type];if(t.building||t.terrain!=="plain"){addLog("部署失敗：此地格無法建造。");return;}if(type==="miner"&& !t.ore){addLog("採礦機必須部署在礦脈上。");return;}if(type==="drill"&&t.ore!=="crystal"){addLog("晶體鑽機必須部署在碳晶礦脈上。");return;}for(let k in cost)if(state.res[k]<cost[k]){addLog("資源不足，無法建造"+names[type]);return;}for(let k in cost)state.res[k]-=cost[k];let b={id:Date.now()+Math.random(),type,index:i,hp:100};t.building=b;state.buildings.push(b);state.mode=null;document.querySelectorAll(".build").forEach(e=>e.classList.remove("active"));addLog("已部署："+names[type]);select(i);}
-function tick(){if(state.paused)return;state.tick++;let solar=state.buildings.filter(b=>b.type==="solar").length*(state.tick%24<17?3:0);let demand=state.buildings.reduce((a,b)=>a+({miner:1,smelter:2,assembler:3,drill:2,turret:1}[b.type]||0),0);let battery=state.buildings.filter(b=>b.type==="battery").length;state.res.energy=Math.min(100+battery*60,state.res.energy+solar-demand*.4);let power=state.res.energy>0;
-if(power){state.buildings.forEach(b=>{if(b.type==="miner"&&state.tick%3===0){let ore=state.tiles[b.index].ore;if(ore)state.res[ore]+=.7;}if(b.type==="drill"&&state.tick%4===0)state.res.crystal+=.5;if(b.type==="smelter"&&state.tick%5===0&&state.res.iron>=3){state.res.iron-=3;state.res.plate++;}if(b.type==="assembler"&&state.tick%8===0&&state.res.plate>=2&&state.res.copper>=2){state.res.plate-=2;state.res.copper-=2;state.res.crystal++;}});}
-if(state.tick%24===0){addLog("新的一天開始。基地能源與生產線已更新。");if(Math.random()<.4){state.bugs.push({hp:3});addLog("警告：偵測到外星生物活動！防禦砲塔將自動攔截。");}}
-if(state.tick%24>=17&&state.bugs.length){let turrets=state.buildings.filter(b=>b.type==="turret").length;if(turrets)state.bugs=[];else if(state.tick%24===23){state.integrity=Math.max(0,state.integrity-8);state.bugs=[];addLog("外星生物突破防線！基地完整度下降。");}}
-if(state.res.energy<0)state.res.energy=0;if(state.integrity<=0){state.paused=true;addLog("基地失守。請重新開始殖民。");}
-render();save(false);}
-function save(show=true){localStorage.setItem("frontierSave",JSON.stringify(state));if(show)addLog("基地已儲存至本機瀏覽器。");}
-function load(){try{let s=JSON.parse(localStorage.getItem("frontierSave"));if(s&&s.tiles?.length===W*H){state={...state,...s};addLog("已載入本機基地紀錄。");}}catch(e){}}
-$("toolbar").addEventListener("click",e=>{let b=e.target.closest("[data-build]");if(!b)return;state.mode=b.dataset.build;document.querySelectorAll(".build").forEach(x=>x.classList.toggle("active",x===b));addLog("建造模式："+names[state.mode]+"。請選擇地格。");});
-$("world").addEventListener("click",e=>{let c=e.target.closest("[data-i]");if(c&&state.mode)place(+c.dataset.i,state.mode);});
-$("cancel").onclick=()=>{state.mode=null;document.querySelectorAll(".build").forEach(x=>x.classList.remove("active"));};
-$("demolish").onclick=()=>{let t=state.tiles[state.selected];if(!t.building)return;let b=t.building;state.res.iron+=Math.floor((costs[b.type].iron||0)*.5);t.building=null;state.buildings=state.buildings.filter(x=>x.id!==b.id);addLog("已拆除"+names[b.type]+"，回收部分材料。");select(state.selected);};
-$("pause").onclick=()=>{state.paused=!state.paused;$("pause").textContent=state.paused?"繼續":"暫停";};
-$("speed").onclick=()=>{state.speed=state.speed===1?2:state.speed===2?3:1;$("speed").textContent="速度 ×"+state.speed;};
+function log(t){s.log.unshift(t);s.log=s.log.slice(0,45);$("log").innerHTML=s.log.map(x=>"<div>"+x+"</div>").join("");}
+function count(type){return s.buildings.filter(b=>b.type===type).length}
+function powerGen(){let day=s.tick%120<82,boost=s.unlocked.includes("power")?1.3:1;return count("solar")*(day?7*boost:0)+count("wind")*3*boost}
+function powerUse(){return s.buildings.reduce((a,b)=>a+(defs[b.type]?.power||0),0)}
+function active(){return s.res.energy>0}
+function buildAt(i,type){
+const t=s.tiles[i],d=defs[type];if(!d)return;
+if(t.building||t.terrain!=="plain"){log("部署失敗：此地格無法建造。");return;}
+if(type==="miner"&&!t.ore){log("採礦機必須部署在鐵礦或銅礦脈上。");return}
+if(type==="drill"&&t.ore!=="crystal"){log("晶體鑽機必須部署在碳晶礦脈上。");return}
+if(type==="miner"&&t.ore==="crystal"){log("碳晶礦脈請使用晶體鑽機。");return}
+for(const [k,v] of Object.entries(d.cost))if(s.res[k]<v){log("資源不足，無法建造"+d.name+"。");return}
+for(const [k,v] of Object.entries(d.cost))s.res[k]-=v;
+const b={id:Date.now()+Math.random(),type,index:i,hp:100,dir:0};t.building=b;s.buildings.push(b);s.mode=null;document.querySelectorAll(".build").forEach(e=>e.classList.remove("active"));log("已部署："+d.name);select(i);render();
+}
+function select(i){s.selected=i;const t=s.tiles[i],p=xy(i);let lines=["座標："+p.x+", "+p.y];if(t.building){const b=t.building,d=defs[b.type];lines.push("設施："+d.name,"狀態："+(active()?"待命／自動運作":"能源不足"),d.desc);if(b.type==="belt")lines.push("方向："+["東","南","西","北"][b.dir]);}else{lines.push("地形："+({plain:"平原",rock:"岩壁",water:"水域"}[t.terrain]));if(t.ore)lines.push("礦物："+oreNames[t.ore]);else lines.push("可建造：是");}$("tileInfo").innerHTML=lines.join("<br>");$("demolish").disabled=!t.building;$("rotate").disabled=t.building?.type!=="belt";renderMap();}
+function renderMap(){
+$("world").innerHTML=s.tiles.map((t,i)=>{let cls=t.terrain;if(t.ore)cls+=" ore";if(i===s.selected)cls+=" selected";let icon=t.building?defs[t.building.type].icon:t.ore?({iron:"🪨",copper:"🟠",crystal:"💎"}[t.ore]):t.terrain==="water"?"🌊":t.terrain==="rock"?"⛰️":"";if(s.enemy.some(e=>e.index===i))icon="👾";return '<div class="cell '+cls+'" data-i="'+i+'" title="'+(t.building?defs[t.building.type].name:t.ore?oreNames[t.ore]:t.terrain)+'">'+icon+'</div>'}).join("");
+}
+function mission(){
+let n=0,goal=2,title="第一座能源基地",desc="部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。",max=2;
+if(s.mission===0){n=Math.min(2,count("solar")+count("wind")+count("miner"));if(count("miner")&&count("solar")+count("wind"))s.mission=1;}
+if(s.mission===1){title="建立冶煉產線";desc="建造冶煉爐，將採集到的鐵礦加工成合金板。";max=1;n=count("smelter");if(n)s.mission=2;}
+if(s.mission===2){title="邁向自動化";desc="建造組裝工廠，生產電子元件，並部署研究中心。";max=2;n=Math.min(2,count("assembler")+count("lab"));if(count("assembler")&&count("lab"))s.mission=3;}
+if(s.mission>=3){title="守住這顆星球";desc="擴張基地、研究科技並建立砲塔防線。每隔一段時間就會有外星生物來襲。";max=5;n=Math.min(5,count("turret")+s.unlocked.length);}
+$("missionTitle").textContent=title;$("objective").textContent=desc;$("progress").style.width=(n/max*100)+"%";$("progressText").textContent=n+" / "+max;
+}
+function renderTech(){
+$("science").textContent="研究點 "+Math.floor(s.science);
+$("techlist").innerHTML=techs.map(t=>{let done=s.unlocked.includes(t.id);return '<div class="tech '+(done?"done":"")+'"><div><b>'+t.name+'</b><small>'+t.desc+'</small></div><button class="action" data-tech="'+t.id+'" '+(done||s.science<t.cost||!count("lab")?"disabled":"")+ '>'+(done?"完成":t.cost+" 點")+'</button></div>'}).join("");
+}
+function render(){
+for(const k of Object.keys(s.res))$(k).textContent=Math.floor(s.res[k]);
+const gen=powerGen(),use=powerUse();$("generation").textContent=gen.toFixed(1)+" MW";$("usage").textContent=use+" MW";$("integrity").textContent=s.integrity+"%";$("buildingCount").textContent=s.buildings.length;$("day").textContent=Math.floor(s.tick/120)+1;$("threat").textContent=s.threat<2?"低":s.threat<5?"中":"高";
+const t=s.tick%120,day=t<82;$("clock").textContent=(day?"☀ 白晝 ":"☾ 夜晚 ")+String(t+1).padStart(3,"0");mission();renderTech();renderMap();
+}
+function event(title,txt){$("eventTitle").textContent=title;$("eventText").textContent=txt;$("eventModal").hidden=false;s.paused=true;$("pause").textContent="繼續";}
+function raid(){
+s.threat++;let strength=Math.min(7,1+Math.floor(s.threat/2));let turrets=count("turret"),defence=turrets*(s.unlocked.includes("weapons")?3:1);
+if(defence>=strength){log("防禦成功：砲塔擊退了 "+strength+" 隻外星生物。");s.res.crystal+=Math.ceil(strength/2);s.res.plate+=1;return}
+let damage=Math.min(35,(strength-defence)*8);s.integrity=Math.max(0,s.integrity-damage);log("警報：外星蟲群突破防線！基地受損 "+damage+"%。");
+if(s.integrity<=0){s.paused=true;event("殖民基地失守","外星生物摧毀了基地核心。你可以重新開始殖民計畫。");}
+else if(s.threat%2===0)event("偵測到外星訊號","遠方地表出現新的活動跡象。威脅正在升高，請建造防禦砲塔。");
+}
+function tick(){
+if(s.paused)return;s.tick++;
+const gen=powerGen(),use=powerUse(),cap=100+count("battery")*100;
+s.res.energy=Math.max(0,Math.min(cap,s.res.energy+gen-use));
+const powered=s.res.energy>0;
+if(powered){
+for(const b of s.buildings){
+if(b.type==="miner"&&s.tick%4===0){let k=s.tiles[b.index].ore;if(k)s.res[k]+=s.unlocked.includes("efficiency")?3:2;}
+if(b.type==="drill"&&s.tick%5===0)s.res.crystal+=1;
+if(b.type==="smelter"&&s.tick%6===0&&s.res.iron>=3){s.res.iron-=3;s.res.plate+=1;}
+if(b.type==="assembler"&&s.tick%8===0&&s.res.plate>=2&&s.res.copper>=2){s.res.plate-=2;s.res.copper-=2;s.res.circuit+=1;}
+if(b.type==="lab"&&s.tick%15===0)s.science+=1;
+}
+}
+if(s.tick%120===0){log("第 "+(Math.floor(s.tick/120)+1)+" 天開始。能源與產線狀態已更新。");}
+if(s.tick%90===0)raid();
+if(s.tick%30===0&&s.integrity<100&&s.unlocked.includes("shields"))s.integrity=Math.min(100,s.integrity+1);
+if(s.res.energy<=0&&use>0&&s.tick%10===0)log("能源不足：部分工業設施已停止運作，請擴建發電設施。");
+render();save(false);
+}
+function save(show=true){localStorage.setItem("projectFrontierSaveV2",JSON.stringify(s));if(show)log("基地進度已儲存。")}
+function load(){try{let x=JSON.parse(localStorage.getItem("projectFrontierSaveV2"));if(x&&x.tiles?.length===W*H){s={...s,...x};log("已載入先前的殖民基地。");}}catch(e){}}
+$("toolbar").addEventListener("click",e=>{let b=e.target.closest("[data-build]");if(!b)return;let type=b.dataset.build;s.mode=type;document.querySelectorAll(".build").forEach(x=>x.classList.toggle("active",x===b));log("建造模式："+defs[type].name+"；選擇地格部署。");});
+$("world").addEventListener("click",e=>{let c=e.target.closest("[data-i]");if(!c)return;let i=+c.dataset.i;if(s.mode)buildAt(i,s.mode);else select(i);});
+$("cancel").onclick=()=>{s.mode=null;document.querySelectorAll(".build").forEach(x=>x.classList.remove("active"));};
+$("demolish").onclick=()=>{let t=s.tiles[s.selected];if(!t.building)return;let b=t.building,d=defs[b.type];for(const [k,v] of Object.entries(d.cost))s.res[k]+=Math.floor(v*.35);t.building=null;s.buildings=s.buildings.filter(x=>x.id!==b.id);log("已拆除："+d.name+"，回收部分材料。");select(s.selected);render();};
+$("rotate").onclick=()=>{let b=s.tiles[s.selected].building;if(!b||b.type!=="belt")return;b.dir=(b.dir+1)%4;select(s.selected);};
+$("techlist").addEventListener("click",e=>{let b=e.target.closest("[data-tech]");if(!b)return;let t=techs.find(x=>x.id===b.dataset.tech);if(!t||s.unlocked.includes(t.id)||s.science<t.cost||!count("lab"))return;s.science-=t.cost;s.unlocked.push(t.id);log("科技解鎖："+t.name+"。"+t.desc);render();});
+$("pause").onclick=()=>{s.paused=!s.paused;$("pause").textContent=s.paused?"繼續":"暫停";};
+$("speed").onclick=()=>{s.speed=s.speed===1?2:s.speed===2?3:1;$("speed").textContent="速度 ×"+s.speed;};
 $("save").onclick=()=>save(true);
-$("reset").onclick=()=>{if(!confirm("確定要刪除目前基地並重新開始？"))return;localStorage.removeItem("frontierSave");location.reload();};
+$("reset").onclick=()=>{if(confirm("確定刪除目前基地並重新開始？")){localStorage.removeItem("projectFrontierSaveV2");location.reload();}};
 $("start").onclick=()=>{$("intro").hidden=true;};
-initMap();load();render();addLog("殖民艦拓荒者七號已迫降。請開始建立基地。");setInterval(()=>{for(let i=0;i<state.speed;i++)tick();},1000);
+$("eventOk").onclick=()=>{$("eventModal").hidden=true;s.paused=false;$("pause").textContent="暫停";};
+fresh();load();render();log("殖民艦拓荒者七號已迫降。請開始建立基地。");$("start").onclick=()=>{$("intro").hidden=true;};
+setInterval(()=>{for(let i=0;i<s.speed;i++)tick();},1000);
 })();
 </script>
 </body></html>
