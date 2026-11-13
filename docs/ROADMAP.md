@@ -6,13 +6,13 @@
 - [x] Establish squad tactics design baseline.
 
 ## Milestone 1 — Tactical combat prototype
-- [ ] Grid battlefield and unit selection.
-- [ ] Movement with action point costs.
-- [ ] Weapon range and line of sight.
-- [ ] Three operative archetypes and signature skills.
-- [ ] Enemy intent previews and enemy phase.
-- [ ] Cover, hazards and readable combat feedback.
-- [ ] Win/lose state and restart loop.
+- [x] Grid battlefield and unit selection.
+- [x] Movement with action point costs.
+- [x] Weapon range and line of sight.
+- [x] Three operative archetypes and signature skills.
+- [x] Enemy intent previews and enemy phase.
+- [x] Cover, obstacles and combat feedback.
+- [x] Win/lose state and restart loop.
 
 ## Milestone 2 — Tactical depth
 - [ ] Fourth operative and squad composition choices.
