@@ -26,9 +26,9 @@ A browser-playable, single-player top-down action roguelite prototype. Built as 
 
 - Four playable operatives: Phantom, Bastion, Engineer, Hacker.
 - Two weapon slots with Arc Pistol, Plasma Shotgun, Pulse Rifle and Rail Lance.
-- Room-based combat, route choices, supply rooms, black market, experimental events, elite encounters and scheduled boss encounters.
+- Room-based combat, route choices, supply rooms, black market, experimental events, elite encounters, weapon armory and scheduled boss encounters.
 - XP level-ups with three random upgrade choices.
-- Cross-build effects: chain lightning, burn, freeze, drones, lifesteal, dash burst and shield.
+- Cross-build effects with combat implementation: visible chain lightning, burn, freeze, orbiting auto-fire drones, burn-death nova explosions, lifesteal, dash burst and shield.
 - Extraction, partial resource retention on defeat, and persistent safehouse upgrades.
 - Responsive HUD and neon sci-fi canvas rendering.
 
