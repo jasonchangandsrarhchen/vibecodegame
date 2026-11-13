@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#070914"><title>NEON ABYSS PROTOCOL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+:root{color-scheme:dark;--cyan:#55f5f2;--blue:#658cff;--pink:#ff4da6;--gold:#ffd166;--bg:#070914;--panel:rgba(12,18,38,.92)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:#eaf7ff;font-family:'Noto Sans TC',sans-serif}button{font:inherit;color:inherit;cursor:pointer;border:1px solid #34516d;background:linear-gradient(135deg,#14233d,#10152a);padding:11px 16px;letter-spacing:.04em;transition:.15s}button:hover{border-color:var(--cyan);box-shadow:0 0 18px #55f5f244;transform:translateY(-1px)}button:disabled{opacity:.35;cursor:not-allowed;transform:none}.mono,.eyebrow,.brand{font-family:Orbitron,monospace;letter-spacing:.12em}.shell{position:relative;width:100%;height:100%;isolation:isolate}canvas{display:block;width:100%;height:100%;background:#080d1b;cursor:crosshair}.scanlines{position:absolute;inset:0;pointer-events:none;z-index:2;background:repeating-linear-gradient(0deg,transparent 0 3px,#b8eaff08 4px);mix-blend-mode:screen}.vignette{position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at center,transparent 45%,#02040bd9 100%)}.hud{position:absolute;inset:0;z-index:3;pointer-events:none;display:none}.hud>*{pointer-events:auto}.topbar{position:absolute;left:22px;right:22px;top:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.statbox{background:#081226c9;border:1px solid #31516a;padding:10px 13px;min-width:180px;backdrop-filter:blur(10px);clip-path:polygon(0 0,100% 0,100% 78%,90% 100%,0 100%)}.eyebrow{font-size:10px;color:#7fa5c4}.big{font:700 20px Orbitron;color:#eafaff;margin-top:3px}.bars{display:flex;gap:7px;margin-top:8px}.bar{height:7px;background:#18283d;flex:1;overflow:hidden}.bar i{display:block;height:100%;width:50%;background:var(--cyan);box-shadow:0 0 10px currentColor}.bar.hp i{background:#ff557e}.bar.xp i{background:#65a7ff}.rightstats{display:flex;gap:8px}.chip{background:#081226d9;border:1px solid #29425b;padding:9px 12px;font:11px Orbitron;color:#a9cbe2}.bottomleft{position:absolute;left:22px;bottom:20px;display:flex;gap:8px;align-items:end}.weapon-card{border:1px solid #36566d;background:#081226dc;padding:9px 12px;min-width:130px}.weapon-card.active{border-color:var(--cyan);box-shadow:0 0 15px #55f5f233}.weapon-card small{display:block;color:#79a0bb;font-size:10px}.weapon-card strong{font:12px Orbitron}.bottomright{position:absolute;right:22px;bottom:20px;text-align:right;color:#9bb8d0;font-size:11px;line-height:1.8}.bossbar{position:absolute;top:105px;left:50%;transform:translateX(-50%);width:min(460px,70vw);display:none;text-align:center}.bossbar .bar{height:10px;border:1px solid #873c73}.bossbar .bar i{background:linear-gradient(90deg,#ff4da6,#ffb15b)}.toast{position:absolute;left:50%;top:22%;transform:translate(-50%,-10px);opacity:0;transition:.25s;background:#0b1b31eF;border:1px solid var(--cyan);padding:10px 18px;color:#dffcff;font-size:13px;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}.overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at center,#101a32a8,#03050deF 80%);backdrop-filter:blur(5px)}.panel{width:min(760px,96vw);max-height:92vh;overflow:auto;border:1px solid #345d79;background:linear-gradient(145deg,#101b34f5,#080d1bf5);box-shadow:0 0 70px #1d7caa22,inset 0 0 35px #1b527018;padding:clamp(20px,4vw,38px);position:relative}.panel:before,.panel:after{content:"";position:absolute;width:48px;height:3px;background:var(--cyan);box-shadow:0 0 14px var(--cyan)}.panel:before{top:-1px;left:20px}.panel:after{right:20px;bottom:-1px}.brand{font-size:clamp(25px,5vw,48px);font-weight:800;line-height:1.12;text-shadow:0 0 24px #55f5f277}.brand span{color:var(--cyan)}.subtitle{color:#9bb9d0;letter-spacing:.22em;font:11px Orbitron;margin:10px 0 24px}.lede{color:#c1d5e7;line-height:1.8;font-size:14px;max-width:610px}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}.primary{background:linear-gradient(100deg,#087c91,#2257a5);border-color:#68ffff;color:white;font-weight:700}.smallnote{color:#7895ad;font-size:11px;line-height:1.7;margin-top:16px}.sectiontitle{font:600 12px Orbitron;color:var(--cyan);letter-spacing:.16em;margin:0 0 14px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.choice{padding:14px;border:1px solid #29445e;background:#0a1428}.choice h3{margin:0 0 6px;font-size:14px}.choice p{margin:0;color:#91abc2;font-size:12px;line-height:1.6}.tag{display:inline-block;color:var(--cyan);font:10px Orbitron;margin-bottom:7px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.upgrade{min-height:170px;text-align:left;padding:16px;background:linear-gradient(145deg,#14233d,#0a1224);border:1px solid #37617a}.upgrade .symbol{font-size:27px;margin-bottom:12px}.upgrade h3{font-size:14px;margin:0 0 8px;color:#effaff}.upgrade p{font-size:12px;color:#9bb6cb;line-height:1.6;margin:0}.upgrade .rarity{font:9px Orbitron;color:var(--gold);margin-top:12px}.roommap{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.room{min-height:118px;text-align:left;padding:14px}.room strong{display:block;font-size:14px;margin:7px 0}.room span{font-size:11px;color:#9ab5cb;line-height:1.5}.room .ico{font-size:22px}.room.elite{border-color:#b64c7d}.room.cache{border-color:#4b9b86}.room.shop{border-color:#b18a4b}.room.boss{border-color:#db4f83}.resultline{display:flex;justify-content:space-between;border-bottom:1px solid #24384d;padding:10px 0;color:#a9c3d8;font-size:13px}.resultline b{color:#effaff}.footer{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:#536d86;font:9px Orbitron;letter-spacing:.2em;z-index:3;pointer-events:none}
+@media(max-width:650px){.topbar{left:10px;right:10px;top:10px}.statbox{min-width:145px;padding:8px}.rightstats{flex-direction:column;gap:5px}.chip{padding:6px 8px;font-size:9px}.bottomleft{left:10px;bottom:12px}.weapon-card{min-width:105px;padding:7px}.bottomright{right:10px;bottom:12px;font-size:9px}.cards{grid-template-columns:1fr}.upgrade{min-height:0}.grid2{grid-template-columns:1fr}.roommap{grid-template-columns:1fr 1fr}.panel{padding:20px}.bossbar{top:125px}}
+</style></head>
+<body><div class="shell"><canvas id="game"></canvas><div class="scanlines"></div><div class="vignette"></div>
+<div class="hud" id="hud">
+ <div class="topbar"><div class="statbox"><div class="eyebrow" id="pilotName">PHANTOM // FIELD STATUS</div><div class="big"><span id="hpText">100</span><small style="font:10px Orbitron;color:#7e9ab4"> / <span id="hpMax">100</span> HP</small></div><div class="bars"><div class="bar hp"><i id="hpBar"></i></div></div><div class="bars"><div class="bar xp"><i id="xpBar"></i></div></div><div class="eyebrow" style="margin-top:5px">LEVEL <span id="levelText">1</span> · XP <span id="xpText">0</span></div></div>
+ <div class="rightstats"><div class="chip">SECTOR <b id="sectorText">01</b></div><div class="chip">ROOM <b id="roomText">01</b></div><div class="chip">SCRAP <b id="scrapText">0</b></div></div></div>
+ <div class="bossbar" id="bossbar"><div class="eyebrow" id="bossName">WARDEN</div><div class="bar"><i id="bossHp"></i></div></div>
+ <div class="bottomleft"><div class="weapon-card active" id="weapon1"><small>1 · PRIMARY</small><strong>ARC PISTOL</strong></div><div class="weapon-card" id="weapon2"><small>2 · SECONDARY</small><strong>PLASMA SHOTGUN</strong></div></div>
+ <div class="bottomright">WASD MOVE · MOUSE AIM / FIRE<br>1 / 2 SWITCH · SPACE DASH · E PULSE<br>ESC PAUSE</div><div class="toast" id="toast"></div>
+</div>
+<div class="overlay" id="overlay"><div class="panel" id="panel"></div></div><div class="footer">NEXUS CONTAINMENT INITIATIVE // BUILD 0.1.0</div></div>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id), canvas=$('game'),ctx=canvas.getContext('2d');
+let W=innerWidth,H=innerHeight,DPR=Math.min(devicePixelRatio||1,2);
+function resize(){W=innerWidth;H=innerHeight;DPR=Math.min(devicePixelRatio||1,2);canvas.width=Math.floor(W*DPR);canvas.height=Math.floor(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0)}
+addEventListener('resize',resize);resize();
+const TAU=Math.PI*2,rand=(a,b)=>a+Math.random()*(b-a),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),pick=a=>a[Math.floor(Math.random()*a.length)];
+const saveKey='neonAbyssSaveV1';
+let meta={scrap:0,unlocks:['phantom'],upgrades:{hull:0,damage:0,fortune:0},bestSector:1,runs:0};
+try{meta={...meta,...JSON.parse(localStorage.getItem(saveKey)||'{}')}}catch(e){}
+function save(){try{localStorage.setItem(saveKey,JSON.stringify(meta))}catch(e){}}
+const pilots={
+ phantom:{name:'PHANTOM',cn:'幽影',color:'#55f5f2',desc:'高速機動與精準暴擊。連續命中會逐步提高暴擊率。',passive:'連續命中累積專注，最高 +18% 暴擊率。',ability:'相位衝刺',ult:'幽影協定',hp:100,speed:235,passiveId:'focus'},
+ bastion:{name:'BASTION',cn:'堡壘',color:'#ffb45d',desc:'重裝防禦與正面火力。護盾會週期性恢復。',passive:'每 8 秒獲得 12 點護盾。',ability:'堡壘屏障',ult:'攻城模式',hp:145,speed:190,passiveId:'shield'},
+ engineer:{name:'ENGINEER',cn:'工程師',color:'#8cff9b',desc:'部署砲塔支援，擅長建立交叉火網。',passive:'砲塔持續時間增加，部署冷卻縮短。',ability:'自動砲塔',ult:'無人機蜂群',hp:110,speed:205,passiveId:'turret'},
+ hacker:{name:'HACKER',cn:'駭客',color:'#c18aff',desc:'干擾敵方系統，讓危險戰場暫時安靜。',passive:'電磁效果持續時間增加。',ability:'系統癱瘓',ult:'敵我識別覆寫',hp:95,speed:215,passiveId:'hack'}
+};
+const weapons={
+ pistol:{name:'ARC PISTOL',cn:'電弧手槍',rate:.22,damage:17,speed:690,spread:.025,count:1,color:'#55f5f2',size:4,desc:'精準、穩定，可觸發電磁連鎖。'},
+ shotgun:{name:'PLASMA SHOTGUN',cn:'電漿霰彈槍',rate:.78,damage:10,speed:520,spread:.34,count:7,color:'#ffb45d',size:4,desc:'近距離扇形爆發。'},
+ rifle:{name:'PULSE RIFLE',cn:'脈衝步槍',rate:.105,damage:9,speed:850,spread:.045,count:1,color:'#8b9dff',size:3,desc:'高射速、低後座力。'},
+ rail:{name:'RAIL LANCE',cn:'電磁長槍',rate:.95,damage:48,speed:1100,spread:.008,count:1,color:'#e4faff',size:5,pierce:3,desc:'穿透射擊，對精英與首領有效。'}
+};
+let state='menu',last=0,elapsed=0,keys={},mouse={x:W/2,y:H/2,down:false},audio=null;
+let player=null,enemies=[],bullets=[],enemyBullets=[],particles=[],pickups=[],hazards=[],turrets=[],room=1,sector=1,roomType='combat',roomKills=0,roomTarget=8,spawnTimer=0,level=1,xp=0,xpNeed=45,scrapRun=0,build={},runStats={kills:0,rooms:0,damage:0},activeWeapon=1,weaponLoadout=['pistol','shotgun'],boss=null,roomCleared=false,choiceCards=[],pendingAction=null,toastTimer=0,shake=0;
+const upgrades=[
+{id:'damage',name:'過載線圈',symbol:'⚡',desc:'所有武器傷害 +18%。',rarity:'COMMON',apply:()=>build.damage=(build.damage||0)+.18},
+{id:'firerate',name:'速射協定',symbol:'»',desc:'武器射速提高 14%。',rarity:'COMMON',apply:()=>build.rate=(build.rate||0)+.14},
+{id:'vital',name:'生物修復',symbol:'✚',desc:'立即恢復 30 HP，最大生命 +8。',rarity:'COMMON',apply:()=>{player.hp=Math.min(player.maxHp+8,player.hp+30);player.maxHp+=8}},
+{id:'speed',name:'相位穩定器',symbol:'⌁',desc:'移動速度 +9%，閃避冷卻縮短。',rarity:'COMMON',apply:()=>{build.speed=(build.speed||0)+.09;player.dashMax=Math.max(.55,player.dashMax-.12)}},
+{id:'crit',name:'弱點分析',symbol:'◎',desc:'暴擊率 +8%，暴擊傷害 +25%。',rarity:'RARE',apply:()=>{build.crit=(build.crit||0)+.08;build.critDamage=(build.critDamage||0)+.25}},
+{id:'chain',name:'電弧矩陣',symbol:'ϟ',desc:'電弧手槍命中後跳躍至附近 2 名敵人，造成 45% 傷害。',rarity:'RARE',apply:()=>build.chain=(build.chain||0)+1},
+{id:'burn',name:'熱能殘留',symbol:'♨',desc:'命中有 25% 機率點燃敵人，持續造成傷害。',rarity:'RARE',apply:()=>build.burn=(build.burn||0)+.25},
+{id:'drone',name:'守望蜂群',symbol:'◈',desc:'獲得一架自動攻擊無人機。',rarity:'RARE',apply:()=>build.drones=(build.drones||0)+1},
+{id:'freeze',name:'低溫彈頭',symbol:'❄',desc:'命中有 20% 機率凍結敵人 1.2 秒。',rarity:'RARE',apply:()=>build.freeze=(build.freeze||0)+.2},
+{id:'leech',name:'納米汲取',symbol:'♥',desc:'擊殺敵人時恢復 2 HP。',rarity:'RARE',apply:()=>build.leech=(build.leech||0)+2},
+{id:'dash',name:'殘像引擎',symbol:'✧',desc:'閃避後留下爆炸殘影，對附近敵人造成 35 傷害。',rarity:'EPIC',apply:()=>build.dashBurst=(build.dashBurst||0)+1},
+{id:'overload',name:'雷霆核心',symbol:'⬡',desc:'電擊連鎖額外跳躍 1 次，連鎖傷害提高。',rarity:'EPIC',apply:()=>build.chainPower=(build.chainPower||0)+.25},
+{id:'nova',name:'熔爐核心',symbol:'✹',desc:'燃燒敵人死亡時引發爆炸。',rarity:'EPIC',apply:()=>build.nova=(build.nova||0)+1},
+{id:'shield',name:'偏折護盾',symbol:'⬢',desc:'獲得 25 點可再生護盾，受擊後 5 秒開始恢復。',rarity:'EPIC',apply:()=>{player.shield+=25;player.maxShield+=25}}
+];
+function sound(freq=440,dur=.07,type='sine',vol=.025){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();let o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);g.gain.setValueAtTime(vol,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch(e){}}
+function toast(s){let el=$('toast');el.textContent=s;el.classList.add('show');toastTimer=2}
+function panel(html){$('panel').innerHTML=html;$('overlay').style.display='flex'}
+function hidePanel(){$('overlay').style.display='none'}
+function menu(){
+ state='menu';$('hud').style.display='none';
+ panel('<div class="eyebrow">NEXUS CONTAINMENT INITIATIVE // CLASSIFIED</div><div class="brand">NEON <span>ABYSS</span><br>PROTOCOL</div><div class="subtitle">ROGUELITE · TOP-DOWN TACTICAL ACTION</div><p class="lede">西元 2189 年，地下都市 NEXUS 的核心 AI 失控。你是最後一批仍保有自主意識的改造戰士。深入封鎖區，回收核心資料，找出這場災難的真相。</p><div class="grid2"><div class="choice"><span class="tag">MISSION</span><h3>單人深入作戰</h3><p>房間制戰鬥、分歧路線、隨機強化與區域首領。</p></div><div class="choice"><span class="tag">PERSISTENCE</span><h3>永久基地升級</h3><p>死亡仍能帶回部分廢料，解鎖長期成長。</p></div></div><div class="actions"><button class="primary" id="startBtn">▶ 開始出擊</button><button id="pilotBtn">選擇作戰員</button><button id="upgradeBtn">基地整備</button></div><div class="smallnote">操作：WASD 移動 · 滑鼠瞄準與射擊 · 1/2 切換武器 · SPACE 閃避 · E 角色技能 · ESC 暫停<br>建議使用桌面瀏覽器。進度自動儲存在此瀏覽器。</div>');
+$('startBtn').onclick=()=>startRun();$('pilotBtn').onclick=pilotSelect;$('upgradeBtn').onclick=baseUpgrade;
+}
+function pilotSelect(){
+let html='<div class="eyebrow">OPERATIVE SELECTION</div><h2 style="font:700 25px Orbitron;margin:8px 0 20px">選擇作戰員</h2><div class="grid2">'+Object.entries(pilots).map(([id,p])=>'<div class="choice"><span class="tag">'+p.name+'</span><h3>'+p.cn+'</h3><p>'+p.desc+'</p><p style="margin-top:8px;color:#55f5f2">被動：'+p.passive+'</p><button style="margin-top:12px;width:100%" data-pilot="'+id+'" '+(!meta.unlocks.includes(id)?'disabled':'')+'>'+(meta.unlocks.includes(id)?(selectedPilot===id?'目前選擇':'選擇作戰員'):'尚未解鎖')+'</button></div>').join('')+'</div><div class="actions"><button id="back">返回</button></div>';
+panel(html);document.querySelectorAll('[data-pilot]').forEach(b=>b.onclick=()=>{selectedPilot=b.dataset.pilot;pilotSelect()});$('back').onclick=menu;
+}
+let selectedPilot='phantom';
+function baseUpgrade(){
+let costs={hull:35,damage:45,fortune:55};
+let desc={hull:'初始最大生命 +8',damage:'初始武器傷害 +5%',fortune:'出擊時額外獲得 8 廢料'};
+panel('<div class="eyebrow">SAFEHOUSE // PERMANENT SYSTEMS</div><h2 style="font:700 25px Orbitron;margin:8px 0">基地整備</h2><p class="lede">可用廢料：<b style="color:#55f5f2">'+meta.scrap+'</b> SCRAP。升級永久保留。</p><div class="grid2">'+Object.keys(costs).map(k=>'<div class="choice"><span class="tag">LEVEL '+(meta.upgrades[k]||0)+'</span><h3>'+({hull:'強化外骨骼',damage:'武器校準',fortune:'回收協議'}[k])+'</h3><p>'+desc[k]+'</p><button data-up="'+k+'" style="width:100%;margin-top:12px">升級 · '+(costs[k]+(meta.upgrades[k]||0)*25)+' SCRAP</button></div>').join('')+'</div><div class="actions"><button id="back">返回</button></div>');
+document.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{let k=b.dataset.up,c=costs[k]+(meta.upgrades[k]||0)*25;if(meta.scrap<c){toast('廢料不足');return}meta.scrap-=c;meta.upgrades[k]=(meta.upgrades[k]||0)+1;save();baseUpgrade()});$('back').onclick=menu;
+}
+function startRun(){
+selectedPilot=selectedPilot||'phantom';let p=pilots[selectedPilot];
+player={x:W/2,y:H/2,r:13,hp:p.hp+(meta.upgrades.hull||0)*8,maxHp:p.hp+(meta.upgrades.hull||0)*8,speed:p.speed,angle:0,shield:selectedPilot==='bastion'?20:0,maxShield:selectedPilot==='bastion'?20:0,inv:0,dash:0,dashMax:1.7,dashTime:0,fire:0,ability:0,abilityMax:selectedPilot==='engineer'?7:9,ult:0,focus:0,streak:0,damageFlash:0};
+room=1;sector=1;roomType='combat';roomKills=0;roomTarget=8;spawnTimer=.6;level=1;xp=0;xpNeed=45;scrapRun=0;build={damage:(meta.upgrades.damage||0)*.05};runStats={kills:0,rooms:0,damage:0};activeWeapon=1;weaponLoadout=['pistol','shotgun'];enemies=[];bullets=[];enemyBullets=[];particles=[];pickups=[];hazards=[];turrets=[];boss=null;roomCleared=false;elapsed=0;
+state='playing';hidePanel();$('hud').style.display='block';updateHud();spawnRoom();last=performance.now();
+}
+function spawnRoom(){
+roomCleared=false;enemies=[];enemyBullets=[];hazards=[];roomKills=0;boss=null;$('bossbar').style.display='none';
+roomTarget=roomType==='elite'?12:roomType==='boss'?0:roomType==='combat'?8+sector*2:0;
+if(roomType==='boss'){spawnBoss()}else if(roomType==='combat'||roomType==='elite'){spawnTimer=.7}else{roomCleared=true}
+player.x=W/2;player.y=H/2;toast(({combat:'接觸敵方單位',elite:'警告：偵測到精英威脅',boss:'區域首領接近',cache:'補給區域',shop:'黑市交易站',event:'未知訊號來源'})[roomType]||'區域已抵達');
+}
+function spawnEnemy(type){
+let edge=Math.floor(rand(0,4)),x=edge===0?rand(30,W-30):edge===1?rand(30,W-30):edge===2?20:W-20,y=edge===0?20:edge===1?H-20:rand(30,H-30);
+let s=sector,stats={
+drone:{hp:28+s*5,speed:75+s*3,r:11,dmg:9,color:'#ff638e',xp:9,scrap:2},
+rusher:{hp:23+s*5,speed:145+s*4,r:10,dmg:13,color:'#ff9b59',xp:11,scrap:2},
+sniper:{hp:38+s*7,speed:52+s*2,r:13,dmg:12,color:'#b38aff',xp:14,scrap:3},
+tank:{hp:100+s*17,speed:36+s*2,r:19,dmg:20,color:'#ff4e68',xp:24,scrap:5}
+}[type];
+enemies.push({x,y,...stats,type,maxHp:stats.hp,attack:rand(.5,1.5),shoot:rand(1,2),burn:0,freeze:0,hit:0,phase:rand(0,TAU)});
+}
+function spawnBoss(){
+let hp=550+sector*180;boss={x:W/2,y:130,r:39,hp,maxHp:hp,attack:1.2,shoot:2.1,phase:0,hit:0,name:sector===1?'IRON WARDEN':'NEXUS SENTINEL'};
+$('bossbar').style.display='block';$('bossName').textContent=boss.name;$('bossHp').style.width='100%';
+}
+function addParticle(x,y,color,n=8,power=130){for(let i=0;i<n;i++){let a=rand(0,TAU),v=rand(power*.25,power);particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.2,.55),max:.55,color,size:rand(1.5,4)})}}
+function shoot(){
+let w=weapons[weaponLoadout[activeWeapon-1]],rate=w.rate/(1+(build.rate||0));if(player.fire>0)return;player.fire=rate;
+let base=Math.atan2(mouse.y-player.y,mouse.x-player.x);player.angle=base;
+for(let i=0;i<w.count;i++){let a=base+(i-(w.count-1)/2)*w.spread+rand(-.012,.012),dmg=w.damage*(1+(build.damage||0));bullets.push({x:player.x+Math.cos(a)*17,y:player.y+Math.sin(a)*17,vx:Math.cos(a)*w.speed,vy:Math.sin(a)*w.speed,r:w.size,damage:dmg,life:1.4,color:w.color,pierce:w.pierce||0,chain:build.chain||0,burn:Math.random()<(build.burn||0),freeze:Math.random()<(build.freeze||0),crit:Math.random()<(build.crit||0)+ (selectedPilot==='phantom'?player.focus*.001:0)})}
+sound(weaponLoadout[activeWeapon-1]==='shotgun'?110:390,.045,'square',.012);
+}
+function damageEnemy(e,dmg,source){
+if(e.hp<=0)return;let critical=source&&source.crit;if(critical)dmg*=1.8+(build.critDamage||0);
+e.hp-=dmg;e.hit=.09;runStats.damage+=dmg;
+if(source&&source.burn)e.burn=2.8;if(source&&source.freeze)e.freeze=1.2;
+addParticle(e.x,e.y,critical?'#fff1a8':e.color,critical?7:3,75);
+if(source&&source.chain>0&&Math.random()<.35){
+let near=enemies.filter(o=>o!==e&&o.hp>0&&dist(o,e)<125).sort((a,b)=>dist(a,e)-dist(b,e)).slice(0,1+(build.chainPower?1:0));
+near.forEach(o=>{damageEnemy(o,dmg*(.45+(build.chainPower||0)),{chain:Math.max(0,source.chain-1)});addParticle((o.x+e.x)/2,(o.y+e.y)/2,'#55f5f2',5,90)});
+}
+if(e.hp<=0)killEnemy(e);
+}
+function killEnemy(e){
+runStats.kills++;roomKills++;scrapRun+=e.scrap;xp+=e.xp;
+if(build.leech)player.hp=Math.min(player.maxHp,player.hp+build.leech);
+if(e.burn&&build.nova){enemies.filter(o=>o!==e&&dist(o,e)<95).forEach(o=>damageEnemy(o,28,{chain:0}));addParticle(e.x,e.y,'#ff9c4c',25,180)}
+if(Math.random()<.13)pickups.push({x:e.x,y:e.y,type:'heal',r:7});
+addParticle(e.x,e.y,e.color,15,170);sound(130,.09,'triangle',.018);
+if(selectedPilot==='phantom')player.focus=Math.min(18,player.focus+1);
+checkLevel();
+}
+function checkLevel(){while(xp>=xpNeed){xp-=xpNeed;level++;xpNeed=Math.floor(xpNeed*1.28+12);showUpgrade()}}
+function showUpgrade(){
+if(state!=='playing')return;state='upgrade';let pool=[...upgrades];if((build.chain||0)>0)pool=pool.filter(u=>u.id!=='chain');choiceCards=[];while(choiceCards.length<3&&pool.length){let i=Math.floor(Math.random()*pool.length);choiceCards.push(pool.splice(i,1)[0])}
+panel('<div class="eyebrow">NEURAL ADAPTATION // LEVEL '+level+'</div><h2 style="font:700 25px Orbitron;margin:8px 0 5px">選擇戰鬥強化</h2><p class="lede" style="margin:0 0 18px">你的神經介面已完成同步。選擇一項模組植入本次出擊。</p><div class="cards">'+choiceCards.map((u,i)=>'<button class="upgrade" data-card="'+i+'"><div class="symbol">'+u.symbol+'</div><div class="tag">'+u.rarity+'</div><h3>'+u.name+'</h3><p>'+u.desc+'</p></button>').join('')+'</div>');
+document.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>{choiceCards[+b.dataset.card].apply();sound(620,.15,'sine');state='playing';hidePanel();updateHud();last=performance.now()});
+}
+function useAbility(){
+if(player.ability>0)return;player.ability=player.abilityMax;
+if(selectedPilot==='phantom'){player.dashTime=.24;player.inv=.35;addParticle(player.x,player.y,'#55f5f2',20,180);if(build.dashBurst)enemies.forEach(e=>{if(dist(e,player)<100)damageEnemy(e,35,{chain:0})})}
+if(selectedPilot==='bastion'){player.shield=Math.min(player.maxShield+35,player.shield+45);player.inv=.25;addParticle(player.x,player.y,'#ffb45d',22,130)}
+if(selectedPilot==='engineer'){turrets.push({x:player.x,y:player.y,hp:80,life:9,fire:.2});addParticle(player.x,player.y,'#8cff9b',16,100)}
+if(selectedPilot==='hacker'){enemies.forEach(e=>{if(dist(e,player)<260)e.freeze=2.2});addParticle(player.x,player.y,'#c18aff',26,160)}
+sound(230,.2,'sawtooth',.035);toast(pilots[selectedPilot].ability);
+}
+function useUltimate(){if(player.ult<100)return;player.ult=0;
+if(selectedPilot==='phantom'){player.inv=2.5;player.dashTime=1.8;enemies.forEach(e=>{if(dist(e,player)<240)damageEnemy(e,85,{chain:0})})}
+if(selectedPilot==='bastion'){player.shield+=65;enemies.forEach(e=>{if(dist(e,player)<220)damageEnemy(e,75,{chain:0})})}
+if(selectedPilot==='engineer'){for(let i=0;i<4;i++)turrets.push({x:player.x+rand(-65,65),y:player.y+rand(-65,65),hp:65,life:12,fire:.1})}
+if(selectedPilot==='hacker'){enemies.forEach(e=>{e.freeze=4;damageEnemy(e,55,{chain:0})})}
+sound(90,.5,'sawtooth',.06);toast('終極協定啟動');
+}
+function dash(){if(player.dash>0)return;player.dash=player.dashMax;player.dashTime=.2;player.inv=.28;let a=player.angle;if(keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD){let dx=(keys.KeyD?1:0)-(keys.KeyA?1:0),dy=(keys.KeyS?1:0)-(keys.KeyW?1:0);a=Math.atan2(dy,dx)}player.vx=Math.cos(a)*680;player.vy=Math.sin(a)*680;addParticle(player.x,player.y,pilots[selectedPilot].color,12,100);sound(180,.1,'triangle',.025)}
+function hurt(dmg){if(player.inv>0)return;if(player.shield>0){let s=Math.min(player.shield,dmg);player.shield-=s;dmg-=s}if(dmg>0)player.hp-=dmg;player.inv=.55;player.damageFlash=.18;shake=8;addParticle(player.x,player.y,'#ff557e',12,130);sound(75,.15,'sawtooth',.04);if(player.hp<=0)endRun(false)}
+function enemyFire(e){let a=Math.atan2(player.y-e.y,player.x-e.x),speed=e.type==='sniper'?300:230;enemyBullets.push({x:e.x,y:e.y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,r:5,damage:e.dmg,color:e.color,life:3})}
+function update(dt){
+elapsed+=dt;player.angle=Math.atan2(mouse.y-player.y,mouse.x-player.x);
+let dx=(keys.KeyD?1:0)-(keys.KeyA?1:0),dy=(keys.KeyS?1:0)-(keys.KeyW?1:0),len=Math.hypot(dx,dy)||1;
+if(player.dashTime>0){player.x+=(player.vx||Math.cos(player.angle)*680)*dt;player.y+=(player.vy||Math.sin(player.angle)*680)*dt;player.dashTime-=dt}
+else{player.x+=dx/len*player.speed*(1+(build.speed||0))*dt;player.y+=dy/len*player.speed*(1+(build.speed||0))*dt}
+player.x=clamp(player.x,28,W-28);player.y=clamp(player.y,28,H-28);
+for(let k of ['fire','dash','ability','inv','damageFlash'])player[k]=Math.max(0,player[k]-dt);
+if(player.shield<player.maxShield&&selectedPilot==='bastion'&&elapsed%8<dt)player.shield=Math.min(player.maxShield,player.shield+12);
+if(player.shield>0&&player.shield<player.maxShield&&Math.random()<dt*.04)player.shield=Math.min(player.maxShield,player.shield+1);
+if(mouse.down)shoot();
+if(roomType==='combat'||roomType==='elite'){
+spawnTimer-=dt;if(spawnTimer<=0&&enemies.length<Math.min(12,roomTarget-roomKills)){let t=roomType==='elite'&&Math.random()<.35?'tank':pick(['drone','drone','rusher','sniper',...(sector>1?['tank']:[])]);spawnEnemy(t);spawnTimer=Math.max(.35,1.15-sector*.08)}
+}
+enemies.forEach(e=>{
+if(e.hp<=0)return;e.attack-=dt;e.shoot-=dt;e.hit=Math.max(0,e.hit-dt);e.burn=Math.max(0,e.burn-dt);e.freeze=Math.max(0,e.freeze-dt);
+if(e.burn>0&&Math.random()<dt*2)damageEnemy(e,4,{chain:0});
+let d=dist(e,player),a=Math.atan2(player.y-e.y,player.x-e.x),sp=e.speed*(e.freeze>0?.15:1);
+if(e.type==='sniper'){if(d<220){e.x-=Math.cos(a)*sp*.65*dt;e.y-=Math.sin(a)*sp*.65*dt}else if(d>340){e.x+=Math.cos(a)*sp*.4*dt;e.y+=Math.sin(a)*sp*.4*dt}if(e.shoot<=0&&d<560){enemyFire(e);e.shoot=2.2}}
+else{if(d>e.r+player.r+8){e.x+=Math.cos(a)*sp*dt;e.y+=Math.sin(a)*sp*dt}if(d<e.r+player.r+5&&e.attack<=0){hurt(e.dmg);e.attack=1.05}}
+});
+if(boss){boss.attack-=dt;boss.shoot-=dt;boss.phase+=dt;boss.hit=Math.max(0,boss.hit-dt);let a=Math.atan2(player.y-boss.y,player.x-boss.x),d=dist(boss,player);boss.x+=Math.sin(boss.phase*.8)*25*dt;boss.y=110+Math.sin(boss.phase*1.4)*20;if(boss.shoot<=0){for(let i=0;i<7;i++){let ang=boss.phase+i*TAU/7;enemyBullets.push({x:boss.x,y:boss.y,vx:Math.cos(ang)*175,vy:Math.sin(ang)*175,r:7,damage:13+sector,color:'#ff4da6',life:3})}boss.shoot=1.8;if(d<130&&boss.attack<=0){hurt(24);boss.attack=1.3}}}
+bullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;for(let e of enemies){if(e.hp>0&&dist(b,e)<e.r+b.r){damageEnemy(e,b.damage,b);b.life=b.pierce>0?b.life:0;if(b.pierce>0)b.pierce--;break}}if(boss&&dist(b,boss)<boss.r+b.r){let dmg=b.damage;boss.hp-=dmg;boss.hit=.08;b.life=b.pierce>0?b.life:0;if(b.pierce>0)b.pierce--;if(boss.hp<=0){boss=null;$('bossbar').style.display='none';roomCleared=true;roomKills=roomTarget;xp+=80;scrapRun+=35;toast('區域首領已摧毀');checkLevel()}}});
+enemyBullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;if(dist(b,player)<player.r+b.r){hurt(b.damage);b.life=0}});
+turrets.forEach(t=>{t.life-=dt;t.fire-=dt;if(t.fire<=0){let target=enemies.filter(e=>e.hp>0).sort((a,b)=>dist(a,t)-dist(b,t))[0];if(target){let a=Math.atan2(target.y-t.y,target.x-t.x);bullets.push({x:t.x,y:t.y,vx:Math.cos(a)*580,vy:Math.sin(a)*580,r:3,damage:13*(1+(build.damage||0)),life:1.5,color:'#8cff9b'});t.fire=.48}}});
+pickups.forEach(p=>{if(dist(p,player)<22){if(p.type==='heal')player.hp=Math.min(player.maxHp,player.hp+17);p.life=0;sound(660,.1,'sine')}});pickups.forEach(p=>p.life=(p.life??8)-dt);
+particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt});
+bullets=bullets.filter(b=>b.life>0&&b.x>-20&&b.x<W+20&&b.y>-20&&b.y<H+20);enemyBullets=enemyBullets.filter(b=>b.life>0&&b.x>-20&&b.x<W+20&&b.y>-20&&b.y<H+20);enemies=enemies.filter(e=>e.hp>0);particles=particles.filter(p=>p.life>0);pickups=pickups.filter(p=>p.life>0);turrets=turrets.filter(t=>t.life>0);
+if(!boss&&!roomCleared&&roomKills>=roomTarget&&enemies.length===0){roomCleared=true;roomClearReward()}
+if(boss){$('bossHp').style.width=clamp(boss.hp/boss.maxHp*100,0,100)+'%'}
+updateHud();
+}
+function roomClearReward(){runStats.rooms++;scrapRun+=roomType==='elite'?18:10;xp+=roomType==='elite'?35:20;checkLevel();if(roomType==='boss'){scrapRun+=25;sector++;room=0;toast('區域完成：可選擇下一戰區')}else toast('區域清除 · +'+(roomType==='elite'?18:10)+' SCRAP')}
+function updateHud(){
+$('hpText').textContent=Math.ceil(player.hp);$('hpMax').textContent=player.maxHp;$('hpBar').style.width=clamp(player.hp/player.maxHp*100,0,100)+'%';$('xpBar').style.width=xp/xpNeed*100+'%';$('xpText').textContent=xp;$('levelText').textContent=level;$('sectorText').textContent=String(sector).padStart(2,'0');$('roomText').textContent=String(room).padStart(2,'0');$('scrapText').textContent=scrapRun;$('weapon1').classList.toggle('active',activeWeapon===1);$('weapon2').classList.toggle('active',activeWeapon===2);$('weapon1').querySelector('strong').textContent=weapons[weaponLoadout[0]].name;$('weapon2').querySelector('strong').textContent=weapons[weaponLoadout[1]].name;
+}
+function openRoute(){
+state='route';let options=[
+{type:'combat',icon:'⚔',name:'戰鬥區',desc:'標準敵方單位。穩定獲得經驗與廢料。',cls:''},
+{type:'cache',icon:'✚',name:'補給站',desc:'恢復 35 HP，並取得額外廢料。',cls:'cache'},
+{type:'elite',icon:'☠',name:'精英封鎖區',desc:'高威脅敵群。獎勵更多稀有強化。',cls:'elite'},
+{type:'shop',icon:'◇',name:'黑市商人',desc:'花費廢料購買修復或強化。',cls:'shop'},
+{type:'event',icon:'⌘',name:'異常訊號',desc:'未知實驗：承擔代價換取力量。',cls:''}
+];let chosen=[pick(options),pick(options),pick(options)];if(!chosen.some(x=>x.type==='combat'))chosen[0]=options[0];if(room===0)chosen=[{type:'combat',icon:'⚔',name:'新區域：戰鬥',desc:'新戰區第一場遭遇。',cls:''},{type:'cache',icon:'✚',name:'緊急補給',desc:'恢復 35 HP，取得廢料。',cls:'cache'},{type:'elite',icon:'☠',name:'高危目標',desc:'精英單位把守的高報酬房間。',cls:'elite'}];
+panel('<div class="eyebrow">TACTICAL ROUTING // SECTOR '+String(sector).padStart(2,'0')+'</div><h2 style="font:700 25px Orbitron;margin:8px 0 5px">選擇下一個房間</h2><p class="lede" style="margin:0 0 18px">路線會影響你的資源、生命與戰鬥強度。謹慎選擇。</p><div class="roommap">'+chosen.map((o,i)=>'<button class="room '+o.cls+'" data-room="'+i+'"><div class="ico">'+o.icon+'</div><strong>'+o.name+'</strong><span>'+o.desc+'</span></button>').join('')+'</div><div class="smallnote">目前生命 '+Math.ceil(player.hp)+' / '+player.maxHp+' · 攜帶廢料 '+scrapRun+' · 已完成房間 '+runStats.rooms+'</div><div class="actions"><button id="extract">撤離並結算</button><button id="continue" class="primary">繼續深入</button></div>');
+document.querySelectorAll('[data-room]').forEach(b=>b.onclick=()=>{let o=chosen[+b.dataset.room];room++;roomType=o.type;hidePanel();state='playing';if(o.type==='cache'){player.hp=Math.min(player.maxHp,player.hp+35);scrapRun+=12;roomCleared=true;toast('補給完成 +35 HP')}else if(o.type==='shop')shopRoom();else if(o.type==='event')eventRoom();else spawnRoom();last=performance.now()});
+$('extract').onclick=()=>endRun(true);$('continue').onclick=()=>{room++;roomType='combat';hidePanel();state='playing';spawnRoom();last=performance.now()};
+}
+function shopRoom(){state='shop';panel('<div class="eyebrow">BLACK MARKET // OFF-GRID TRADER</div><h2 style="font:700 25px Orbitron;margin:8px 0">黑市交易站</h2><p class="lede">「不問你從哪裡來，只問你帶了多少廢料。」</p><div class="grid2"><div class="choice"><span class="tag">MEDICAL</span><h3>戰地修復</h3><p>恢復 45 HP。</p><button id="healBuy">購買 · 18 SCRAP</button></div><div class="choice"><span class="tag">WEAPON</span><h3>武器校準</h3><p>本次出擊傷害 +15%。</p><button id="dmgBuy">購買 · 22 SCRAP</button></div></div><div class="actions"><button id="leave" class="primary">離開商店</button></div><div class="smallnote">現有廢料：'+scrapRun+'</div>');
+$('healBuy').onclick=()=>{if(scrapRun<18)return toast('廢料不足');scrapRun-=18;player.hp=Math.min(player.maxHp,player.hp+45);shopRoom()};$('dmgBuy').onclick=()=>{if(scrapRun<22)return toast('廢料不足');scrapRun-=22;build.damage=(build.damage||0)+.15;shopRoom()};$('leave').onclick=()=>{hidePanel();state='playing';roomCleared=true;last=performance.now();updateHud()};
+}
+function eventRoom(){state='event';panel('<div class="eyebrow">UNKNOWN SIGNAL // EXPERIMENTAL CACHE</div><h2 style="font:700 25px Orbitron;margin:8px 0">失控實驗室</h2><p class="lede">一座仍在運作的實驗艙向你發出邀請。艙門標示著：神經超頻測試。</p><div class="grid2"><div class="choice"><span class="tag">HIGH RISK</span><h3>接受超頻</h3><p>失去 20 HP，永久於本次出擊獲得 +30% 傷害。</p><button id="risk">啟動實驗</button></div><div class="choice"><span class="tag">SAFE</span><h3>回收能源</h3><p>取得 18 廢料，不承擔額外風險。</p><button id="safe">回收能源</button></div></div>');
+$('risk').onclick=()=>{player.hp=Math.max(1,player.hp-20);build.damage=(build.damage||0)+.3;leaveEvent()};$('safe').onclick=()=>{scrapRun+=18;leaveEvent()};
+}
+function leaveEvent(){hidePanel();state='playing';roomCleared=true;last=performance.now();toast('實驗完成');updateHud()}
+function pause(){if(state!=='playing')return;state='paused';panel('<div class="eyebrow">SYSTEM PAUSED</div><h2 style="font:700 27px Orbitron">戰術暫停</h2><p class="lede">目前進度會在本次出擊結束後結算。</p><div class="actions"><button class="primary" id="resume">繼續作戰</button><button id="quit">放棄任務並撤離</button></div>');$('resume').onclick=()=>{state='playing';hidePanel();last=performance.now()};$('quit').onclick=()=>endRun(true)}
+function endRun(success){
+state='result';$('hud').style.display='none';let carry=success?scrapRun:Math.floor(scrapRun*.45),bonus=success?Math.floor(runStats.rooms*2):0;meta.scrap+=carry+bonus;meta.bestSector=Math.max(meta.bestSector,sector);meta.runs++;save();
+panel('<div class="eyebrow">'+(success?'MISSION EXTRACTED':'SIGNAL LOST')+' // DEBRIEF</div><h2 class="brand" style="font-size:32px">'+(success?'成功撤離':'作戰員陣亡')+'</h2><p class="lede">'+(success?'你帶著回收資料返回安全屋。':'NEXUS 已回收你的作戰訊號，但部分資源仍成功送回基地。')+'</p><div class="resultline"><span>抵達區域</span><b>'+sector+'</b></div><div class="resultline"><span>清除房間</span><b>'+runStats.rooms+'</b></div><div class="resultline"><span>擊殺單位</span><b>'+runStats.kills+'</b></div><div class="resultline"><span>本次廢料</span><b>'+scrapRun+'</b></div><div class="resultline"><span>帶回基地</span><b style="color:#55f5f2">+'+(carry+bonus)+' SCRAP</b></div><div class="resultline"><span>累計基地廢料</span><b>'+meta.scrap+'</b></div><div class="actions"><button class="primary" id="again">再次出擊</button><button id="base">基地整備</button><button id="home">主選單</button></div>');
+$('again').onclick=startRun;$('base').onclick=baseUpgrade;$('home').onclick=menu;
+}
+function drawBackground(){
+ctx.fillStyle='#080d1b';ctx.fillRect(0,0,W,H);
+let g=ctx.createRadialGradient(W*.5,H*.45,20,W*.5,H*.5,Math.max(W,H)*.75);g.addColorStop(0,'#101c35');g.addColorStop(1,'#050812');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ctx.save();ctx.strokeStyle='#28436133';ctx.lineWidth=1;let step=48,ox=(elapsed*5)%step,oy=(elapsed*3)%step;for(let x=-step+ox;x<W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}for(let y=-step+oy;y<H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+ctx.strokeStyle='#55f5f21c';ctx.lineWidth=2;ctx.strokeRect(18,18,W-36,H-36);ctx.restore();
+for(let i=0;i<7;i++){let x=(i*197+80)%W,y=(i*131+50)%H;ctx.fillStyle='#55f5f20c';ctx.fillRect(x,y,rand(18,60),2)}
+}
+function glow(x,y,r,color){ctx.shadowBlur=18;ctx.shadowColor=color;ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();ctx.shadowBlur=0}
+function draw(){
+drawBackground();
+if(state==='playing'||state==='paused'||state==='upgrade'||state==='route'||state==='shop'||state==='event'){
+// decorative obstacles
+for(let i=0;i<5;i++){let x=100+i*(W-200)/5,y=H*.35+(i%2)*H*.3;ctx.strokeStyle='#31506a55';ctx.lineWidth=2;ctx.strokeRect(x-17,y-17,34,34);ctx.strokeStyle='#55f5f222';ctx.strokeRect(x-12,y-12,24,24)}
+pickups.forEach(p=>{glow(p.x,p.y,5,'#8cff9b');ctx.fillStyle='#c8ffd7';ctx.fillRect(p.x-2,p.y-2,4,4)});
+turrets.forEach(t=>{ctx.strokeStyle='#8cff9b';ctx.lineWidth=2;ctx.beginPath();ctx.arc(t.x,t.y,12,0,TAU);ctx.stroke();glow(t.x,t.y,5,'#8cff9b')});
+bullets.forEach(b=>{ctx.shadowBlur=12;ctx.shadowColor=b.color;ctx.fillStyle=b.color;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,TAU);ctx.fill();ctx.shadowBlur=0});
+enemyBullets.forEach(b=>glow(b.x,b.y,b.r,b.color));
+enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.rotate(Math.atan2(player.y-e.y,player.x-e.x));ctx.shadowBlur=16;ctx.shadowColor=e.color;ctx.fillStyle=e.hit>0?'#fff':e.color;ctx.beginPath();if(e.type==='tank'){ctx.rect(-e.r,-e.r,e.r*2,e.r*2)}else{ctx.moveTo(e.r,0);ctx.lineTo(-e.r*.8,-e.r*.8);ctx.lineTo(-e.r*.55,0);ctx.lineTo(-e.r*.8,e.r*.8);ctx.closePath()}ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff9';ctx.stroke();ctx.restore();if(e.hp<e.maxHp){ctx.fillStyle='#142337';ctx.fillRect(e.x-e.r,e.y-e.r-8,e.r*2,3);ctx.fillStyle=e.color;ctx.fillRect(e.x-e.r,e.y-e.r-8,e.r*2*e.hp/e.maxHp,3)}});
+if(boss){ctx.save();ctx.translate(boss.x,boss.y);ctx.rotate(elapsed*.3);ctx.shadowBlur=28;ctx.shadowColor='#ff4da6';ctx.strokeStyle='#ff4da6';ctx.lineWidth=5;ctx.beginPath();ctx.rect(-boss.r,-boss.r,boss.r*2,boss.r*2);ctx.stroke();ctx.rotate(-elapsed*.6);ctx.strokeStyle='#ffb45d';ctx.beginPath();ctx.arc(0,0,boss.r*.68,0,TAU);ctx.stroke();ctx.fillStyle='#ff4da6';ctx.fillRect(-9,-9,18,18);ctx.restore()}
+particles.forEach(p=>{ctx.globalAlpha=clamp(p.life/p.max,0,1);glow(p.x,p.y,p.size,p.color);ctx.globalAlpha=1});
+if(player){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);ctx.globalAlpha=player.inv>0&&Math.floor(elapsed*18)%2===0?.4:1;ctx.shadowBlur=20;ctx.shadowColor=pilots[selectedPilot].color;ctx.fillStyle=pilots[selectedPilot].color;ctx.beginPath();ctx.moveTo(19,0);ctx.lineTo(-11,-10);ctx.lineTo(-7,0);ctx.lineTo(-11,10);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#eaffff';ctx.fillRect(1,-3,8,6);ctx.restore();if(player.shield>0){ctx.strokeStyle='#6eaaffaa';ctx.lineWidth=2;ctx.beginPath();ctx.arc(player.x,player.y,player.r+8,0,TAU);ctx.stroke()}}
+}
+if(shake>0){shake=Math.max(0,shake-.6);ctx.translate(rand(-shake,shake),rand(-shake,shake))}
+}
+function frame(t){let dt=Math.min((t-last)/1000||0,.033);last=t;if(state==='playing')update(dt);else elapsed+=dt;draw();if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').classList.remove('show')}
+if(state==='playing'&&roomCleared&&roomType!=='cache'&&roomType!=='shop'&&roomType!=='event'&&!boss){openRoute()}
+requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+addEventListener('keydown',e=>{keys[e.code]=true;if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(state==='playing'){if(e.code==='Space')dash();if(e.code==='Digit1')activeWeapon=1;if(e.code==='Digit2')activeWeapon=2;if(e.code==='KeyE')useAbility();if(e.code==='KeyQ')useUltimate();if(e.code==='Escape')pause()}});
+addEventListener('keyup',e=>keys[e.code]=false);
+canvas.addEventListener('mousemove',e=>{let r=canvas.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top});
+canvas.addEventListener('mousedown',e=>{if(e.button===0)mouse.down=true;if(e.button===2&&state==='playing')useAbility()});addEventListener('mouseup',e=>{if(e.button===0)mouse.down=false});canvas.addEventListener('contextmenu',e=>e.preventDefault());
+$('weapon1').onclick=()=>activeWeapon=1;$('weapon2').onclick=()=>activeWeapon=2;
+addEventListener('blur',()=>{mouse.down=false;keys={};if(state==='playing')pause()});
+menu();
+})();
+</script></body></html>
