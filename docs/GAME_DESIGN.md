@@ -1,102 +1,107 @@
-# NEON ABYSS PROTOCOL — Game Design Document
-Version 0.1 · Prototype baseline
+# NEON ABYSS PROTOCOL — Turn-Based Tactical Roguelite
+Version 2.0 · Rebooted design baseline
 
-## High concept
-A single-player, top-down action roguelite set in a neon-drenched underground megacity controlled by a corrupted AI called NEXUS. The player is an augmented operative entering sealed sectors to recover data and uncover the cause of the collapse.
+## Product direction
+A single-player, squad-based, turn-based tactical roguelite in a neon cyberpunk megacity. The real-time action prototype is superseded by this design. The new branch is intentionally isolated so the previous prototype remains intact on main.
 
-**Design pillars**
-1. Immediate, responsive combat with manual mouse aiming.
-2. Build freedom: character identity shapes playstyle but does not lock weapon or upgrade choices.
-3. Tactical pacing: quick standard encounters, deliberate elite and boss fights.
-4. Meaningful risk: choose routes, decide when to extract, and retain part of resources after defeat.
-5. Replayability through random upgrades, weapon combinations and persistent unlocks.
+## Core fantasy
+Lead a three-operative strike team through hostile sectors controlled by the rogue AI NEXUS. Every turn is a tactical puzzle: reposition, exploit cover, coordinate abilities, predict enemy intent and create elemental chain reactions.
 
-## Camera, controls and combat
-- Fixed top-down camera.
-- WASD movement, mouse aim/fire, 1/2 weapon switch, Space dash, E/right-click operative skill, Q ultimate, Esc pause.
-- One primary and one secondary weapon.
-- Dash grants a short invulnerability window and has a cooldown.
-- Combat feedback uses hit flashes, particles, projectile colors, screen shake and synthesized audio cues.
+## Design pillars
+1. Readable tactical decisions — every enemy telegraphs its next action before the player commits.
+2. Squad synergy — three operatives combine distinct roles and abilities.
+3. Position matters — cover, line of sight, range, chokepoints and flanking matter more than raw stats.
+4. Build freedom — equipment and modules create cross-role synergies; characters are not locked to one damage element.
+5. Roguelite risk — branch through rooms, choose rewards and decide when to extract.
+6. Fair information — no hidden enemy action resolution; enemy intent is visible and explainable.
+
+## Battle format
+- Grid battlefield, initially 10 columns × 8 rows.
+- Fixed top-down tactical presentation; clear square grid in the first prototype.
+- Player squad: three operatives deployed together.
+- Each operative receives 2 action points (AP) per player turn.
+- Move costs 1 AP; basic attack costs 1 AP; major skill usually costs 2 AP; interact costs 1 AP.
+- An operative may move and attack in one turn, attack twice if weapon permits, or spend AP on a tactical skill.
+- After all operatives act or the player presses End Turn, enemies execute their telegraphed intent.
+- The player can inspect units and enemies before committing actions.
+
+## Position and battlefield rules
+- Orthogonal movement initially; diagonal movement may be introduced as a module.
+- Obstacles block movement and line of sight.
+- Cover reduces incoming ranged damage; heavy cover blocks shots.
+- Melee/rush enemies threaten adjacent tiles.
+- Later systems: elevation, destructible cover, hazards, overwatch cones, flanking and environmental interactions.
 
 ## Operatives
-| Operative | Role | Passive identity | Active skill |
-|---|---|---|---|
-| Phantom / 幽影 | Mobility and precision | Consecutive kills build focus | Phase dash |
-| Bastion / 堡壘 | Defense and frontline | Periodic shield recovery | Bastion barrier |
-| Engineer / 工程師 | Deployables | Improved turret uptime | Auto-turret |
-| Hacker / 駭客 | Crowd control | Improved disruption duration | System shutdown |
+Four selectable characters; deploy three per mission.
 
-Operatives should encourage distinct builds without restricting access to weapons or general upgrades.
+| Operative | Tactical role | Signature skill |
+|---|---|---|
+| PHANTOM / 幽影 | Scout, flank, precision damage | Phase Shift: reposition through threatened lanes and mark a target |
+| BASTION / 堡壘 | Tank, protect allies, hold chokepoints | Aegis Wall: deploy directional cover and draw enemy fire |
+| ENGINEER / 工程師 | Area control, deployables | Sentry Drone: deploy a turret that fires during enemy phase |
+| HACKER / 駭客 | Disable, manipulate machines | System Breach: interrupt or redirect a machine enemy's intent |
 
-## Weapons
-| Weapon | Identity |
-|---|---|
-| Arc Pistol | Accurate energy sidearm; chain effects |
-| Plasma Shotgun | Close-range multi-projectile burst |
-| Pulse Rifle | High rate of fire and stable tracking |
-| Rail Lance | Slow, high-damage piercing shot |
+Character identity comes from AP-efficient abilities and passive traits, not weapon restrictions.
 
-The intended full-game roster is 10+ weapons. Prototype begins with Arc Pistol + Plasma Shotgun. A field armory appears after the first cleared room and periodically afterward; choose one newly offered weapon and replace either slot. The replaced weapon returns to the available pool. Prototype weapons validate the two-slot loop before expanding the full roster.
+## Weapons and gear
+Weapon families include energy sidearms, shotguns, pulse rifles, rail weapons, flamers, launchers and control tools. Gear alters tactical rules (pierce cover, chain to adjacent targets, suppress, mark, push, create hazards) rather than only increasing damage. Initial prototype equipment remains small to validate tactical feel.
 
-## Upgrade families and synergies
-- Electromagnetic: chain lightning, stun and EMP.
-- Thermal: burn, explosions and heat.
-- Cryogenic: slow, freeze and shatter.
-- Nano: drones, repair and persistent summons.
-- Overload: critical hits, attack speed and burst windows.
+## Status and synergy families
+- Electromagnetic: chain damage, stun, interrupt, machine vulnerability.
+- Thermal: burn damage over turns, explosive terrain, area denial.
+- Cryogenic: slow, root/freeze, brittle targets take bonus damage.
+- Nano: drones, repair, shields, deployable structures.
+- Overload: AP conversion, critical windows, cooldown manipulation.
 
-Prototype upgrades include damage, fire rate, critical chance, reliable visible chain lightning (with an extra jump from Overload), burn, freeze, orbiting auto-fire drones, lifesteal, dash burst, burn-death nova explosions and shields.
+Examples:
+- Hacker EMP + Engineer turret: turret gains a temporary chain-lightning shot.
+- Cryo-marked enemy + Phantom precision strike: shatter bonus.
+- Bastion blocks a corridor while Engineer controls the approach with mines.
+- Thermal explosion ignites nearby volatile objects.
 
-## Run structure
-1. Start from safehouse and select an operative.
-2. Enter a sector and clear rooms.
-3. Choose a branching route: combat, supply, elite, shop or anomaly.
-4. Every fourth cleared room offers a sector boss encounter.
-5. Defeat the boss to advance to the next sector.
-6. Extract when desired or continue deeper.
-7. Spend retained scrap on permanent safehouse upgrades.
+## Enemy intent system
+Enemies announce planned actions during the player phase:
+- Drone: move toward the nearest exposed operative and fire.
+- Rusher: mark a target tile, then charge next enemy phase.
+- Sniper: draw a targeting line; fire if the target remains in line of sight.
+- Bulwark: guard adjacent enemies or advance to block a lane.
+- Controller: create a hazard zone or buff nearby machines.
+Intent must be visually distinct: move marker, attack line, danger tiles or shield icon. Player actions can interrupt, stun, push or block an intent.
 
-Target full-run length: approximately 25–45 minutes, subject to playtesting.
+## Room and run structure
+1. Safehouse: select three operatives, equip gear and choose a starting contract.
+2. Tactical encounter: fight on a grid with visible enemy intent.
+3. Reward: choose one of three modules, gear pieces or resources.
+4. Route map: choose combat, elite, supply, shop, event or boss.
+5. Sector boss: multi-phase encounter with arena mechanics.
+6. Extract or continue deeper.
+7. Return to safehouse and spend retained resources on permanent unlocks.
 
-## Room types
-- Combat: standard enemy waves and reliable XP/scrap.
-- Elite: tougher composition and improved rewards.
-- Boss: named encounter with radial projectile patterns.
-- Supply: healing and a modest resource cache.
-- Shop: trade scrap for healing or temporary damage.
-- Anomaly: choose between a risky power boost and a safe resource reward.
+Target expedition length: 25–45 minutes, to be validated through playtests.
 
-## Enemies
-- Drone: basic pursuit unit.
-- Rusher: fast melee pressure.
-- Sniper: maintains distance and fires aimed projectiles.
-- Tank: slow, high-health threat.
-- Boss: large health pool and radial bullet patterns.
+## Progression
+- During a run: modules, weapon modifications, consumables and temporary squad synergies.
+- Between runs: operative unlocks, gear blueprints, safehouse services, codex entries and difficulty tiers.
+- Defeat retains a portion of common resources; successful extraction retains the full haul.
+- Higher difficulties add enemy behaviors and tactical modifiers, not merely inflated health.
 
-Future enemy roles: shield bearer, repair drone, summoner, area-denial artillery and kamikaze unit.
+## Scope targets
+- 4 playable operatives; 3 deployed per encounter.
+- 10+ weapon families and tactical modifications.
+- 5 synergy families.
+- 4 regions and 8+ bosses.
+- Multiple difficulty tiers.
+- Single-player only.
 
-## Progression and economy
-- Run XP grants a level-up; choose one of three random upgrades.
-- Scrap is the run currency.
-- Successful extraction retains all run scrap; defeat retains 45%.
-- Permanent safehouse upgrades improve starting hull, weapon damage and resource recovery.
-- Higher difficulty tiers unlock after clears in the full design; the prototype currently focuses on the baseline loop.
+## Prototype acceptance criteria
+- Grid selection and movement.
+- Action point spending and End Turn.
+- Range and line-of-sight validation.
+- Enemy intent previews.
+- Enemy phase resolution.
+- At least three distinct operative abilities.
+- Victory/defeat and a repeatable encounter loop.
 
-## Visual direction
-- Neon sci-fi / cyberpunk industrial spaces.
-- Dark navy environment, cyan player silhouette, pink/red hostile signals, amber elite/boss accents.
-- Geometric silhouettes and strong projectile contrast take priority over decorative detail.
-
-## Scope targets for the full game
-- 4 playable operatives.
-- 10+ weapons and meaningful weapon modifiers.
-- 5 upgrade/synergy families.
-- 4 major regions and 8+ bosses.
-- Progressive difficulty tiers with mechanical modifiers, not just inflated enemy health.
-
-## Current prototype limitations
-- Single HTML file; no asset pipeline or bundler.
-- Keyboard/mouse only; touch and gamepad are not implemented.
-- Audio is synthesized and intentionally minimal.
-- Boss patterns, enemy AI, balance and room generation are early placeholders.
-- Local browser save only; no cloud save or account system.
+## Explicitly out of scope for the reboot
+Real-time movement, mouse-aim shooting, bullet-hell projectile dodging, real-time cooldown rotations and the old quick-switch action combat loop.
