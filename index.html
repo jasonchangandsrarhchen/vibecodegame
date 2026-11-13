@@ -18,13 +18,13 @@ button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3
 <body>
 <header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // BUILD 0.2.2</div></div>
 <div class="resources">
-<div class="res"><small>鐵礦</small><b id="iron">40</b></div><div class="res"><small>銅礦</small><b id="copper">25</b></div><div class="res"><small>碳晶</small><b id="crystal">12</b></div><div class="res"><small>合金板</small><b id="plate">0</b></div><div class="res"><small>電子元件</small><b id="circuit">0</b></div><div class="res"><small>能源</small><b id="energy">80</b></div>
+<div class="res"><small>鐵礦</small><b id="iron">40</b></div><div class="res"><small>銅礦</small><b id="copper">25</b></div><div class="res"><small>碳晶</small><b id="crystal">12</b></div><div class="res"><small>合金板</small><b id="plate">0</b></div><div class="res"><small>電子元件</small><b id="circuit">0</b></div><div class="res"><small>能源</small><b id="energy">80</b></div><div class="res"><small>石材</small><b id="stone">0</b></div><div class="res"><small>稀有元素</small><b id="rare">0</b></div><div class="res"><small>星際資料</small><b id="data">0</b></div>
 </div></header>
 <main>
 <section class="panel">
 <div class="topline"><div><div class="eyebrow">SECTOR 07 / PLANETARY SURFACE</div><div class="muted" style="font-size:10px">點擊地格選取；選擇建築後再點地圖部署。滾動可查看完整星球地表。</div></div><div id="clock" class="eyebrow">☀ 白晝 01</div></div>
 <div class="world-wrap"><div class="world" id="world"></div></div>
-<div class="legend"><span>🪨 鐵礦脈</span><span>🟠 銅礦脈</span><span>💎 碳晶</span><span>🌊 水域</span><span>⛰️ 岩壁</span><span>🏭 工業設施</span><span>👾 敵對生物</span></div>
+<div class="legend"><span>🪨 鐵礦脈</span><span>🟠 銅礦脈</span><span>💎 碳晶</span><span>🌊 水域</span><span>⛰️ 岩壁</span><span>🏭 工業設施</span><span>👾 敵對生物</span><span>🪨 岩壁可建採石場</span></div>
 <div class="topline" style="margin-top:12px"><div class="eyebrow">CONSTRUCTION / 建造選單</div><button class="action" id="cancel">取消建造</button></div>
 <div class="toolbar" id="toolbar">
 <button class="build" data-build="miner"><strong><span class="ico">⛏️</span>採礦機</strong><small>鐵 8 · 銅 4</small></button>
@@ -36,9 +36,9 @@ button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3
 <button class="build" data-build="belt"><strong><span class="ico">➖</span>輸送帶</strong><small>鐵 1</small></button>
 <button class="build" data-build="battery"><strong><span class="ico">🔋</span>蓄電池</strong><small>鐵 6 · 銅 4</small></button>
 <button class="build" data-build="turret"><strong><span class="ico">🛡️</span>防禦砲塔</strong><small>板 4 · 電子 2</small></button>
-<button class="build" data-build="lab"><strong><span class="ico">🧬</span>研究中心</strong><small>板 8 · 電子 5 · 晶 5</small></button>
+<button class="build" data-build="lab"><strong><span class="ico">🧬</span>研究中心</strong><small>板 8 · 電子 5 · 晶 5</small></button><button class="build" data-build="quarry"><strong><span class="ico">🪨</span>採石場</strong><small>鐵 10 · 銅 6（岩壁）</small></button><button class="build" data-build="fusion"><strong><span class="ico">☢️</span>核融合爐</strong><small>板 40 · 電子 20 · 晶 20</small></button><button class="build" data-build="spaceport"><strong><span class="ico">🚀</span>星際港</strong><small>板 35 · 電子 25 · 晶 25 · 石 30</small></button><button class="build" data-build="quantum"><strong><span class="ico">🌀</span>量子工廠</strong><small>板 30 · 電子 20 · 稀有 10</small></button><button class="build" data-build="shield"><strong><span class="ico">🛡️</span>行星護盾</strong><small>板 50 · 電子 25 · 稀有 15 · 資料 20</small></button><button class="build" data-build="orbital"><strong><span class="ico">🛰️</span>軌道炮</strong><small>板 45 · 電子 30 · 稀有 20 · 資料 30</small></button>
 </div>
-<div class="muted" style="font-size:9px;margin-top:8px">提示：採礦機必須放在對應礦脈；晶體鑽機只能放在碳晶礦脈。生產設施會自動使用基地共享倉儲中的材料。</div>
+<div class="muted" style="font-size:9px;margin-top:8px">提示：採礦機必須放在對應礦脈；晶體鑽機只能放在碳晶礦脈。採石場必須放在岩壁。星際港會定期派遣探勘船，帶回稀有元素與星際資料。</div>
 </section>
 <aside class="side">
 <section class="panel"><div class="eyebrow">新手教學 / FIRST 10 MINUTES</div><div class="objective" style="margin-top:7px"><b>① 採礦：</b>點「採礦機」→ 點座標 (2,2) 的鐵礦 🪨。<br><b>② 發電：</b>建造太陽能板，再補風力發電，夜晚才不會停電。<br><b>③ 冶煉：</b>鐵礦累積後，在平地建造冶煉爐，生產合金板。<br><b>④ 研究：</b>建造組裝工廠生產電子元件，再建研究中心。<br><b>⑤ 防守：</b>約 4 分鐘後第一波蟲群才會抵達；前期先安心採礦、發電與冶煉。每波來襲前 30 秒會收到警報。<br><span style="color:var(--gold)">地圖中央 🏠 是基地核心；敵人會從邊緣出現並朝核心移動。</span></div></section><section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 id="missionTitle" style="margin:5px 0;font-size:15px">第一座能源基地</h3><div id="objective" class="objective">部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。</div><div class="meter"><i id="progress"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
@@ -65,7 +65,13 @@ const defs={
  belt:{name:"輸送帶",icon:"➖",cost:{iron:1},power:0,desc:"物流網路節點；連接相鄰工業設施。"},
  battery:{name:"蓄電池",icon:"🔋",cost:{iron:6,copper:4},power:0,desc:"增加 100 點能源儲存容量。"},
  turret:{name:"防禦砲塔",icon:"🛡️",cost:{plate:4,circuit:2},power:2,desc:"自動防守基地，抵禦外星生物。"},
- lab:{name:"研究中心",icon:"🧬",cost:{plate:8,circuit:5,crystal:5},power:5,desc:"每 15 秒產生 1 研究點。"}
+ lab:{name:"研究中心",icon:"🧬",cost:{plate:8,circuit:5,crystal:5},power:5,desc:"每 15 秒產生 1 研究點。"},
+ quarry:{name:"採石場",icon:"🪨",cost:{iron:10,copper:6},power:2,desc:"每 5 秒從岩壁開採 2 石材。"},
+ fusion:{name:"核融合爐",icon:"☢️",cost:{plate:40,circuit:20,crystal:20},power:0,desc:"穩定提供 20 MW 全天候能源。"},
+ spaceport:{name:"星際港",icon:"🚀",cost:{plate:35,circuit:25,crystal:25,stone:30},power:5,desc:"每 120 秒派遣探勘船；消耗補給換取稀有元素與星際資料。"},
+ quantum:{name:"量子工廠",icon:"🌀",cost:{plate:30,circuit:20,rare:10},power:6,desc:"每 30 秒消耗稀有元素與電子元件，製造星際資料。"},
+ shield:{name:"行星護盾",icon:"🛡️",cost:{plate:50,circuit:25,rare:15,data:20},power:8,desc:"大幅提升基地耐久上限，並持續修復核心。"},
+ orbital:{name:"軌道炮",icon:"🛰️",cost:{plate:45,circuit:30,rare:20,data:30},power:10,desc:"每 5 秒打擊 10 格內敵人，造成 80 傷害。"}
 };
 const oreNames={iron:"鐵礦脈",copper:"銅礦脈",crystal:"碳晶礦脈"};
 const techs=[
@@ -74,11 +80,15 @@ const techs=[
 {id:"metallurgy",name:"先進冶金",cost:6,desc:"冶煉爐速度提升 35%。"},
 {id:"weapons",name:"脈衝武器",cost:7,desc:"砲塔攻擊力提升，可抵禦大型蟲群。"},
 {id:"automation",name:"工業自動化",cost:9,desc:"組裝工廠速度提升 40%。"},
-{id:"shields",name:"行星護盾",cost:12,desc:"基地完整度上限與防禦能力提升。"}
+{id:"shields",name:"行星護盾技術",cost:12,desc:"解鎖行星護盾建築。"},
+{id:"deepSpace",name:"深空探勘",cost:14,desc:"解鎖星際港與採石場。"},
+{id:"fusion",name:"核融合工程",cost:18,desc:"解鎖核融合爐，提供穩定的大量能源。"},
+{id:"quantum",name:"量子運算",cost:22,desc:"解鎖量子工廠與行星護盾。"},
+{id:"orbital",name:"軌道打擊",cost:26,desc:"解鎖軌道炮，遠距離清除敵群。"}
 ];
 let s;
 function fresh(){
-s={res:{iron:40,copper:25,crystal:12,plate:0,circuit:0,energy:80},tiles:[],buildings:[],selected:0,mode:null,tick:0,paused:false,speed:1,integrity:100,threat:0,science:0,unlocked:[],log:[],mission:0,enemy:[],beltDir:0,lastEvent:0};
+s={res:{iron:40,copper:25,crystal:12,plate:0,circuit:0,energy:80,stone:0,rare:0,data:0},tiles:[],buildings:[],selected:0,mode:null,tick:0,paused:false,speed:1,integrity:100,threat:0,science:0,unlocked:[],log:[],mission:0,enemy:[],beltDir:0,lastEvent:0};
 makeMap();
 }
 function makeMap(){
@@ -86,15 +96,17 @@ s.tiles=[];
 for(let y=0;y<H;y++)for(let x=0;x<W;x++){let terrain="plain";if((x===0||x===19)&&(y<3||y>10))terrain="rock";if((x===9||x===10)&&y===0)terrain="water";s.tiles.push({terrain,ore:null,building:null});}
 s.tiles[idx(9,7)].terrain="base";
 [[2,2,"iron"],[3,2,"iron"],[5,10,"iron"],[16,3,"iron"],[17,3,"iron"],[15,10,"iron"],[2,8,"copper"],[3,9,"copper"],[16,8,"copper"],[17,9,"copper"],[8,4,"crystal"],[11,10,"crystal"],[6,6,"iron"],[13,5,"copper"],[10,7,"iron"],[4,12,"copper"]].forEach(([x,y,o])=>s.tiles[idx(x,y)].ore=o);
+[[1,6],[1,7],[18,6],[18,7],[7,1],[12,12],[5,5],[14,8]].forEach(([x,y])=>s.tiles[idx(x,y)].terrain="rock");
 }
 function log(t){s.log.unshift(t);s.log=s.log.slice(0,45);$("log").innerHTML=s.log.map(x=>"<div>"+x+"</div>").join("");}
 function count(type){return s.buildings.filter(b=>b.type===type).length}
-function powerGen(){let day=s.tick%120<82,boost=s.unlocked.includes("power")?1.3:1;return count("solar")*(day?7*boost:0)+count("wind")*3*boost}
+function powerGen(){let day=s.tick%120<82,boost=s.unlocked.includes("power")?1.3:1;return count("solar")*(day?7*boost:0)+count("wind")*3*boost+count("fusion")*20}
 function powerUse(){return s.buildings.reduce((a,b)=>a+(defs[b.type]?.power||0),0)}
 function active(){return s.res.energy>0}
 function buildAt(i,type){
 const t=s.tiles[i],d=defs[type];if(!d)return;
-if(t.building||t.terrain!=="plain"){log(t.terrain==="base"?"這裡是基地核心，不能建造。":"部署失敗：此地格無法建造。");return;}
+if(t.building||(type==="quarry"?t.terrain!=="rock":t.terrain!=="plain")){log(t.terrain==="base"?"這裡是基地核心，不能建造。":type==="quarry"?"採石場只能部署在岩壁上。":"部署失敗：此地格無法建造。");return;}
+const gates={quarry:"deepSpace",spaceport:"deepSpace",fusion:"fusion",quantum:"quantum",shield:"quantum",orbital:"orbital"};if(gates[type]&&!s.unlocked.includes(gates[type])){log("尚未研究必要科技，無法部署"+d.name+"。");return;}
 if(type==="miner"&&!t.ore){log("採礦機必須部署在鐵礦或銅礦脈上。");return}
 if(type==="drill"&&t.ore!=="crystal"){log("晶體鑽機必須部署在碳晶礦脈上。");return}
 if(type==="miner"&&t.ore==="crystal"){log("碳晶礦脈請使用晶體鑽機。");return}
@@ -132,7 +144,7 @@ for(let n=0;n<amount;n++){
  let edge=Math.floor(Math.random()*4),x=edge===0?1:edge===1?W-2:1+Math.floor(Math.random()*(W-2)),y=edge===2?1:edge===3?H-2:1+Math.floor(Math.random()*(H-2));
  let tries=0,i=idx(x,y);
  while((s.tiles[i].terrain!=="plain"||s.enemy.some(e=>e.index===i))&&tries++<40){x=1+Math.floor(Math.random()*(W-2));y=1+Math.floor(Math.random()*(H-2));i=idx(x,y);}
- if(tries<40){s.enemy.push({id:Date.now()+Math.random(),index:i,hp:50,move:0,attack:0});spawned++;}
+ if(tries<40){s.enemy.push({id:Date.now()+Math.random(),index:i,hp:50+s.threat*8,move:0,attack:0});spawned++;}
 }
 log("🚨 蟲群警報！"+spawned+" 隻外星生物已從地圖邊緣出現，正朝基地核心移動！");
 }
@@ -152,6 +164,8 @@ for(const b of s.buildings.filter(b=>b.type==="turret")){
  if(target){target.hp-=s.unlocked.includes("weapons")?50:25;log("🛡️ 防禦砲塔命中外星生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=1;log("外星生物已被消滅，回收 1 碳晶。");}}
 }
 }
+if(s.tick%5===0){for(const b of s.buildings.filter(b=>b.type==="orbital")){const target=s.enemy.find(e=>Math.abs(xy(e.index).x-xy(b.index).x)+Math.abs(xy(e.index).y-xy(b.index).y)<=10);if(target){target.hp-=s.unlocked.includes("weapons")?120:80;log("🛰️ 軌道炮命中敵對生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=2;s.res.rare+=1;log("軌道打擊消滅目標，回收 2 碳晶與 1 稀有元素。");}}}}
+}
 function tick(){
 if(s.paused)return;s.tick++;
 const gen=powerGen(),use=powerUse(),cap=100+count("battery")*100;
@@ -164,6 +178,10 @@ if(b.type==="drill"&&s.tick%5===0)s.res.crystal+=1;
 if(b.type==="smelter"&&s.tick%6===0&&s.res.iron>=3){s.res.iron-=3;s.res.plate+=1;}
 if(b.type==="assembler"&&s.tick%8===0&&s.res.plate>=2&&s.res.copper>=2){s.res.plate-=2;s.res.copper-=2;s.res.circuit+=1;}
 if(b.type==="lab"&&s.tick%15===0)s.science+=1;
+if(b.type==="quarry"&&s.tick%5===0)s.res.stone+=2;
+if(b.type==="spaceport"&&s.tick%120===0){if(s.res.circuit>=8&&s.res.plate>=12&&s.res.crystal>=5){s.res.circuit-=8;s.res.plate-=12;s.res.crystal-=5;s.res.rare+=4;s.res.data+=3;log("🚀 探勘船返航！取得 4 稀有元素與 3 星際資料。");}else log("星際港補給不足：探勘船暫緩出發（需電子 8、合金板 12、碳晶 5）。");}
+if(b.type==="quantum"&&s.tick%30===0&&s.res.rare>=1&&s.res.circuit>=2){s.res.rare-=1;s.res.circuit-=2;s.res.data+=3;s.science+=1;}
+
 }
 }
 if(s.tick%120===0){log("第 "+(Math.floor(s.tick/120)+1)+" 天開始。能源與產線狀態已更新。");}
@@ -171,12 +189,12 @@ if(s.tick>=210&&(s.tick-210)%180===0)log("⚠️ 蟲群接近警報：預計 30 
 if(s.tick>=240&&(s.tick-240)%180===0)raid();
 updateEnemies();turretFire();
 if(s.integrity<=0){s.paused=true;event("殖民基地失守","外星生物已突破防線並摧毀基地核心。請重新開始殖民計畫。");}
-if(s.tick%30===0&&s.integrity<100&&s.unlocked.includes("shields"))s.integrity=Math.min(100,s.integrity+1);
+if(s.tick%30===0&&count("shield"))s.integrity=Math.min(200,s.integrity+2);
 if(s.res.energy<=0&&use>0&&s.tick%10===0)log("能源不足：部分工業設施已停止運作，請擴建發電設施。");
 render();save(false);
 }
 function save(show=true){localStorage.setItem("projectFrontierSaveV2",JSON.stringify(s));if(show)log("基地進度已儲存。")}
-function load(){try{let x=JSON.parse(localStorage.getItem("projectFrontierSaveV2"));if(x&&x.tiles?.length===W*H){s={...s,...x,enemy:Array.isArray(x.enemy)?x.enemy:[]};if(s.tiles[idx(9,7)]&&!s.tiles[idx(9,7)].building)s.tiles[idx(9,7)].terrain="base";log("已載入先前的殖民基地。");}}catch(e){}}
+function load(){try{let x=JSON.parse(localStorage.getItem("projectFrontierSaveV2"));if(x&&x.tiles?.length===W*H){s={...s,...x,enemy:Array.isArray(x.enemy)?x.enemy:[]};if(s.tiles[idx(9,7)]&&!s.tiles[idx(9,7)].building)s.tiles[idx(9,7)].terrain="base";s.res={iron:40,copper:25,crystal:12,plate:0,circuit:0,energy:80,stone:0,rare:0,data:0,...(x.res||{})};log("已載入先前的殖民基地。");}}catch(e){}}
 $("toolbar").addEventListener("click",e=>{let b=e.target.closest("[data-build]");if(!b)return;let type=b.dataset.build;s.mode=type;document.querySelectorAll(".build").forEach(x=>x.classList.toggle("active",x===b));log("建造模式："+defs[type].name+"；選擇地格部署。");});
 $("world").addEventListener("click",e=>{let c=e.target.closest("[data-i]");if(!c)return;let i=+c.dataset.i;if(s.mode)buildAt(i,s.mode);else select(i);});
 $("cancel").onclick=()=>{s.mode=null;document.querySelectorAll(".build").forEach(x=>x.classList.remove("active"));};
