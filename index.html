@@ -82,7 +82,7 @@ document.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{let k=b.dataset
 }
 function startRun(){
 selectedPilot=selectedPilot||'phantom';let p=pilots[selectedPilot];
-player={x:W/2,y:H/2,r:13,hp:p.hp+(meta.upgrades.hull||0)*8,maxHp:p.hp+(meta.upgrades.hull||0)*8,speed:p.speed,angle:0,shield:selectedPilot==='bastion'?20:0,maxShield:selectedPilot==='bastion'?20:0,inv:0,dash:0,dashMax:1.7,dashTime:0,fire:0,ability:0,abilityMax:selectedPilot==='engineer'?7:9,ult:0,focus:0,streak:0,damageFlash:0};
+player={x:W/2,y:H/2,r:13,hp:p.hp+(meta.upgrades.hull||0)*8,maxHp:p.hp+(meta.upgrades.hull||0)*8,speed:p.speed,angle:0,shield:selectedPilot==='bastion'?20:0,maxShield:selectedPilot==='bastion'?20:0,inv:0,dash:0,dashMax:1.7,dashTime:0,fire:0,ability:0,abilityMax:selectedPilot==='engineer'?7:9,ult:0,focus:0,streak:0,damageFlash:0,droneFire:0};
 room=1;sector=1;roomType='combat';roomKills=0;roomTarget=8;spawnTimer=.6;level=1;xp=0;xpNeed=45;scrapRun=0;build={damage:(meta.upgrades.damage||0)*.05};runStats={kills:0,rooms:0,damage:0};activeWeapon=1;weaponLoadout=['pistol','shotgun'];enemies=[];bullets=[];enemyBullets=[];particles=[];pickups=[];hazards=[];turrets=[];effects=[];boss=null;player.droneFire=0;roomCleared=false;elapsed=0;
 state='playing';hidePanel();$('hud').style.display='block';updateHud();spawnRoom();last=performance.now();
 }
@@ -118,7 +118,7 @@ if(e.hp<=0)return;let critical=source&&source.crit;if(critical)dmg*=1.8+(build.c
 e.hp-=dmg;e.hit=.09;runStats.damage+=dmg;
 if(source&&source.burn)e.burn=2.8;if(source&&source.freeze)e.freeze=1.2;
 addParticle(e.x,e.y,critical?'#fff1a8':e.color,critical?7:3,75);
-if(source&&source.chain>0&&Math.random()<.35){
+if(source&&source.chain>0){
 let hops=1+(build.chainPower?1:0),near=enemies.filter(o=>o!==e&&o.hp>0&&dist(o,e)<185).sort((a,b)=>dist(a,e)-dist(b,e)).slice(0,hops);
 near.forEach(o=>{effects.push({type:'line',x1:e.x,y1:e.y,x2:o.x,y2:o.y,life:.18,max:.18,color:'#55f5f2'});damageEnemy(o,dmg*(.55+(build.chainPower||0)),{chain:Math.max(0,source.chain-1)});addParticle((o.x+e.x)/2,(o.y+e.y)/2,'#55f5f2',8,120)});
 }
@@ -173,7 +173,7 @@ spawnTimer-=dt;if(spawnTimer<=0&&enemies.length<Math.min(12,roomTarget-roomKills
 }
 enemies.forEach(e=>{
 if(e.hp<=0)return;e.attack-=dt;e.shoot-=dt;e.hit=Math.max(0,e.hit-dt);e.burn=Math.max(0,e.burn-dt);e.freeze=Math.max(0,e.freeze-dt);
-if(e.burn>0&&Math.random()<dt*2)damageEnemy(e,4,{chain:0});
+if(e.burn>0&&Math.random()<dt*2)damageEnemy(e,4,{chain:0,noNova:false});
 let d=dist(e,player),a=Math.atan2(player.y-e.y,player.x-e.x),sp=e.speed*(e.freeze>0?.15:1);
 if(e.type==='sniper'){if(d<220){e.x-=Math.cos(a)*sp*.65*dt;e.y-=Math.sin(a)*sp*.65*dt}else if(d>340){e.x+=Math.cos(a)*sp*.4*dt;e.y+=Math.sin(a)*sp*.4*dt}if(e.shoot<=0&&d<560){enemyFire(e);e.shoot=2.2}}
 else{if(d>e.r+player.r+8){e.x+=Math.cos(a)*sp*dt;e.y+=Math.sin(a)*sp*dt}if(d<e.r+player.r+5&&e.attack<=0){hurt(e.dmg);e.attack=1.05}}
