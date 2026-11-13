@@ -1,46 +1,31 @@
 # NEON ABYSS PROTOCOL
-### 霓虹深淵：Neon Abyss Protocol
+### 霓虹深淵：戰術協定
 
-A browser-playable, single-player top-down action roguelite prototype. Built as a lightweight HTML5 Canvas game with no build step and no external runtime dependencies.
+A single-player, squad-based, turn-based tactical roguelite prototype.
 
-## Play
+## Development branch
+The reboot is being developed on **turn-based-reboot**. The previous real-time action prototype remains preserved on **main**.
 
-- Open **[index.html](index.html)** in a modern desktop browser.
-- Or enable GitHub Pages: repository **Settings → Pages → Deploy from a branch → main / root**. After deployment, use the Pages URL shown in Settings.
-- Progress is stored in the browser's localStorage.
-
-## Controls
-
-| Input | Action |
-|---|---|
-| W A S D | Move |
-| Mouse | Aim |
-| Left click | Fire |
-| 1 / 2 | Switch primary / secondary weapon |
-| Space | Dodge dash with brief invulnerability |
-| E or right click | Character ability |
-| Q | Ultimate ability (when charged by combat) |
-| Esc | Pause |
-
-## Current prototype features
-
-- Four playable operatives: Phantom, Bastion, Engineer, Hacker.
-- Two weapon slots with Arc Pistol, Plasma Shotgun, Pulse Rifle and Rail Lance.
-- Room-based combat, route choices, supply rooms, black market, experimental events, elite encounters, weapon armory and scheduled boss encounters.
-- XP level-ups with three random upgrade choices.
-- Cross-build effects with combat implementation: visible chain lightning, burn, freeze, orbiting auto-fire drones, burn-death nova explosions, lifesteal, dash burst and shield.
-- Extraction, partial resource retention on defeat, and persistent safehouse upgrades.
-- Responsive HUD and neon sci-fi canvas rendering.
-
-## Prototype status
-
-This is the first playable vertical slice, not the final content-complete game. Balance, enemy variety, audio, touch/gamepad support, additional bosses, region art and full narrative progression remain planned.
+## New direction
+- Three-operatives squad tactics.
+- Grid-based movement and positioning.
+- Action points per operative.
+- Visible enemy intent and a distinct enemy phase.
+- Cover, line of sight, tactical skills and squad synergies.
+- Roguelite routes, rewards, extraction and safehouse progression.
 
 ## Project documents
-
-- [Game Design Document](docs/GAME_DESIGN.md)
+- [Turn-Based Game Design](docs/GAME_DESIGN.md)
 - [Development Roadmap](docs/ROADMAP.md)
 
-## License
+## Play
+The tactical prototype is under construction on the `turn-based-reboot` branch. Open `index.html` in a modern desktop browser after the first playable build is committed.
 
-No license has been added yet. All rights remain with the repository owner unless a license is explicitly added.
+## Controls (planned)
+- Click a friendly unit to select.
+- Click a reachable tile to move.
+- Click a target to attack when in range and line of sight.
+- Use skill buttons for operative abilities.
+- End Turn to resolve enemy intent.
+
+No license has been added yet.
