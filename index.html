@@ -157,14 +157,12 @@ for(const e of [...s.enemy]){
 }
 }
 function turretFire(){
-if(s.tick%3!==0)return;
-for(const b of s.buildings.filter(b=>b.type==="turret")){
+if(s.tick%3===0){for(const b of s.buildings.filter(b=>b.type==="turret")){
  const p=xy(b.index);
  const target=s.enemy.find(e=>Math.abs(xy(e.index).x-p.x)+Math.abs(xy(e.index).y-p.y)<=5);
  if(target){target.hp-=s.unlocked.includes("weapons")?50:25;log("🛡️ 防禦砲塔命中外星生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=1;log("外星生物已被消滅，回收 1 碳晶。");}}
-}
-}
-if(s.tick%5===0){for(const b of s.buildings.filter(b=>b.type==="orbital")){const target=s.enemy.find(e=>Math.abs(xy(e.index).x-xy(b.index).x)+Math.abs(xy(e.index).y-xy(b.index).y)<=10);if(target){target.hp-=s.unlocked.includes("weapons")?120:80;log("🛰️ 軌道炮命中敵對生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=2;s.res.rare+=1;log("軌道打擊消滅目標，回收 2 碳晶與 1 稀有元素。");}}}}
+}}
+if(s.tick%5===0){for(const b of s.buildings.filter(b=>b.type==="orbital")){const target=s.enemy.find(e=>Math.abs(xy(e.index).x-xy(b.index).x)+Math.abs(xy(e.index).y-xy(b.index).y)<=10);if(target){target.hp-=s.unlocked.includes("weapons")?120:80;log("🛰️ 軌道炮命中外星生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=2;s.res.rare+=1;log("軌道打擊消滅目標，回收 2 碳晶與 1 稀有元素。");}}}}
 }
 function tick(){
 if(s.paused)return;s.tick++;
@@ -175,8 +173,8 @@ if(powered){
 for(const b of s.buildings){
 if(b.type==="miner"&&s.tick%4===0){let k=s.tiles[b.index].ore;if(k)s.res[k]+=s.unlocked.includes("efficiency")?3:2;}
 if(b.type==="drill"&&s.tick%5===0)s.res.crystal+=1;
-if(b.type==="smelter"&&s.tick%6===0&&s.res.iron>=3){s.res.iron-=3;s.res.plate+=1;}
-if(b.type==="assembler"&&s.tick%8===0&&s.res.plate>=2&&s.res.copper>=2){s.res.plate-=2;s.res.copper-=2;s.res.circuit+=1;}
+if(b.type==="smelter"&&s.tick%(s.unlocked.includes("metallurgy")?4:6)===0&&s.res.iron>=3){s.res.iron-=3;s.res.plate+=1;}
+if(b.type==="assembler"&&s.tick%(s.unlocked.includes("automation")?5:8)===0&&s.res.plate>=2&&s.res.copper>=2){s.res.plate-=2;s.res.copper-=2;s.res.circuit+=1;}
 if(b.type==="lab"&&s.tick%15===0)s.science+=1;
 if(b.type==="quarry"&&s.tick%5===0)s.res.stone+=2;
 if(b.type==="spaceport"&&s.tick%120===0){if(s.res.circuit>=8&&s.res.plate>=12&&s.res.crystal>=5){s.res.circuit-=8;s.res.plate-=12;s.res.crystal-=5;s.res.rare+=4;s.res.data+=3;log("🚀 探勘船返航！取得 4 稀有元素與 3 星際資料。");}else log("星際港補給不足：探勘船暫緩出發（需電子 8、合金板 12、碳晶 5）。");}
@@ -189,7 +187,7 @@ if(s.tick>=210&&(s.tick-210)%180===0)log("⚠️ 蟲群接近警報：預計 30 
 if(s.tick>=240&&(s.tick-240)%180===0)raid();
 updateEnemies();turretFire();
 if(s.integrity<=0){s.paused=true;event("殖民基地失守","外星生物已突破防線並摧毀基地核心。請重新開始殖民計畫。");}
-if(s.tick%30===0&&count("shield"))s.integrity=Math.min(200,s.integrity+2);
+if(s.tick%30===0&&count("shield"))s.integrity=Math.min(200,s.integrity+(s.unlocked.includes("shields")?4:2));
 if(s.res.energy<=0&&use>0&&s.tick%10===0)log("能源不足：部分工業設施已停止運作，請擴建發電設施。");
 render();save(false);
 }
