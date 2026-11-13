@@ -16,7 +16,7 @@ button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3
 </style>
 </head>
 <body>
-<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // BUILD 0.3.1</div></div>
+<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // BUILD 0.4.0</div></div>
 <div class="resources">
 <div class="res"><small>鐵礦</small><b id="iron">40</b></div><div class="res"><small>銅礦</small><b id="copper">25</b></div><div class="res"><small>碳晶</small><b id="crystal">12</b></div><div class="res"><small>合金板</small><b id="plate">0</b></div><div class="res"><small>電子元件</small><b id="circuit">0</b></div><div class="res"><small>能源</small><b id="energy">80</b></div><div class="res"><small>石材</small><b id="stone">0</b></div><div class="res"><small>稀有元素</small><b id="rare">0</b></div><div class="res"><small>星際資料</small><b id="data">0</b></div>
 </div></header>
@@ -43,6 +43,7 @@ button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3
 <aside class="side">
 <section class="panel"><div class="eyebrow">新手教學 / FIRST 10 MINUTES</div><div class="objective" style="margin-top:7px"><b>① 採礦：</b>點「採礦機」→ 點座標 (2,2) 的鐵礦 🪨。<br><b>② 發電：</b>建造太陽能板，再補風力發電，夜晚才不會停電。<br><b>③ 冶煉：</b>鐵礦累積後，在平地建造冶煉爐，生產合金板。<br><b>④ 研究：</b>建造組裝工廠生產電子元件，再建研究中心。<br><b>⑤ 防守：</b>約 4 分鐘後第一波蟲群才會抵達；每波來襲前 30 秒會收到警報。<br><b>⑥ 深空：</b>研究「深空探勘」後，在岩壁建採石場取得石材，再建星際港。<br><b>⑦ 探索：</b>星際港每 120 秒檢查補給；電子 8、合金板 12、碳晶 5 齊備才會取得稀有元素與星際資料。<br><b>⑧ 終局：</b>研究核融合、量子運算與軌道打擊，建造核融合爐、量子工廠、行星護盾及軌道炮。<br><span style="color:var(--gold)">地圖中央 🏠 是基地核心；敵人會從邊緣出現並朝核心移動。</span></div></section><section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 id="missionTitle" style="margin:5px 0;font-size:15px">第一座能源基地</h3><div id="objective" class="objective">部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。</div><div class="meter"><i id="progress"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
 <section class="panel"><div class="eyebrow">GRID TELEMETRY</div><div class="statline"><span>即時發電</span><b id="generation">0 MW</b></div><div class="statline"><span>設施耗電</span><b id="usage">0 MW</b></div><div class="statline"><span>基地完整度</span><b id="integrity">100%</b></div><div class="statline"><span>設施數量</span><b id="buildingCount">0</b></div><div class="statline"><span>存活天數</span><b id="day">1</b></div><div class="statline"><span>外星威脅</span><b id="threat">低</b></div></section>
+<section class="panel"><div class="eyebrow">INTERSTELLAR EXPEDITIONS / 星際遠征</div><div class="objective" id="expeditionStatus" style="margin:7px 0">建造星際港並累積星際資料，即可派遣遠征隊前往未知世界。遠征需要時間，完成後可獲得永久殖民加成。</div><div class="side-actions" id="expeditionChoices"><button class="action" data-expedition="ice">🌑 冰封衛星</button><button class="action" data-expedition="volcano">🌋 熔岩星球</button><button class="action" data-expedition="ark">🛸 失落方舟</button></div><div class="muted" style="font-size:9px;margin-top:7px">遠征依序解鎖：冰封衛星 → 熔岩星球 → 失落方舟。完成的星球會提供永久加成。</div></section>
 <section class="panel"><div class="eyebrow">SELECTED TILE</div><div class="selected-info" id="tileInfo">選取地圖格子以查看地形、礦物及設施狀態。</div><div class="side-actions"><button class="action" id="demolish" disabled>拆除設施</button><button class="action" id="rotate" disabled>旋轉輸送帶</button></div></section>
 <section class="panel"><div class="topline"><div class="eyebrow">RESEARCH TREE</div><span id="science" class="muted" style="font-size:10px">研究點 0</span></div><div id="techlist" class="techlist"></div></section>
 <section class="panel"><div class="topline"><div class="eyebrow">MISSION LOG</div><button class="action" id="pause">暫停</button></div><div id="log" class="log"></div></section>
@@ -75,6 +76,7 @@ const defs={
  orbital:{name:"軌道炮",icon:"🛰️",cost:{plate:45,circuit:30,rare:20,data:30},power:10,desc:"每 5 秒打擊 10 格內敵人，造成 80 傷害。"}
 };
 const oreNames={iron:"鐵礦脈",copper:"銅礦脈",crystal:"碳晶礦脈"};
+const expeditions={ice:{name:"冰封衛星",cost:{data:8,rare:4},duration:45,reward:"取得 18 稀有元素、30 碳晶與 12 研究點。採集產能永久 +15%。"},volcano:{name:"熔岩星球",cost:{data:14,rare:8},duration:75,reward:"取得 40 合金板、20 碳晶與 50 能源。全基地發電永久 +5 MW。"},ark:{name:"失落方舟",cost:{data:22,rare:15},duration:100,reward:"取得 25 星際資料、20 稀有元素與 30 研究點。所有武器傷害永久 +35%。"}};
 const techs=[
 {id:"efficiency",name:"高效採礦",cost:4,desc:"採礦機產量 +50%。"},
 {id:"power",name:"能源工程",cost:5,desc:"太陽能與風力發電量 +30%。"},
@@ -92,9 +94,9 @@ const SAVE_KEY="projectFrontierColonySlotsV1",LEGACY_KEY="projectFrontierSaveV2"
 const clone=v=>JSON.parse(JSON.stringify(v));
 function saveSlotsWrite(){localStorage.setItem(SAVE_KEY,JSON.stringify({version:1,activeId:activeSaveId,slots:saveSlots}));}
 function persistActive(){if(!activeSaveId)return;const slot=saveSlots.find(x=>x.id===activeSaveId);if(!slot)return;slot.data=clone(s);slot.updated=Date.now();saveSlotsWrite();localStorage.setItem(LEGACY_KEY,JSON.stringify(s));}
-function applySaveData(data){fresh();const base=s;s={...base,...data};s.res={...base.res,...(data.res||{})};if(!Array.isArray(s.tiles)||s.tiles.length!==W*H)s.tiles=base.tiles;if(!Array.isArray(s.buildings))s.buildings=[];if(!Array.isArray(s.enemy))s.enemy=[];if(!Array.isArray(s.unlocked))s.unlocked=[];if(!Array.isArray(s.log))s.log=[];if(!Number.isInteger(s.selected)||s.selected<0||s.selected>=W*H)s.selected=0;if(s.tiles[idx(9,7)]&&!s.tiles[idx(9,7)].building)s.tiles[idx(9,7)].terrain="base";}
+function applySaveData(data){fresh();const base=s;s={...base,...data};s.res={...base.res,...(data.res||{})};s.expedition={...base.expedition,...(data.expedition||{})};if(!Array.isArray(s.completedExpeditions))s.completedExpeditions=[];if(!Array.isArray(s.tiles)||s.tiles.length!==W*H)s.tiles=base.tiles;if(!Array.isArray(s.buildings))s.buildings=[];if(!Array.isArray(s.enemy))s.enemy=[];if(!Array.isArray(s.unlocked))s.unlocked=[];if(!Array.isArray(s.log))s.log=[];if(!Number.isInteger(s.selected)||s.selected<0||s.selected>=W*H)s.selected=0;if(s.tiles[idx(9,7)]&&!s.tiles[idx(9,7)].building)s.tiles[idx(9,7)].terrain="base";}
 function fresh(){
-s={res:{iron:40,copper:25,crystal:12,plate:0,circuit:0,energy:80,stone:0,rare:0,data:0},tiles:[],buildings:[],selected:0,mode:null,tick:0,paused:false,speed:1,integrity:100,threat:0,science:0,unlocked:[],log:[],mission:0,enemy:[],beltDir:0,lastEvent:0};
+s={res:{iron:40,copper:25,crystal:12,plate:0,circuit:0,energy:80,stone:0,rare:0,data:0},tiles:[],buildings:[],selected:0,mode:null,tick:0,paused:false,speed:1,integrity:100,threat:0,science:0,unlocked:[],log:[],mission:0,enemy:[],beltDir:0,lastEvent:0,expedition:{target:null,remaining:0},completedExpeditions:[]};
 makeMap();
 }
 function makeMap(){
@@ -106,7 +108,12 @@ s.tiles[idx(9,7)].terrain="base";
 }
 function log(t){s.log.unshift(t);s.log=s.log.slice(0,45);$("log").innerHTML=s.log.map(x=>"<div>"+x+"</div>").join("");}
 function count(type){return s.buildings.filter(b=>b.type===type).length}
-function powerGen(){let day=s.tick%120<82,boost=s.unlocked.includes("power")?1.3:1;return count("solar")*(day?7*boost:0)+count("wind")*3*boost+count("fusion")*20}
+function powerGen(){let day=s.tick%120<82,boost=s.unlocked.includes("power")?1.3:1;return count("solar")*(day?7*boost:0)+count("wind")*3*boost+count("fusion")*20+(s.completedExpeditions.includes("volcano")?5:0)}
+function productionBoost(){return s.completedExpeditions.includes("ice")?1.15:1}
+function weaponBoost(){return s.completedExpeditions.includes("ark")?1.35:1}
+function startExpedition(id){const d=expeditions[id];if(!d)return;if(!count("spaceport")){log("需要先建造星際港，才能派遣星際遠征隊。");return;}if(s.expedition?.target){log("目前已有遠征隊在外，請等待返航。");return;}if(s.completedExpeditions.includes(id)){log("這個星球已完成探索，永久加成已生效。");return;}if(id==="volcano"&&!s.completedExpeditions.includes("ice")||id==="ark"&&!s.completedExpeditions.includes("volcano")){log("前置星球尚未完成探索，請依序推進星際遠征。");return;}for(const [k,v] of Object.entries(d.cost))if((s.res[k]||0)<v){log("遠征資源不足："+d.name+" 需要星際資料 "+d.cost.data+"、稀有元素 "+d.cost.rare+"。");return;}for(const [k,v] of Object.entries(d.cost))s.res[k]-=v;s.expedition={target:id,remaining:d.duration};log("遠征隊已出發前往「"+d.name+"」，預計 "+d.duration+" 秒後返航。");render();}
+function finishExpedition(){const id=s.expedition.target,d=expeditions[id];if(!d)return;s.completedExpeditions.push(id);s.expedition={target:null,remaining:0};if(id==="ice"){s.res.rare+=18;s.res.crystal+=30;s.science+=12;}if(id==="volcano"){s.res.plate+=40;s.res.crystal+=20;s.res.energy=Math.min(100+count("battery")*100,s.res.energy+50);}if(id==="ark"){s.res.data+=25;s.res.rare+=20;s.science+=30;}log("🚀 遠征成功：「"+d.name+"」已完成。"+d.reward);event("遠征隊返航："+d.name,d.reward+" 這項永久加成已套用至目前殖民地。");render();}
+function planetaryEvent(){const events=[()=>{s.res.iron+=18;s.res.copper+=12;return ["隕石雨","小型隕石群落在基地附近，回收 18 鐵礦與 12 銅礦。"];},()=>{s.res.energy=Math.max(0,s.res.energy-22);return ["太陽風暴","強烈太陽風暴干擾電網，能源暫時損失 22。"];},()=>{s.science+=6;return ["古代訊號","研究中心捕捉到古代文明訊號，獲得 6 研究點。"];},()=>{s.integrity=Math.max(1,s.integrity-8);return ["地殼震動","地震衝擊基地核心，完整度下降 8%。"];},()=>{s.res.crystal+=12;s.res.rare+=3;return ["晶體噴發","地表裂縫噴出稀有晶體，取得 12 碳晶與 3 稀有元素。"];},()=>{s.res.plate+=8;s.res.circuit+=4;return ["流亡者求援","一支流亡者小隊加入殖民地，帶來 8 合金板與 4 電子元件。"]; }];const result=events[Math.floor(Math.random()*events.length)]();log("🌌 行星事件："+result[0]+"。"+result[1]);event(result[0],result[1]);}
 function powerUse(){return s.buildings.reduce((a,b)=>a+(defs[b.type]?.power||0),0)}
 function active(){return s.res.energy>0}
 function buildAt(i,type){
@@ -122,7 +129,7 @@ const b={id:Date.now()+Math.random(),type,index:i,hp:100,dir:0};t.building=b;s.b
 }
 function select(i){s.selected=i;const t=s.tiles[i],p=xy(i);let lines=["座標："+p.x+", "+p.y];if(t.building){const b=t.building,d=defs[b.type];lines.push("設施："+d.name,"狀態："+(active()?"待命／自動運作":"能源不足"),d.desc);if(b.type==="belt")lines.push("方向："+["東","南","西","北"][b.dir]);}else{lines.push("地形："+({plain:"平原",rock:"岩壁",water:"水域",base:"殖民基地核心"}[t.terrain]));if(t.ore)lines.push("礦物："+oreNames[t.ore]);else lines.push("可建造：是");}$("tileInfo").innerHTML=lines.join("<br>");$("demolish").disabled=!t.building;$("rotate").disabled=t.building?.type!=="belt";renderMap();}
 function renderMap(){
-$("world").innerHTML=s.tiles.map((t,i)=>{let cls=t.terrain;if(t.ore)cls+=" ore";if(i===s.selected)cls+=" selected";let icon=t.building?defs[t.building.type].icon:t.ore?({iron:"🪨",copper:"🟠",crystal:"💎"}[t.ore]):t.terrain==="water"?"🌊":t.terrain==="rock"?"⛰️":t.terrain==="base"?"🏠":"";if(s.enemy.some(e=>e.index===i))icon="👾";return '<div class="cell '+cls+'" data-i="'+i+'" title="'+(t.building?defs[t.building.type].name:t.ore?oreNames[t.ore]:t.terrain)+'">'+icon+'</div>'}).join("");
+$("world").innerHTML=s.tiles.map((t,i)=>{let cls=t.terrain;if(t.ore)cls+=" ore";if(i===s.selected)cls+=" selected";let icon=t.building?defs[t.building.type].icon:t.ore?({iron:"🪨",copper:"🟠",crystal:"💎"}[t.ore]):t.terrain==="water"?"🌊":t.terrain==="rock"?"⛰️":t.terrain==="base"?"🏠":"";const enemy=s.enemy.find(e=>e.index===i);if(enemy)icon=enemy.type==="brute"?"👹":enemy.type==="stalker"?"🦂":"👾";return '<div class="cell '+cls+'" data-i="'+i+'" title="'+(t.building?defs[t.building.type].name:t.ore?oreNames[t.ore]:t.terrain)+'">'+icon+'</div>'}).join("");
 }
 function mission(){
 let n=0,goal=2,title="第一座能源基地",desc="部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。",max=2;
@@ -139,6 +146,7 @@ $("techlist").innerHTML=techs.map(t=>{let done=s.unlocked.includes(t.id);return 
 function esc(v){return String(v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));}
 function renderSaveManager(){const list=$("saveList");if(!list)return;list.innerHTML=saveSlots.map(slot=>{const active=slot.id===activeSaveId;const date=slot.updated?new Date(slot.updated).toLocaleString("zh-TW"):"尚無紀錄";const days=Math.floor((slot.data?.tick||0)/120)+1;return '<div class="save-item '+(active?"active":"")+'"><div><b>'+esc(slot.name)+(active?'　<span style="color:var(--cyan)">● 使用中</span>':'')+'</b><small>第 '+days+' 天 · '+(slot.data?.buildings?.length||0)+' 座設施 · 最近保存：'+esc(date)+'</small></div><div class="save-actions">'+(active?'':'<button class="action" data-slot-load="'+esc(slot.id)+'">載入</button>')+'<button class="action" data-slot-rename="'+esc(slot.id)+'">改名</button><button class="action" data-slot-delete="'+esc(slot.id)+'">刪除</button></div></div>';}).join("");}
 function render(){
+const exp=s.expedition||{target:null,remaining:0},status=$("expeditionStatus");if(exp.target){status.textContent="遠征進行中："+expeditions[exp.target].name+"｜剩餘 "+exp.remaining+" 秒。";}else{status.textContent="永久加成："+(s.completedExpeditions.length?s.completedExpeditions.map(id=>expeditions[id].name).join("、"):"尚未探索")+"。選擇下一個遠征目的地。";}document.querySelectorAll("[data-expedition]").forEach(b=>{const id=b.dataset.expedition,done=s.completedExpeditions.includes(id),locked=(id==="volcano"&&!s.completedExpeditions.includes("ice"))||(id==="ark"&&!s.completedExpeditions.includes("volcano"));b.disabled=!!exp.target||done||locked||!count("spaceport");b.textContent=(done?"✓ ":locked?"🔒 ":"")+({ice:"🌑 冰封衛星",volcano:"🌋 熔岩星球",ark:"🛸 失落方舟"}[id]);});
 for(const k of Object.keys(s.res))$(k).textContent=Math.floor(s.res[k]);
 const gen=powerGen(),use=powerUse();$("generation").textContent=gen.toFixed(1)+" MW";$("usage").textContent=use+" MW";$("integrity").textContent=s.integrity+"%";$("buildingCount").textContent=s.buildings.length;$("day").textContent=Math.floor(s.tick/120)+1;$("threat").textContent=s.threat<2?"低":s.threat<5?"中":"高";
 const t=s.tick%120,day=t<82;$("clock").textContent=(day?"☀ 白晝 ":"☾ 夜晚 ")+String(t+1).padStart(3,"0");mission();renderTech();renderMap();
@@ -146,13 +154,13 @@ const t=s.tick%120,day=t<82;$("clock").textContent=(day?"☀ 白晝 ":"☾ 夜�
 function event(title,txt){$("eventTitle").textContent=title;$("eventText").textContent=txt;$("eventModal").hidden=false;s.paused=true;$("pause").textContent="繼續";}
 function raid(){
 s.threat++;
-const amount=Math.min(3,1+Math.floor(s.threat/2));
+const amount=Math.min(5,1+Math.floor(s.threat/2));
 let spawned=0;
 for(let n=0;n<amount;n++){
  let edge=Math.floor(Math.random()*4),x=edge===0?1:edge===1?W-2:1+Math.floor(Math.random()*(W-2)),y=edge===2?1:edge===3?H-2:1+Math.floor(Math.random()*(H-2));
  let tries=0,i=idx(x,y);
  while((s.tiles[i].terrain!=="plain"||s.enemy.some(e=>e.index===i))&&tries++<40){x=1+Math.floor(Math.random()*(W-2));y=1+Math.floor(Math.random()*(H-2));i=idx(x,y);}
- if(tries<40){s.enemy.push({id:Date.now()+Math.random(),index:i,hp:50+s.threat*8,move:0,attack:0});spawned++;}
+ if(tries<40){const roll=Math.random(),type=roll<.58?"scout":roll<.84?"stalker":"brute";s.enemy.push({id:Date.now()+Math.random(),index:i,type,hp:(type==="brute"?125:type==="stalker"?75:42)+s.threat*(type==="brute"?14:8),move:0,attack:0,moveEvery:type==="scout"?6:type==="stalker"?8:13,damage:type==="brute"?5:type==="stalker"?3:2});spawned++;}
 }
 log("🚨 蟲群警報！"+spawned+" 隻外星生物已從地圖邊緣出現，正朝基地核心移動！");
 }
@@ -160,17 +168,17 @@ function updateEnemies(){
 const core=idx(9,7);
 for(const e of [...s.enemy]){
  e.move++;
- if(e.move>=9){e.move=0;const p=xy(e.index),c=xy(core);let nx=p.x,ny=p.y;if(p.x!==c.x)nx+=Math.sign(c.x-p.x);else if(p.y!==c.y)ny+=Math.sign(c.y-p.y);e.index=idx(nx,ny);}
- if(Math.abs(xy(e.index).x-9)+Math.abs(xy(e.index).y-7)<=1){e.attack++;if(e.attack>=20){e.attack=0;s.integrity=Math.max(0,s.integrity-2);log("👾 外星生物正在攻擊基地核心！完整度 -2%。");}}
+ if(e.move>=(e.moveEvery||9)){e.move=0;const p=xy(e.index),c=xy(core);let nx=p.x,ny=p.y;if(p.x!==c.x)nx+=Math.sign(c.x-p.x);else if(p.y!==c.y)ny+=Math.sign(c.y-p.y);e.index=idx(nx,ny);}
+ if(Math.abs(xy(e.index).x-9)+Math.abs(xy(e.index).y-7)<=1){e.attack++;if(e.attack>=20){e.attack=0;s.integrity=Math.max(0,s.integrity-(e.damage||2));log((e.type==="brute"?"👹 重裝掠食者":e.type==="stalker"?"🦂 腐蝕獵手":"👾 迅捷蟲") +"攻擊基地核心！完整度 -"+(e.damage||2)+"%。");}}
 }
 }
 function turretFire(){
 if(s.tick%3===0){for(const b of s.buildings.filter(b=>b.type==="turret")){
  const p=xy(b.index);
  const target=s.enemy.find(e=>Math.abs(xy(e.index).x-p.x)+Math.abs(xy(e.index).y-p.y)<=5);
- if(target){target.hp-=s.unlocked.includes("weapons")?50:25;log("🛡️ 防禦砲塔命中外星生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=1;log("外星生物已被消滅，回收 1 碳晶。");}}
+ if(target){target.hp-=(s.unlocked.includes("weapons")?50:25)*weaponBoost();log("🛡️ 防禦砲塔命中外星生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=1;log("外星生物已被消滅，回收 1 碳晶。");}}
 }}
-if(s.tick%5===0){for(const b of s.buildings.filter(b=>b.type==="orbital")){const target=s.enemy.find(e=>Math.abs(xy(e.index).x-xy(b.index).x)+Math.abs(xy(e.index).y-xy(b.index).y)<=10);if(target){target.hp-=s.unlocked.includes("weapons")?120:80;log("🛰️ 軌道炮命中外星生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=2;s.res.rare+=1;log("軌道打擊消滅目標，回收 2 碳晶與 1 稀有元素。");}}}}
+if(s.tick%5===0){for(const b of s.buildings.filter(b=>b.type==="orbital")){const target=s.enemy.find(e=>Math.abs(xy(e.index).x-xy(b.index).x)+Math.abs(xy(e.index).y-xy(b.index).y)<=10);if(target){target.hp-=(s.unlocked.includes("weapons")?120:80)*weaponBoost();log("🛰️ 軌道炮命中外星生物！");if(target.hp<=0){s.enemy=s.enemy.filter(e=>e!==target);s.res.crystal+=2;s.res.rare+=1;log("軌道打擊消滅目標，回收 2 碳晶與 1 稀有元素。");}}}}
 }
 function tick(){
 if(s.paused)return;s.tick++;
@@ -179,17 +187,19 @@ s.res.energy=Math.max(0,Math.min(cap,s.res.energy+gen-use));
 const powered=s.res.energy>0;
 if(powered){
 for(const b of s.buildings){
-if(b.type==="miner"&&s.tick%4===0){let k=s.tiles[b.index].ore;if(k)s.res[k]+=s.unlocked.includes("efficiency")?3:2;}
-if(b.type==="drill"&&s.tick%5===0)s.res.crystal+=1;
+if(b.type==="miner"&&s.tick%4===0){let k=s.tiles[b.index].ore;if(k)s.res[k]+=(s.unlocked.includes("efficiency")?3:2)*productionBoost();}
+if(b.type==="drill"&&s.tick%5===0)s.res.crystal+=1*productionBoost();
 if(b.type==="smelter"&&s.tick%(s.unlocked.includes("metallurgy")?4:6)===0&&s.res.iron>=3){s.res.iron-=3;s.res.plate+=1;}
 if(b.type==="assembler"&&s.tick%(s.unlocked.includes("automation")?5:8)===0&&s.res.plate>=2&&s.res.copper>=2){s.res.plate-=2;s.res.copper-=2;s.res.circuit+=1;}
 if(b.type==="lab"&&s.tick%15===0)s.science+=1;
-if(b.type==="quarry"&&s.tick%5===0)s.res.stone+=2;
+if(b.type==="quarry"&&s.tick%5===0)s.res.stone+=2*productionBoost();
 if(b.type==="spaceport"&&s.tick%120===0){if(s.res.circuit>=8&&s.res.plate>=12&&s.res.crystal>=5){s.res.circuit-=8;s.res.plate-=12;s.res.crystal-=5;s.res.rare+=4;s.res.data+=3;log("🚀 探勘船返航！取得 4 稀有元素與 3 星際資料。");}else log("星際港補給不足：探勘船暫緩出發（需電子 8、合金板 12、碳晶 5）。");}
 if(b.type==="quantum"&&s.tick%30===0&&s.res.rare>=1&&s.res.circuit>=2){s.res.rare-=1;s.res.circuit-=2;s.res.data+=3;s.science+=1;}
 
 }
 }
+if(s.expedition?.target){s.expedition.remaining--;if(s.expedition.remaining<=0)finishExpedition();}
+if(s.tick%180===0&&!s.paused)planetaryEvent();
 if(s.tick%120===0){log("第 "+(Math.floor(s.tick/120)+1)+" 天開始。能源與產線狀態已更新。");}
 if(s.tick>=210&&(s.tick-210)%180===0)log("⚠️ 蟲群接近警報：預計 30 秒後抵達，請檢查防禦。");
 if(s.tick>=240&&(s.tick-240)%180===0)raid();
@@ -205,6 +215,7 @@ if(store&&Array.isArray(store.slots)){saveSlots=store.slots.filter(x=>x&&typeof 
 if(!saveSlots.length&&legacy&&Array.isArray(legacy.tiles)&&legacy.tiles.length===W*H){saveSlots=[{id:"colony-"+Date.now(),name:"殖民地 01",created:Date.now(),updated:Date.now(),data:legacy}];activeSaveId=saveSlots[0].id;log("已將舊版單一存檔安全轉移至殖民地存檔管理。");}
 if(!saveSlots.length){saveSlots=[{id:"colony-"+Date.now(),name:"殖民地 01",created:Date.now(),updated:Date.now(),data:clone(s)}];activeSaveId=saveSlots[0].id;}
 if(!saveSlots.some(x=>x.id===activeSaveId))activeSaveId=saveSlots[0].id;const activeSlot=saveSlots.find(x=>x.id===activeSaveId);applySaveData(activeSlot.data);saveSlotsWrite();if(store)log("已載入殖民地："+activeSlot.name+"。");}
+$("expeditionChoices").addEventListener("click",e=>{const b=e.target.closest("[data-expedition]");if(b)startExpedition(b.dataset.expedition);});
 $("toolbar").addEventListener("click",e=>{let b=e.target.closest("[data-build]");if(!b)return;let type=b.dataset.build;s.mode=type;document.querySelectorAll(".build").forEach(x=>x.classList.toggle("active",x===b));log("建造模式："+defs[type].name+"；選擇地格部署。");});
 $("world").addEventListener("click",e=>{let c=e.target.closest("[data-i]");if(!c)return;let i=+c.dataset.i;if(s.mode)buildAt(i,s.mode);else select(i);});
 $("cancel").onclick=()=>{s.mode=null;document.querySelectorAll(".build").forEach(x=>x.classList.remove("active"));};
