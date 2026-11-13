@@ -43,21 +43,21 @@ const weapons={
  rail:{name:'RAIL LANCE',cn:'電磁長槍',rate:.95,damage:48,speed:1100,spread:.008,count:1,color:'#e4faff',size:5,pierce:3,desc:'穿透射擊，對精英與首領有效。'}
 };
 let state='menu',last=0,elapsed=0,keys={},mouse={x:W/2,y:H/2,down:false},audio=null;
-let player=null,enemies=[],bullets=[],enemyBullets=[],particles=[],pickups=[],hazards=[],turrets=[],room=1,sector=1,roomType='combat',roomKills=0,roomTarget=8,spawnTimer=0,level=1,xp=0,xpNeed=45,scrapRun=0,build={},runStats={kills:0,rooms:0,damage:0},activeWeapon=1,weaponLoadout=['pistol','shotgun'],boss=null,roomCleared=false,choiceCards=[],pendingAction=null,toastTimer=0,shake=0;
+let player=null,enemies=[],bullets=[],enemyBullets=[],particles=[],pickups=[],hazards=[],turrets=[],effects=[],room=1,sector=1,roomType='combat',roomKills=0,roomTarget=8,spawnTimer=0,level=1,xp=0,xpNeed=45,scrapRun=0,build={},runStats={kills:0,rooms:0,damage:0},activeWeapon=1,weaponLoadout=['pistol','shotgun'],boss=null,roomCleared=false,choiceCards=[],pendingAction=null,toastTimer=0,shake=0;
 const upgrades=[
 {id:'damage',name:'過載線圈',symbol:'⚡',desc:'所有武器傷害 +18%。',rarity:'COMMON',apply:()=>build.damage=(build.damage||0)+.18},
 {id:'firerate',name:'速射協定',symbol:'»',desc:'武器射速提高 14%。',rarity:'COMMON',apply:()=>build.rate=(build.rate||0)+.14},
 {id:'vital',name:'生物修復',symbol:'✚',desc:'立即恢復 30 HP，最大生命 +8。',rarity:'COMMON',apply:()=>{player.hp=Math.min(player.maxHp+8,player.hp+30);player.maxHp+=8}},
 {id:'speed',name:'相位穩定器',symbol:'⌁',desc:'移動速度 +9%，閃避冷卻縮短。',rarity:'COMMON',apply:()=>{build.speed=(build.speed||0)+.09;player.dashMax=Math.max(.55,player.dashMax-.12)}},
 {id:'crit',name:'弱點分析',symbol:'◎',desc:'暴擊率 +8%，暴擊傷害 +25%。',rarity:'RARE',apply:()=>{build.crit=(build.crit||0)+.08;build.critDamage=(build.critDamage||0)+.25}},
-{id:'chain',name:'電弧矩陣',symbol:'ϟ',desc:'電弧手槍命中後跳躍至附近 2 名敵人，造成 45% 傷害。',rarity:'RARE',apply:()=>build.chain=(build.chain||0)+1},
+{id:'chain',name:'電弧矩陣',symbol:'ϟ',desc:'電弧手槍命中後必定連鎖至附近敵人，造成 55% 傷害。',rarity:'RARE',apply:()=>build.chain=(build.chain||0)+1},
 {id:'burn',name:'熱能殘留',symbol:'♨',desc:'命中有 25% 機率點燃敵人，持續造成傷害。',rarity:'RARE',apply:()=>build.burn=(build.burn||0)+.25},
-{id:'drone',name:'守望蜂群',symbol:'◈',desc:'獲得一架自動攻擊無人機。',rarity:'RARE',apply:()=>build.drones=(build.drones||0)+1},
+{id:'drone',name:'守望蜂群',symbol:'◈',desc:'獲得一架自動攻擊無人機。無人機會環繞你並自動射擊最近的敵人。',rarity:'RARE',apply:()=>build.drones=(build.drones||0)+1},
 {id:'freeze',name:'低溫彈頭',symbol:'❄',desc:'命中有 20% 機率凍結敵人 1.2 秒。',rarity:'RARE',apply:()=>build.freeze=(build.freeze||0)+.2},
 {id:'leech',name:'納米汲取',symbol:'♥',desc:'擊殺敵人時恢復 2 HP。',rarity:'RARE',apply:()=>build.leech=(build.leech||0)+2},
 {id:'dash',name:'殘像引擎',symbol:'✧',desc:'閃避後留下爆炸殘影，對附近敵人造成 35 傷害。',rarity:'EPIC',apply:()=>build.dashBurst=(build.dashBurst||0)+1},
 {id:'overload',name:'雷霆核心',symbol:'⬡',desc:'電擊連鎖額外跳躍 1 次，連鎖傷害提高。',rarity:'EPIC',apply:()=>build.chainPower=(build.chainPower||0)+.25},
-{id:'nova',name:'熔爐核心',symbol:'✹',desc:'燃燒敵人死亡時引發爆炸。',rarity:'EPIC',apply:()=>build.nova=(build.nova||0)+1},
+{id:'nova',name:'熔爐核心',symbol:'✹',desc:'燃燒敵人死亡時引發範圍爆炸，對周圍敵人造成 45 點傷害。',rarity:'EPIC',apply:()=>build.nova=(build.nova||0)+1},
 {id:'shield',name:'偏折護盾',symbol:'⬢',desc:'獲得 25 點可再生護盾，受擊後 5 秒開始恢復。',rarity:'EPIC',apply:()=>{player.shield+=25;player.maxShield+=25}}
 ];
 function sound(freq=440,dur=.07,type='sine',vol=.025){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();let o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);g.gain.setValueAtTime(vol,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch(e){}}
@@ -83,7 +83,7 @@ document.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{let k=b.dataset
 function startRun(){
 selectedPilot=selectedPilot||'phantom';let p=pilots[selectedPilot];
 player={x:W/2,y:H/2,r:13,hp:p.hp+(meta.upgrades.hull||0)*8,maxHp:p.hp+(meta.upgrades.hull||0)*8,speed:p.speed,angle:0,shield:selectedPilot==='bastion'?20:0,maxShield:selectedPilot==='bastion'?20:0,inv:0,dash:0,dashMax:1.7,dashTime:0,fire:0,ability:0,abilityMax:selectedPilot==='engineer'?7:9,ult:0,focus:0,streak:0,damageFlash:0};
-room=1;sector=1;roomType='combat';roomKills=0;roomTarget=8;spawnTimer=.6;level=1;xp=0;xpNeed=45;scrapRun=0;build={damage:(meta.upgrades.damage||0)*.05};runStats={kills:0,rooms:0,damage:0};activeWeapon=1;weaponLoadout=['pistol','shotgun'];enemies=[];bullets=[];enemyBullets=[];particles=[];pickups=[];hazards=[];turrets=[];boss=null;roomCleared=false;elapsed=0;
+room=1;sector=1;roomType='combat';roomKills=0;roomTarget=8;spawnTimer=.6;level=1;xp=0;xpNeed=45;scrapRun=0;build={damage:(meta.upgrades.damage||0)*.05};runStats={kills:0,rooms:0,damage:0};activeWeapon=1;weaponLoadout=['pistol','shotgun'];enemies=[];bullets=[];enemyBullets=[];particles=[];pickups=[];hazards=[];turrets=[];effects=[];boss=null;player.droneFire=0;roomCleared=false;elapsed=0;
 state='playing';hidePanel();$('hud').style.display='block';updateHud();spawnRoom();last=performance.now();
 }
 function spawnRoom(){
@@ -110,7 +110,7 @@ function addParticle(x,y,color,n=8,power=130){for(let i=0;i<n;i++){let a=rand(0,
 function shoot(){
 let w=weapons[weaponLoadout[activeWeapon-1]],rate=w.rate/(1+(build.rate||0));if(player.fire>0)return;player.fire=rate;
 let base=Math.atan2(mouse.y-player.y,mouse.x-player.x);player.angle=base;
-for(let i=0;i<w.count;i++){let a=base+(i-(w.count-1)/2)*w.spread+rand(-.012,.012),dmg=w.damage*(1+(build.damage||0));bullets.push({x:player.x+Math.cos(a)*17,y:player.y+Math.sin(a)*17,vx:Math.cos(a)*w.speed,vy:Math.sin(a)*w.speed,r:w.size,damage:dmg,life:1.4,color:w.color,pierce:w.pierce||0,chain:build.chain||0,burn:Math.random()<(build.burn||0),freeze:Math.random()<(build.freeze||0),crit:Math.random()<(build.crit||0)+ (selectedPilot==='phantom'?player.focus*.001:0)})}
+for(let i=0;i<w.count;i++){let a=base+(i-(w.count-1)/2)*w.spread+rand(-.012,.012),dmg=w.damage*(1+(build.damage||0));bullets.push({x:player.x+Math.cos(a)*17,y:player.y+Math.sin(a)*17,vx:Math.cos(a)*w.speed,vy:Math.sin(a)*w.speed,r:w.size,damage:dmg,life:1.4,color:w.color,pierce:w.pierce||0,chain:weaponLoadout[activeWeapon-1]==='pistol'&&build.chain?2+(build.chainPower?1:0):0,burn:Math.random()<(build.burn||0),freeze:Math.random()<(build.freeze||0),crit:Math.random()<(build.crit||0)+ (selectedPilot==='phantom'?player.focus*.001:0)})}
 sound(weaponLoadout[activeWeapon-1]==='shotgun'?110:390,.045,'square',.012);
 }
 function damageEnemy(e,dmg,source){
@@ -119,15 +119,15 @@ e.hp-=dmg;e.hit=.09;runStats.damage+=dmg;
 if(source&&source.burn)e.burn=2.8;if(source&&source.freeze)e.freeze=1.2;
 addParticle(e.x,e.y,critical?'#fff1a8':e.color,critical?7:3,75);
 if(source&&source.chain>0&&Math.random()<.35){
-let near=enemies.filter(o=>o!==e&&o.hp>0&&dist(o,e)<125).sort((a,b)=>dist(a,e)-dist(b,e)).slice(0,1+(build.chainPower?1:0));
-near.forEach(o=>{damageEnemy(o,dmg*(.45+(build.chainPower||0)),{chain:Math.max(0,source.chain-1)});addParticle((o.x+e.x)/2,(o.y+e.y)/2,'#55f5f2',5,90)});
+let hops=1+(build.chainPower?1:0),near=enemies.filter(o=>o!==e&&o.hp>0&&dist(o,e)<185).sort((a,b)=>dist(a,e)-dist(b,e)).slice(0,hops);
+near.forEach(o=>{effects.push({type:'line',x1:e.x,y1:e.y,x2:o.x,y2:o.y,life:.18,max:.18,color:'#55f5f2'});damageEnemy(o,dmg*(.55+(build.chainPower||0)),{chain:Math.max(0,source.chain-1)});addParticle((o.x+e.x)/2,(o.y+e.y)/2,'#55f5f2',8,120)});
 }
-if(e.hp<=0)killEnemy(e);
+if(e.hp<=0)killEnemy(e,source);
 }
-function killEnemy(e){
+function killEnemy(e,source){
 runStats.kills++;roomKills++;scrapRun+=e.scrap;xp+=e.xp;
 if(build.leech)player.hp=Math.min(player.maxHp,player.hp+build.leech);
-if(e.burn&&build.nova){enemies.filter(o=>o!==e&&dist(o,e)<95).forEach(o=>damageEnemy(o,28,{chain:0}));addParticle(e.x,e.y,'#ff9c4c',25,180)}
+if(e.burn>0&&build.nova&&!(source&&source.noNova)){effects.push({type:'ring',x:e.x,y:e.y,r:105,life:.32,max:.32,color:'#ff9c4c'});addParticle(e.x,e.y,'#ff9c4c',30,210);sound(95,.16,'sawtooth',.035);enemies.filter(o=>o!==e&&o.hp>0&&dist(o,e)<105).forEach(o=>damageEnemy(o,45,{chain:0,noNova:true}))}
 if(Math.random()<.13)pickups.push({x:e.x,y:e.y,type:'heal',r:7});
 addParticle(e.x,e.y,e.color,15,170);sound(130,.09,'triangle',.018);
 if(selectedPilot==='phantom')player.focus=Math.min(18,player.focus+1);
@@ -167,6 +167,7 @@ for(let k of ['fire','dash','ability','inv','damageFlash'])player[k]=Math.max(0,
 if(player.shield<player.maxShield&&selectedPilot==='bastion'&&elapsed%8<dt)player.shield=Math.min(player.maxShield,player.shield+12);
 if(player.shield>0&&player.shield<player.maxShield&&Math.random()<dt*.04)player.shield=Math.min(player.maxShield,player.shield+1);
 if(mouse.down)shoot();
+if((build.drones||0)>0){player.droneFire-=dt;if(player.droneFire<=0){let target=enemies.filter(e=>e.hp>0).sort((a,b)=>dist(a,player)-dist(b,player))[0];if(target){for(let i=0;i<build.drones;i++){let a=elapsed*1.8+i*TAU/build.drones,dx=Math.cos(a)*(34+i*7),dy=Math.sin(a)*(34+i*7),sx=player.x+dx,sy=player.y+dy,ang=Math.atan2(target.y-sy,target.x-sx);bullets.push({x:sx,y:sy,vx:Math.cos(ang)*610,vy:Math.sin(ang)*610,r:3.5,damage:12*(1+(build.damage||0)),life:1.6,color:'#8cff9b',pierce:0,chain:0})}player.droneFire=.62}}}
 if(roomType==='combat'||roomType==='elite'){
 spawnTimer-=dt;if(spawnTimer<=0&&enemies.length<Math.min(12,roomTarget-roomKills)){let t=roomType==='elite'&&Math.random()<.35?'tank':pick(['drone','drone','rusher','sniper',...(sector>1?['tank']:[])]);spawnEnemy(t);spawnTimer=Math.max(.35,1.15-sector*.08)}
 }
@@ -182,7 +183,7 @@ bullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;for(let e of enemies){i
 enemyBullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;if(dist(b,player)<player.r+b.r){hurt(b.damage);b.life=0}});
 turrets.forEach(t=>{t.life-=dt;t.fire-=dt;if(t.fire<=0){let target=enemies.filter(e=>e.hp>0).sort((a,b)=>dist(a,t)-dist(b,t))[0];if(target){let a=Math.atan2(target.y-t.y,target.x-t.x);bullets.push({x:t.x,y:t.y,vx:Math.cos(a)*580,vy:Math.sin(a)*580,r:3,damage:13*(1+(build.damage||0)),life:1.5,color:'#8cff9b'});t.fire=.48}}});
 pickups.forEach(p=>{if(dist(p,player)<22){if(p.type==='heal')player.hp=Math.min(player.maxHp,player.hp+17);p.life=0;sound(660,.1,'sine')}});pickups.forEach(p=>p.life=(p.life??8)-dt);
-particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt});
+particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.96;p.vy*=.96;p.life-=dt});effects.forEach(e=>e.life-=dt);effects=effects.filter(e=>e.life>0);
 bullets=bullets.filter(b=>b.life>0&&b.x>-20&&b.x<W+20&&b.y>-20&&b.y<H+20);enemyBullets=enemyBullets.filter(b=>b.life>0&&b.x>-20&&b.x<W+20&&b.y>-20&&b.y<H+20);enemies=enemies.filter(e=>e.hp>0);particles=particles.filter(p=>p.life>0);pickups=pickups.filter(p=>p.life>0);turrets=turrets.filter(t=>t.life>0);
 if(!boss&&!roomCleared&&roomKills>=roomTarget&&enemies.length===0){roomCleared=true;roomClearReward()}
 if(boss){$('bossHp').style.width=clamp(boss.hp/boss.maxHp*100,0,100)+'%'}
@@ -198,12 +199,15 @@ state='route';let options=[
 {type:'cache',icon:'✚',name:'補給站',desc:'恢復 35 HP，並取得額外廢料。',cls:'cache'},
 {type:'elite',icon:'☠',name:'精英封鎖區',desc:'高威脅敵群。獎勵更多稀有強化。',cls:'elite'},
 {type:'shop',icon:'◇',name:'黑市商人',desc:'花費廢料購買修復或強化。',cls:'shop'},
-{type:'event',icon:'⌘',name:'異常訊號',desc:'未知實驗：承擔代價換取力量。',cls:''}
-];options.push({type:'boss',icon:'☠',name:'區域首領',desc:'強大的守門單位。擊敗後推進至下一區域。',cls:'boss'});let chosen=[pick(options),pick(options),pick(options)];if(runStats.rooms>0&&runStats.rooms%4===0)chosen[2]=options[5];if(!chosen.some(x=>x.type==='combat'))chosen[0]=options[0];if(room===0)chosen=[{type:'combat',icon:'⚔',name:'新區域：戰鬥',desc:'新戰區第一場遭遇。',cls:''},{type:'cache',icon:'✚',name:'緊急補給',desc:'恢復 35 HP，取得廢料。',cls:'cache'},{type:'elite',icon:'☠',name:'高危目標',desc:'精英單位把守的高報酬房間。',cls:'elite'}];
+{type:'event',icon:'⌘',name:'異常訊號',desc:'未知實驗：承擔代價換取力量。',cls:''},
+{type:'armory',icon:'⚙',name:'武器軍械庫',desc:'取得一把新武器，並選擇替換主武器或副武器。',cls:'shop'}
+];options.push({type:'boss',icon:'☠',name:'區域首領',desc:'強大的守門單位。擊敗後推進至下一區域。',cls:'boss'});let chosen=[pick(options),pick(options),pick(options)];if(runStats.rooms>0&&runStats.rooms%4===0)chosen[2]=options[6];else if(runStats.rooms===1||runStats.rooms%3===0)chosen[2]=options[5];if(!chosen.some(x=>x.type==='combat'))chosen[0]=options[0];if(room===0)chosen=[{type:'combat',icon:'⚔',name:'新區域：戰鬥',desc:'新戰區第一場遭遇。',cls:''},{type:'cache',icon:'✚',name:'緊急補給',desc:'恢復 35 HP，取得廢料。',cls:'cache'},{type:'elite',icon:'☠',name:'高危目標',desc:'精英單位把守的高報酬房間。',cls:'elite'}];
 panel('<div class="eyebrow">TACTICAL ROUTING // SECTOR '+String(sector).padStart(2,'0')+'</div><h2 style="font:700 25px Orbitron;margin:8px 0 5px">選擇下一個房間</h2><p class="lede" style="margin:0 0 18px">路線會影響你的資源、生命與戰鬥強度。謹慎選擇。</p><div class="roommap">'+chosen.map((o,i)=>'<button class="room '+o.cls+'" data-room="'+i+'"><div class="ico">'+o.icon+'</div><strong>'+o.name+'</strong><span>'+o.desc+'</span></button>').join('')+'</div><div class="smallnote">目前生命 '+Math.ceil(player.hp)+' / '+player.maxHp+' · 攜帶廢料 '+scrapRun+' · 已完成房間 '+runStats.rooms+'</div><div class="actions"><button id="extract">撤離並結算</button><button id="continue" class="primary">繼續深入</button></div>');
-document.querySelectorAll('[data-room]').forEach(b=>b.onclick=()=>{let o=chosen[+b.dataset.room];room++;roomType=o.type;hidePanel();state='playing';if(o.type==='cache'){player.hp=Math.min(player.maxHp,player.hp+35);scrapRun+=12;roomCleared=true;toast('補給完成 +35 HP')}else if(o.type==='boss'){spawnRoom()}else if(o.type==='shop')shopRoom();else if(o.type==='event')eventRoom();else spawnRoom();last=performance.now()});
+document.querySelectorAll('[data-room]').forEach(b=>b.onclick=()=>{let o=chosen[+b.dataset.room];room++;roomType=o.type;hidePanel();state='playing';if(o.type==='cache'){player.hp=Math.min(player.maxHp,player.hp+35);scrapRun+=12;roomCleared=true;toast('補給完成 +35 HP')}else if(o.type==='boss'){spawnRoom()}else if(o.type==='shop')shopRoom();else if(o.type==='event')eventRoom();else if(o.type==='armory')armoryRoom();else spawnRoom();last=performance.now()});
 $('extract').onclick=()=>endRun(true);$('continue').onclick=()=>{room++;roomType='combat';hidePanel();state='playing';spawnRoom();last=performance.now()};
 }
+function armoryRoom(){state='armory';let available=Object.keys(weapons).filter(id=>!weaponLoadout.includes(id));if(!available.length){scrapRun+=15;toast('軍械庫已無新武器 · +15 SCRAP');roomCleared=true;state='playing';return}panel('<div class="eyebrow">FIELD ARMORY // WEAPON REQUISITION</div><h2 style="font:700 25px Orbitron;margin:8px 0">選擇新武器</h2><p class="lede">選擇一把新武器，再決定要替換主武器或副武器。被替換的武器會重新回到可取得清單。</p><div class="grid2">'+available.map(id=>'<div class="choice"><span class="tag">NEW WEAPON</span><h3>'+weapons[id].cn+'</h3><p>'+weapons[id].desc+'</p><p style="color:#55f5f2;margin-top:8px">'+weapons[id].name+'</p><div class="actions"><button data-equip="'+id+'|0">換主武器</button><button data-equip="'+id+'|1">換副武器</button></div></div>').join('')+'</div><div class="actions"><button id="skipArmory">不更換，離開</button></div>');document.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>{let [id,slot]=b.dataset.equip.split('|');weaponLoadout[+slot]=id;activeWeapon=+slot+1;toast('已裝備 '+weapons[id].cn);leaveArmory()});$('skipArmory').onclick=leaveArmory;}
+function leaveArmory(){hidePanel();state='playing';roomCleared=true;last=performance.now();updateHud()}
 function shopRoom(){state='shop';panel('<div class="eyebrow">BLACK MARKET // OFF-GRID TRADER</div><h2 style="font:700 25px Orbitron;margin:8px 0">黑市交易站</h2><p class="lede">「不問你從哪裡來，只問你帶了多少廢料。」</p><div class="grid2"><div class="choice"><span class="tag">MEDICAL</span><h3>戰地修復</h3><p>恢復 45 HP。</p><button id="healBuy">購買 · 18 SCRAP</button></div><div class="choice"><span class="tag">WEAPON</span><h3>武器校準</h3><p>本次出擊傷害 +15%。</p><button id="dmgBuy">購買 · 22 SCRAP</button></div></div><div class="actions"><button id="leave" class="primary">離開商店</button></div><div class="smallnote">現有廢料：'+scrapRun+'</div>');
 $('healBuy').onclick=()=>{if(scrapRun<18)return toast('廢料不足');scrapRun-=18;player.hp=Math.min(player.maxHp,player.hp+45);shopRoom()};$('dmgBuy').onclick=()=>{if(scrapRun<22)return toast('廢料不足');scrapRun-=22;build.damage=(build.damage||0)+.15;shopRoom()};$('leave').onclick=()=>{hidePanel();state='playing';roomCleared=true;last=performance.now();updateHud()};
 }
@@ -232,9 +236,11 @@ if(state==='playing'||state==='paused'||state==='upgrade'||state==='route'||stat
 for(let i=0;i<5;i++){let x=100+i*(W-200)/5,y=H*.35+(i%2)*H*.3;ctx.strokeStyle='#31506a55';ctx.lineWidth=2;ctx.strokeRect(x-17,y-17,34,34);ctx.strokeStyle='#55f5f222';ctx.strokeRect(x-12,y-12,24,24)}
 pickups.forEach(p=>{glow(p.x,p.y,5,'#8cff9b');ctx.fillStyle='#c8ffd7';ctx.fillRect(p.x-2,p.y-2,4,4)});
 turrets.forEach(t=>{ctx.strokeStyle='#8cff9b';ctx.lineWidth=2;ctx.beginPath();ctx.arc(t.x,t.y,12,0,TAU);ctx.stroke();glow(t.x,t.y,5,'#8cff9b')});
+if(player&&(build.drones||0)>0){for(let i=0;i<build.drones;i++){let a=elapsed*1.8+i*TAU/build.drones,dx=Math.cos(a)*(34+i*7),dy=Math.sin(a)*(34+i*7),x=player.x+dx,y=player.y+dy;ctx.strokeStyle='#8cff9b88';ctx.beginPath();ctx.moveTo(player.x,player.y);ctx.lineTo(x,y);ctx.stroke();glow(x,y,6,'#8cff9b');ctx.strokeStyle='#eaffef';ctx.strokeRect(x-3,y-3,6,6)}}
 bullets.forEach(b=>{ctx.shadowBlur=12;ctx.shadowColor=b.color;ctx.fillStyle=b.color;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,TAU);ctx.fill();ctx.shadowBlur=0});
 enemyBullets.forEach(b=>glow(b.x,b.y,b.r,b.color));
-enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.rotate(Math.atan2(player.y-e.y,player.x-e.x));ctx.shadowBlur=16;ctx.shadowColor=e.color;ctx.fillStyle=e.hit>0?'#fff':e.color;ctx.beginPath();if(e.type==='tank'){ctx.rect(-e.r,-e.r,e.r*2,e.r*2)}else{ctx.moveTo(e.r,0);ctx.lineTo(-e.r*.8,-e.r*.8);ctx.lineTo(-e.r*.55,0);ctx.lineTo(-e.r*.8,e.r*.8);ctx.closePath()}ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff9';ctx.stroke();ctx.restore();if(e.hp<e.maxHp){ctx.fillStyle='#142337';ctx.fillRect(e.x-e.r,e.y-e.r-8,e.r*2,3);ctx.fillStyle=e.color;ctx.fillRect(e.x-e.r,e.y-e.r-8,e.r*2*e.hp/e.maxHp,3)}});
+effects.forEach(fx=>{ctx.save();ctx.globalAlpha=clamp(fx.life/fx.max,0,1);if(fx.type==='line'){ctx.strokeStyle=fx.color;ctx.lineWidth=3;ctx.shadowBlur=18;ctx.shadowColor=fx.color;ctx.beginPath();ctx.moveTo(fx.x1,fx.y1);ctx.lineTo(fx.x2,fx.y2);ctx.stroke()}else{ctx.strokeStyle=fx.color;ctx.lineWidth=5;ctx.shadowBlur=22;ctx.shadowColor=fx.color;ctx.beginPath();ctx.arc(fx.x,fx.y,fx.r*(1-fx.life/fx.max*.35),0,TAU);ctx.stroke()}ctx.restore()});
+enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.rotate(Math.atan2(player.y-e.y,player.x-e.x));ctx.shadowBlur=16;ctx.shadowColor=e.color;ctx.fillStyle=e.hit>0?'#fff':e.burn>0?'#ff9b4a':e.freeze>0?'#8cecff':e.color;ctx.beginPath();if(e.type==='tank'){ctx.rect(-e.r,-e.r,e.r*2,e.r*2)}else{ctx.moveTo(e.r,0);ctx.lineTo(-e.r*.8,-e.r*.8);ctx.lineTo(-e.r*.55,0);ctx.lineTo(-e.r*.8,e.r*.8);ctx.closePath()}ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff9';ctx.stroke();ctx.restore();if(e.burn>0||e.freeze>0){ctx.strokeStyle=e.burn>0?'#ff9b4a':'#8cecff';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+4,0,TAU);ctx.stroke()}if(e.hp<e.maxHp){ctx.fillStyle='#142337';ctx.fillRect(e.x-e.r,e.y-e.r-8,e.r*2,3);ctx.fillStyle=e.color;ctx.fillRect(e.x-e.r,e.y-e.r-8,e.r*2*e.hp/e.maxHp,3)}});
 if(boss){ctx.save();ctx.translate(boss.x,boss.y);ctx.rotate(elapsed*.3);ctx.shadowBlur=28;ctx.shadowColor='#ff4da6';ctx.strokeStyle='#ff4da6';ctx.lineWidth=5;ctx.beginPath();ctx.rect(-boss.r,-boss.r,boss.r*2,boss.r*2);ctx.stroke();ctx.rotate(-elapsed*.6);ctx.strokeStyle='#ffb45d';ctx.beginPath();ctx.arc(0,0,boss.r*.68,0,TAU);ctx.stroke();ctx.fillStyle='#ff4da6';ctx.fillRect(-9,-9,18,18);ctx.restore()}
 particles.forEach(p=>{ctx.globalAlpha=clamp(p.life/p.max,0,1);glow(p.x,p.y,p.size,p.color);ctx.globalAlpha=1});
 if(player){ctx.save();ctx.translate(player.x,player.y);ctx.rotate(player.angle);ctx.globalAlpha=player.inv>0&&Math.floor(elapsed*18)%2===0?.4:1;ctx.shadowBlur=20;ctx.shadowColor=pilots[selectedPilot].color;ctx.fillStyle=pilots[selectedPilot].color;ctx.beginPath();ctx.moveTo(19,0);ctx.lineTo(-11,-10);ctx.lineTo(-7,0);ctx.lineTo(-11,10);ctx.closePath();ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#eaffff';ctx.fillRect(1,-3,8,6);ctx.restore();if(player.shield>0){ctx.strokeStyle='#6eaaffaa';ctx.lineWidth=2;ctx.beginPath();ctx.arc(player.x,player.y,player.r+8,0,TAU);ctx.stroke()}}
