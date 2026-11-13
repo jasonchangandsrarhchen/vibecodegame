@@ -16,7 +16,7 @@ button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3
 </style>
 </head>
 <body>
-<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // BUILD 0.2.2</div></div>
+<header><div><div class="brand">PROJECT <span>FRONTIER</span></div><div class="sub">PLANETARY INDUSTRIAL SURVIVAL // BUILD 0.3.0</div></div>
 <div class="resources">
 <div class="res"><small>鐵礦</small><b id="iron">40</b></div><div class="res"><small>銅礦</small><b id="copper">25</b></div><div class="res"><small>碳晶</small><b id="crystal">12</b></div><div class="res"><small>合金板</small><b id="plate">0</b></div><div class="res"><small>電子元件</small><b id="circuit">0</b></div><div class="res"><small>能源</small><b id="energy">80</b></div><div class="res"><small>石材</small><b id="stone">0</b></div><div class="res"><small>稀有元素</small><b id="rare">0</b></div><div class="res"><small>星際資料</small><b id="data">0</b></div>
 </div></header>
@@ -41,7 +41,7 @@ button{font:inherit}.action{background:#1b4145;color:#e2fff8;border:1px solid #3
 <div class="muted" style="font-size:9px;margin-top:8px">提示：採礦機必須放在對應礦脈；晶體鑽機只能放在碳晶礦脈。採石場必須放在岩壁。星際港會定期派遣探勘船，帶回稀有元素與星際資料。</div>
 </section>
 <aside class="side">
-<section class="panel"><div class="eyebrow">新手教學 / FIRST 10 MINUTES</div><div class="objective" style="margin-top:7px"><b>① 採礦：</b>點「採礦機」→ 點座標 (2,2) 的鐵礦 🪨。<br><b>② 發電：</b>建造太陽能板，再補風力發電，夜晚才不會停電。<br><b>③ 冶煉：</b>鐵礦累積後，在平地建造冶煉爐，生產合金板。<br><b>④ 研究：</b>建造組裝工廠生產電子元件，再建研究中心。<br><b>⑤ 防守：</b>約 4 分鐘後第一波蟲群才會抵達；前期先安心採礦、發電與冶煉。每波來襲前 30 秒會收到警報。<br><span style="color:var(--gold)">地圖中央 🏠 是基地核心；敵人會從邊緣出現並朝核心移動。</span></div></section><section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 id="missionTitle" style="margin:5px 0;font-size:15px">第一座能源基地</h3><div id="objective" class="objective">部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。</div><div class="meter"><i id="progress"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
+<section class="panel"><div class="eyebrow">新手教學 / FIRST 10 MINUTES</div><div class="objective" style="margin-top:7px"><b>① 採礦：</b>點「採礦機」→ 點座標 (2,2) 的鐵礦 🪨。<br><b>② 發電：</b>建造太陽能板，再補風力發電，夜晚才不會停電。<br><b>③ 冶煉：</b>鐵礦累積後，在平地建造冶煉爐，生產合金板。<br><b>④ 研究：</b>建造組裝工廠生產電子元件，再建研究中心。<br><b>⑤ 防守：</b>約 4 分鐘後第一波蟲群才會抵達；每波來襲前 30 秒會收到警報。<br><b>⑥ 深空：</b>研究「深空探勘」後，在岩壁建採石場取得石材，再建星際港。<br><b>⑦ 探索：</b>星際港每 120 秒檢查補給；電子 8、合金板 12、碳晶 5 齊備才會取得稀有元素與星際資料。<br><b>⑧ 終局：</b>研究核融合、量子運算與軌道打擊，建造核融合爐、量子工廠、行星護盾及軌道炮。<br><span style="color:var(--gold)">地圖中央 🏠 是基地核心；敵人會從邊緣出現並朝核心移動。</span></div></section><section class="panel"><div class="eyebrow">MISSION DIRECTIVE</div><h3 id="missionTitle" style="margin:5px 0;font-size:15px">第一座能源基地</h3><div id="objective" class="objective">部署一座太陽能板與一台採礦機，建立最初的能源與採集能力。</div><div class="meter"><i id="progress"></i></div><div class="statline"><span>任務進度</span><b id="progressText">0 / 2</b></div></section>
 <section class="panel"><div class="eyebrow">GRID TELEMETRY</div><div class="statline"><span>即時發電</span><b id="generation">0 MW</b></div><div class="statline"><span>設施耗電</span><b id="usage">0 MW</b></div><div class="statline"><span>基地完整度</span><b id="integrity">100%</b></div><div class="statline"><span>設施數量</span><b id="buildingCount">0</b></div><div class="statline"><span>存活天數</span><b id="day">1</b></div><div class="statline"><span>外星威脅</span><b id="threat">低</b></div></section>
 <section class="panel"><div class="eyebrow">SELECTED TILE</div><div class="selected-info" id="tileInfo">選取地圖格子以查看地形、礦物及設施狀態。</div><div class="side-actions"><button class="action" id="demolish" disabled>拆除設施</button><button class="action" id="rotate" disabled>旋轉輸送帶</button></div></section>
 <section class="panel"><div class="topline"><div class="eyebrow">RESEARCH TREE</div><span id="science" class="muted" style="font-size:10px">研究點 0</span></div><div id="techlist" class="techlist"></div></section>
@@ -81,10 +81,10 @@ const techs=[
 {id:"weapons",name:"脈衝武器",cost:7,desc:"砲塔攻擊力提升，可抵禦大型蟲群。"},
 {id:"automation",name:"工業自動化",cost:9,desc:"組裝工廠速度提升 40%。"},
 {id:"shields",name:"行星護盾技術",cost:12,desc:"解鎖行星護盾建築。"},
-{id:"deepSpace",name:"深空探勘",cost:14,desc:"解鎖星際港與採石場。"},
-{id:"fusion",name:"核融合工程",cost:18,desc:"解鎖核融合爐，提供穩定的大量能源。"},
-{id:"quantum",name:"量子運算",cost:22,desc:"解鎖量子工廠與行星護盾。"},
-{id:"orbital",name:"軌道打擊",cost:26,desc:"解鎖軌道炮，遠距離清除敵群。"}
+{id:"deepSpace",name:"深空探勘",cost:10,desc:"解鎖星際港與採石場。"},
+{id:"fusion",name:"核融合工程",cost:14,desc:"解鎖核融合爐，提供穩定的大量能源。"},
+{id:"quantum",name:"量子運算",cost:18,desc:"解鎖量子工廠與行星護盾。"},
+{id:"orbital",name:"軌道打擊",cost:20,desc:"解鎖軌道炮，遠距離清除敵群。"}
 ];
 let s;
 function fresh(){
@@ -123,7 +123,7 @@ let n=0,goal=2,title="第一座能源基地",desc="部署一座太陽能板與�
 if(s.mission===0){n=Math.min(2,count("solar")+count("wind")+count("miner"));if(count("miner")&&count("solar")+count("wind"))s.mission=1;}
 if(s.mission===1){title="建立冶煉產線";desc="建造冶煉爐，將採集到的鐵礦加工成合金板。";max=1;n=count("smelter");if(n)s.mission=2;}
 if(s.mission===2){title="邁向自動化";desc="建造組裝工廠，生產電子元件，並部署研究中心。";max=2;n=Math.min(2,count("assembler")+count("lab"));if(count("assembler")&&count("lab"))s.mission=3;}
-if(s.mission>=3){title="守住這顆星球";desc="擴張基地、研究科技並建立砲塔防線。每隔一段時間就會有外星生物來襲。";max=5;n=Math.min(5,count("turret")+s.unlocked.length);}
+if(s.mission>=3){if(!count("quarry")){title="開採岩壁資源";desc="研究「深空探勘」後，在岩壁部署採石場，開始取得石材。";max=1;n=0;}else if(!count("spaceport")){title="建立星際港";desc="用採石場取得石材，建造星際港並準備探勘補給。";max=1;n=0;}else if(!s.unlocked.includes("fusion")){title="升級能源網路";desc="研究核融合工程，解鎖核融合爐，為大型工業設施提供能源。";max=1;n=0;}else if(!count("fusion")){title="建造核融合爐";desc="建造核融合爐，取得穩定的 20 MW 發電能力。";max=1;n=0;}else if(!s.unlocked.includes("quantum")){title="進入量子時代";desc="研究量子運算，解鎖量子工廠與行星護盾。";max=1;n=0;}else if(!count("quantum")){title="建造量子工廠";desc="量子工廠會消耗稀有元素與電子元件，持續製造星際資料。";max=1;n=0;}else if(!count("shield")){title="啟動行星護盾";desc="消耗星際資料與稀有元素建造護盾，將基地完整度上限提高至 200%。";max=1;n=0;}else if(!s.unlocked.includes("orbital")){title="取得軌道打擊能力";desc="研究軌道打擊，解鎖可遠距離消滅敵人的軌道炮。";max=1;n=0;}else if(!count("orbital")){title="部署軌道炮";desc="建造軌道炮，將防線延伸至整個基地周邊。";max=1;n=0;}else{title="星球殖民計畫完成";desc="你已建立完整的深空工業與行星防禦體系。繼續擴張、累積資源，抵禦不斷增強的蟲群。";max=1;n=1;}}
 $("missionTitle").textContent=title;$("objective").textContent=desc;$("progress").style.width=(n/max*100)+"%";$("progressText").textContent=n+" / "+max;
 }
 function renderTech(){
